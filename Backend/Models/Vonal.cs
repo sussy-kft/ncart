@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -11,11 +12,11 @@ namespace Backend.Models
         [Required] public int KezdoAll { get; set; }
         [Required] public int Vegall { get; set; }
 
-        [ForeignKey(nameof(JarmuTipus))] public JarmuTipus _JarmuTipus { get; set; }
-        [ForeignKey(nameof(KezdoAll))] public Allomas _KezdoAll { get; set; }
-        [ForeignKey(nameof(Vegall))] public Allomas _Vegall { get; set; }
+        [ForeignKey(nameof(JarmuTipus)), JsonIgnore] public JarmuTipus _JarmuTipus { get; set; }
+        [ForeignKey(nameof(KezdoAll)), JsonIgnore] public Allomas _KezdoAll { get; set; }
+        [ForeignKey(nameof(Vegall)), JsonIgnore] public Allomas _Vegall { get; set; }
 
-        public List<Inditas> _Inditasok { get; set; }
-        public List<Megall> _Megallok { get; set; }
+        [JsonIgnore] public List<Inditas> _Inditasok { get; set; }
+        [JsonIgnore] public List<Megall> _Megallok { get; set; }
     }
 }

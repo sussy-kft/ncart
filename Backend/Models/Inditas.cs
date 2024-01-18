@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -11,6 +12,6 @@ namespace Backend.Models
         [Required] public byte Nap { get; set; }
         [Required] public short InditasIdeje { get; set; }
 
-        [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
+        [ForeignKey(nameof(Vonal)), JsonIgnore] public Vonal _Vonal { get; set; }
     }
 }
