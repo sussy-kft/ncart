@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -7,6 +8,6 @@ namespace Backend.Models
         [Key] public int Id { get; set; }
         [Required, MaxLength(16)] public string Megnevezes { get; set; }
 
-        public List<Vonal> _Vonalak { get; set; }
+        [JsonIgnore] public List<Vonal> _Vonalak { get; set; }
     }
 }

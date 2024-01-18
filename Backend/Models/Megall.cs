@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -12,7 +13,7 @@ namespace Backend.Models
         [Required] public int ElozoMegallo { get; set; }
         [Required] public byte HanyPerc { get; set; }
 
-        [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
-        [ForeignKey(nameof(Allomas))] public Allomas _Allomas { get; set; }
+        [ForeignKey(nameof(Vonal)), JsonIgnore] public Vonal _Vonal { get; set; }
+        [ForeignKey(nameof(Allomas)), JsonIgnore] public Allomas _Allomas { get; set; }
     }
 }
