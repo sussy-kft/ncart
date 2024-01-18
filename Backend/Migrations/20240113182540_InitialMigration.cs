@@ -159,7 +159,7 @@ namespace Backend.Migrations
                         SELECT COUNT(*)
                         FROM Vonalak
                         WHERE {nameof(Vonal.VonalSzam)} = @{nameof(Vonal.VonalSzam)}
-                    ) >= 2
+                    ) > 2
                         SET @ret = 0
                     RETURN @ret
                 END
