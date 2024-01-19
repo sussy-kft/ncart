@@ -23,39 +23,26 @@ namespace Backend.Controllers
 
         protected IActionResult Post(DbSet<TDbFormat> dbSet, TDbFormat data, Func<TDbFormat, TJsonFormat> convertToJsonFormat) => CheckIfBadRequest(() => {
             dbSet.Add(data);
-            return SaveAndOk(convertToJsonFormat(data));
+            return TrySave(convertToJsonFormat(data));
         });
 
-        protected IActionResult Put(DbSet<TDbFormat> dbSet, Func<TDbFormat, TJsonFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, record => SaveAndOk(updateRecord(record)), pk));
+        protected IActionResult Put(DbSet<TDbFormat> dbSet, Func<TDbFormat, TJsonFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, record => TrySave(updateRecord(record)), pk));
 
         protected IActionResult Delete(DbSet<TDbFormat> dbSet, Func<TDbFormat, TJsonFormat> convertToJsonFormat, params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
-            handleRequest: record => HandleDbUpdateException(() => {
+            handleRequest: record => {
                 dbSet.Remove(record);
-                return SaveAndOk(convertToJsonFormat(record));
-            }),
+                return TrySave(convertToJsonFormat(record));
+            },
             pk: pk
         );
 
-        protected OkObjectResult SaveAndOk(TJsonFormat record)
-        {
-            context.SaveChanges();
-            return Ok(record);
-        }
-
-        IActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, IActionResult> handleRequest, params object?[]? pk)
-        {
-            TDbFormat? record = dbSet.Find(pk);
-            return record != null ? handleRequest(record) : NotFound();
-        }
-
-        IActionResult CheckIfBadRequest(Func<IActionResult> handleRequest) => ModelState.IsValid ? HandleDbUpdateException(handleRequest) : BadRequest(ModelState);
-
-        IActionResult HandleDbUpdateException(Func<IActionResult> handleRequest)
+        protected IActionResult TrySave(TJsonFormat record)
         {
             try
             {
-                return handleRequest();
+                context.SaveChanges();
+                return Ok(record);
             }
             catch (DbUpdateConcurrencyException e)
             {
@@ -66,5 +53,13 @@ namespace Backend.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        IActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, IActionResult> handleRequest, params object?[]? pk)
+        {
+            TDbFormat? record = dbSet.Find(pk);
+            return record != null ? handleRequest(record) : NotFound();
+        }
+
+        IActionResult CheckIfBadRequest(Func<IActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
     }
 }
