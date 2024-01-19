@@ -14,29 +14,24 @@ namespace Backend.Controllers
         public override IEnumerable<Vonal> Get() => context.Vonalak.ToList();
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.Vonalak, id);
+        public IActionResult Get(int id) => Get(context.Vonalak, record => record, id);
 
-        public override IActionResult Post([FromBody] Vonal data) => Post(() => {
-            context.Vonalak.Add(data);
-            context.SaveChanges();
-            return Ok(data);
-        });
+        public override IActionResult Post([FromBody] Vonal data) => Post(context.Vonalak, data, data => data);
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Vonal ujVonal) => Put(
             dbSet: context.Vonalak,
-            updateData: record => {
-                record.VonalSzam = ujVonal.VonalSzam;
-                record.JarmuTipus = ujVonal.JarmuTipus;
-                record.KezdoAll = ujVonal.KezdoAll;
-                record.Vegall = ujVonal.Vegall;
-                context.SaveChanges();
-                return Ok(record);
+            updateRecord: vonal => {
+                vonal.VonalSzam = ujVonal.VonalSzam;
+                vonal.JarmuTipus = ujVonal.JarmuTipus;
+                vonal.KezdoAll = ujVonal.KezdoAll;
+                vonal.Vegall = ujVonal.Vegall;
+                return vonal;
             },
             pk: id
         );
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.Vonalak, id);
+        public IActionResult Delete(int id) => Delete(context.Vonalak, record => record, id);
     }
 }

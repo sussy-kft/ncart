@@ -14,28 +14,23 @@ namespace Backend.Controllers
         public override IEnumerable<AllomasNyersKoordinatakkal> Get() => context.Allomasok.ToList().ConvertAll<AllomasNyersKoordinatakkal>(allomas => allomas);
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.Allomasok, id);
+        public IActionResult Get(int id) => Get(context.Allomasok, record => record, id);
 
-        public override IActionResult Post([FromBody] AllomasNyersKoordinatakkal data) => Post(() => {
-            context.Allomasok.Add(data);
-            context.SaveChanges();
-            return Ok(data);
-        });
+        public override IActionResult Post([FromBody] AllomasNyersKoordinatakkal data) => Post(context.Allomasok, data, data => data);
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] AllomasNyersKoordinatakkal ujAllomas) => Put(
             dbSet: context.Allomasok,
-            updateData: record => {
+            updateRecord: allomas => {
                 Allomas a = ujAllomas;
-                record.Nev = a.Nev;
-                record.Koord = a.Koord;
-                context.SaveChanges();
-                return Ok((AllomasNyersKoordinatakkal)record);
+                allomas.Nev = a.Nev;
+                allomas.Koord = a.Koord;
+                return allomas;
             },
             pk: id
         );
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.Allomasok, id);
+        public IActionResult Delete(int id) => Delete(context.Allomasok, record => record, id);
     }
 }
