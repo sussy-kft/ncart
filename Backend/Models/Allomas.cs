@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using Backend.DTOs;
 using Backend.ModelDTOBases;
 
@@ -10,9 +9,9 @@ namespace Backend.Models
         [Key] public int Id { get; set; }
         [Required] public long Koord { get; set; }
 
-        [JsonIgnore] public List<Vonal> _VonalakKezdoAll { get; set; }
-        [JsonIgnore] public List<Vonal> _VonalakVegall { get; set; }
-        [JsonIgnore] public List<Megall> _Megallok { get; set; }
+        public List<Vonal> _VonalakKezdoAll { get; set; }
+        public List<Vonal> _VonalakVegall { get; set; }
+        public List<Megall> _Megallok { get; set; }
 
         public AllomasDTO ToDTO() => new AllomasDTO {
             Id = Id,

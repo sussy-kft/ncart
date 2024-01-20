@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Backend.ModelDTOBases;
 using Backend.DTOs;
@@ -12,8 +11,8 @@ namespace Backend.Models
         public int Vonal { get; set; }
         public int Allomas { get; set; }
 
-        [ForeignKey(nameof(Vonal)), JsonIgnore] public Vonal _Vonal { get; set; }
-        [ForeignKey(nameof(Allomas)), JsonIgnore] public Allomas _Allomas { get; set; }
+        [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
+        [ForeignKey(nameof(Allomas))] public Allomas _Allomas { get; set; }
 
         public MegallDTO ToDTO() => new MegallDTO {
             Vonal = Vonal,
