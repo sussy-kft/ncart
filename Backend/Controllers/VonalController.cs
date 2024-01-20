@@ -1,37 +1,40 @@
-﻿using Backend.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Backend.DTOs;
+using Backend.Models;
 
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public class VonalController : TablaController<Vonal, Vonal>
+    public class VonalController : TablaController<Vonal, VonalDTO>
     {
         public VonalController(AppDbContext context) : base(context)
         {
 
         }
 
-        public override IEnumerable<Vonal> Get() => context.Vonalak.ToList();
+        public override IEnumerable<VonalDTO> Get() => Get(context.Vonalak);
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.Vonalak, record => record, id);
+        public IActionResult Get(int id) => Get(context.Vonalak, id);
 
-        public override IActionResult Post([FromBody] Vonal data) => Post(context.Vonalak, data, data => data);
+        public override IActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Vonal ujVonal) => Put(
+        public IActionResult Put(int id, [FromBody] VonalDTO ujVonal) => Put(
             dbSet: context.Vonalak,
-            updateRecord: vonal => {
+            data: ujVonal,
+            updateRecord: (vonal, ujVonal) => {
                 vonal.VonalSzam = ujVonal.VonalSzam;
                 vonal.JarmuTipus = ujVonal.JarmuTipus;
                 vonal.KezdoAll = ujVonal.KezdoAll;
                 vonal.Vegall = ujVonal.Vegall;
-                return vonal;
             },
             pk: id
         );
 
+        public override IActionResult Delete() => DeleteAll(context.Vonalak);
+
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.Vonalak, record => record, id);
+        public IActionResult Delete(int id) => Delete(context.Vonalak, id);
     }
 }

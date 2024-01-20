@@ -1,13 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Backend.DTOs;
+using Backend.ModelDTOBases;
 
 namespace Backend.Models
 {
-    public class JarmuTipus
+    public class JarmuTipus : JarmuTipusBase, IDbModel<JarmuTipusDTO>
     {
         [Key] public int Id { get; set; }
-        [Required, MaxLength(16)] public string Megnevezes { get; set; }
 
         [JsonIgnore] public List<Vonal> _Vonalak { get; set; }
+
+        public JarmuTipusDTO ToDTO() => new JarmuTipusDTO {
+            Id = Id,
+            Megnevezes = Megnevezes,
+        };
     }
 }
