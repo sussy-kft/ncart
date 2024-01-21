@@ -4,13 +4,13 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Models
 {
-    public class JarmuTipus : JarmuTipusBase, IDbModel<JarmuTipusDTO>
+    public class JarmuTipus : JarmuTipusBase, IConvertible<JarmuTipusDTO>
     {
         [Key] public int Id { get; set; }
 
         public List<Vonal> _Vonalak { get; set; }
 
-        public JarmuTipusDTO ToDTO() => new JarmuTipusDTO {
+        public JarmuTipusDTO ConvertType() => new JarmuTipusDTO {
             Id = Id,
             Megnevezes = Megnevezes,
         };

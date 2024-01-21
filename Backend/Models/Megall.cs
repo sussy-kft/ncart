@@ -6,7 +6,7 @@ using Backend.DTOs;
 namespace Backend.Models
 {
     [PrimaryKey(nameof(Vonal), nameof(Allomas))]
-    public class Megall : MegallBase, IDbModel<MegallDTO>
+    public class Megall : MegallBase, IConvertible<MegallDTO>
     {
         public int Vonal { get; set; }
         public int Allomas { get; set; }
@@ -14,7 +14,7 @@ namespace Backend.Models
         [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
         [ForeignKey(nameof(Allomas))] public Allomas _Allomas { get; set; }
 
-        public MegallDTO ToDTO() => new MegallDTO {
+        public MegallDTO ConvertType() => new MegallDTO {
             Vonal = Vonal,
             Allomas = Allomas,
             ElozoMegallo = ElozoMegallo,

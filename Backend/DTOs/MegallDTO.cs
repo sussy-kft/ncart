@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs
 {
-    public class MegallDTO : MegallBase, IDataTransferObject<Megall>
+    public class MegallDTO : MegallBase, IConvertible<Megall>
     {
         [Required] public int Vonal { get; set; }
         [Required] public int Allomas { get; set; }
 
-        public Megall ToDbModel() => new Megall {
+        public Megall ConvertType() => new Megall {
             Vonal = Vonal,
             Allomas = Allomas,
             ElozoMegallo = ElozoMegallo,

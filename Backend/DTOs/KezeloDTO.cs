@@ -10,14 +10,14 @@ namespace Backend.DTOs
         JaratokSzerkesztese = 1 << 1
     }
 
-    public class KezeloDTO : KezeloBase, IDataTransferObject<Kezelo>
+    public class KezeloDTO : KezeloBase, IConvertible<Kezelo>
     {
         public int Id { get; set; }
         [Required] public string Jelszo { get; set; }
 
         [Required] public List<string> Engedelyek { get; set; }
 
-        public Kezelo ToDbModel() => new Kezelo {
+        public Kezelo ConvertType() => new Kezelo {
             Id = Id,
             Email = Email,
             Jelszo = Jelszo,

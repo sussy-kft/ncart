@@ -6,7 +6,7 @@ using Backend.DTOs;
 namespace Backend.Models
 {
     [PrimaryKey(nameof(Vonal), nameof(Nap), nameof(InditasIdeje))]
-    public class Inditas : InditasBase, IDbModel<InditasDTO>
+    public class Inditas : InditasBase, IConvertible<InditasDTO>
     {
         public int Vonal { get; set; }
         public byte Nap { get; set; }
@@ -14,7 +14,7 @@ namespace Backend.Models
 
         [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
 
-        public InditasDTO ToDTO() => new InditasDTO {
+        public InditasDTO ConvertType() => new InditasDTO {
             Vonal = Vonal,
             Nap = Nap,
             InditasIdeje = InditasIdeje

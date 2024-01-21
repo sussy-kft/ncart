@@ -5,7 +5,9 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [ApiController]
-    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerBase where TDbFormat : class, IDbModel<TJsonFormat> where TJsonFormat : class, IDataTransferObject<TDbFormat>
+    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerBase 
+        where TDbFormat : class, IConvertible<TJsonFormat>
+        where TJsonFormat : class, IConvertible<TDbFormat>
     {
         protected AppDbContext context { get; }
 
@@ -19,13 +21,13 @@ namespace Backend.Controllers
 
         protected IEnumerable<TJsonFormat> Get(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
-        protected IActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ToDTO()), pk);
+        protected IActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
 
         [HttpPost]
         public abstract IActionResult Post([FromBody] TJsonFormat data);
 
         protected IActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
-            TDbFormat dbFormat = data.ToDbModel();
+            TDbFormat dbFormat = data.ConvertType();
             dbSet.Add(dbFormat);
             return TrySave(dbFormat);
         });
@@ -33,7 +35,7 @@ namespace Backend.Controllers
         protected IActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(
             dbSet: dbSet,
             handleRequest: record => {
-                updateRecord(record, data.ToDbModel());
+                updateRecord(record, data.ConvertType());
                 return TrySave(record);
             },
             pk: pk
@@ -58,9 +60,9 @@ namespace Backend.Controllers
             pk: pk
         );
 
-        List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ToDTO());
+        List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
 
-        IActionResult TrySave(TDbFormat data) => TrySaveData(data.ToDTO);
+        IActionResult TrySave(TDbFormat data) => TrySaveData(data.ConvertType);
 
         IActionResult TrySaveData<T>(Func<T> convert)
         {

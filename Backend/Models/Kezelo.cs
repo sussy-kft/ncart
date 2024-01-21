@@ -7,7 +7,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Models
 {
     [Index(nameof(Email), IsUnique = true)]
-    public class Kezelo : KezeloBase, IDbModel<KezeloDTO>
+    public class Kezelo : KezeloBase, IConvertible<KezeloDTO>
     {
         [Key] public int Id { get; set; }
         [Required, PersonalData] public string Jelszo { get; set; }
@@ -15,7 +15,7 @@ namespace Backend.Models
 
         static readonly Engedelyek[] engedelyek = Enum.GetValues<Engedelyek>();
 
-        public KezeloDTO ToDTO() => new KezeloDTO {
+        public KezeloDTO ConvertType() => new KezeloDTO {
             Id = Id,
             Email = Email,
             Jelszo = Jelszo,

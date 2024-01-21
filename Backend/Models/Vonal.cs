@@ -5,7 +5,7 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Models
 {
-    public class Vonal : VonalBase, IDbModel<VonalDTO>
+    public class Vonal : VonalBase, IConvertible<VonalDTO>
     {
         [Key] public int Id { get; set; }
 
@@ -16,7 +16,7 @@ namespace Backend.Models
         public List<Inditas> _Inditasok { get; set; }
         public List<Megall> _Megallok { get; set; }
 
-        public VonalDTO ToDTO() => new VonalDTO {
+        public VonalDTO ConvertType() => new VonalDTO {
             Id = Id,
             VonalSzam = VonalSzam,
             JarmuTipus = JarmuTipus,

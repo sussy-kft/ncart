@@ -4,7 +4,7 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Models
 {
-    public class Allomas : AllomasBase, IDbModel<AllomasDTO>
+    public class Allomas : AllomasBase, IConvertible<AllomasDTO>
     {
         [Key] public int Id { get; set; }
         [Required] public long Koord { get; set; }
@@ -13,7 +13,7 @@ namespace Backend.Models
         public List<Vonal> _VonalakVegall { get; set; }
         public List<Megall> _Megallok { get; set; }
 
-        public AllomasDTO ToDTO() => new AllomasDTO {
+        public AllomasDTO ConvertType() => new AllomasDTO {
             Id = Id,
             Nev = Nev,
             Koord = Koord
