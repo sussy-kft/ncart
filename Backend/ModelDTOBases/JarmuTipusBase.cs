@@ -2,7 +2,7 @@
 
 namespace Backend.ModelDTOBases
 {
-    public class JarmuTipusBase
+    public abstract class JarmuTipusBase
     {
         [Required, MaxLength(16)] public string Megnevezes { get; set; }
     }

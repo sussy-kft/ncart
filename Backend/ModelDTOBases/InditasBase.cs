@@ -1,6 +1,6 @@
 ﻿namespace Backend.ModelDTOBases
 {
-    public class InditasBase
+    public abstract class InditasBase
     {
         
     }

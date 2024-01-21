@@ -2,7 +2,7 @@
 
 namespace Backend.ModelDTOBases
 {
-    public class KezeloBase
+    public abstract class KezeloBase
     {
         [Required, EmailAddress] public string Email { get; set; }
     }

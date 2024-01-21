@@ -2,7 +2,7 @@
 
 namespace Backend.ModelDTOBases
 {
-    public class VonalBase
+    public abstract class VonalBase
     {
         [Required, MaxLength(4)] public string VonalSzam { get; set; }
         [Required] public int JarmuTipus { get; set; }
