@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 # Server connection string containing file
 appsettings.json
+/Backend/.example appsettings.json
