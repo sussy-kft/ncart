@@ -1,6 +1,5 @@
 ﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System.Collections.Specialized;
 
 #nullable disable
 
@@ -61,21 +60,21 @@ namespace Backend.Migrations
                         column: x => x.KezdoAll,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction
+                        onDelete: ReferentialAction.Restrict
                     );
                     table.ForeignKey(
                         name: "FK_Vonalak_Allomasok_Vegall",
                         column: x => x.Vegall,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction
+                        onDelete: ReferentialAction.Restrict
                     );
                     table.ForeignKey(
                         name: "FK_Vonalak_JarmuTipusok_JarmuTipus",
                         column: x => x.JarmuTipus,
                         principalTable: "JarmuTipusok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
+                        onDelete: ReferentialAction.Restrict
                     );
                 }
             );
@@ -95,7 +94,7 @@ namespace Backend.Migrations
                         column: x => x.Vonal,
                         principalTable: "Vonalak",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
+                        onDelete: ReferentialAction.Restrict
                     );
                 }
             );
@@ -114,14 +113,14 @@ namespace Backend.Migrations
                         column: x => x.Allomas,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
+                        onDelete: ReferentialAction.Restrict
                     );
                     table.ForeignKey(
                         name: "FK_Megallok_Vonalak_Vonal",
                         column: x => x.Vonal,
                         principalTable: "Vonalak",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
+                        onDelete: ReferentialAction.Restrict
                     );
                 }
             );

@@ -5,7 +5,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [ApiController]
-    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerBase 
+    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerBase
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
