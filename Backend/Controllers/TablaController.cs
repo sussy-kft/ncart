@@ -4,16 +4,13 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    [ApiController]
-    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerBase
+    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerContext
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
-        protected AppDbContext context { get; }
-
-        public TablaController(AppDbContext context)
+        public TablaController(AppDbContext context) : base(context)
         {
-            this.context = context;
+            
         }
 
         [HttpGet]
@@ -44,12 +41,7 @@ namespace Backend.Controllers
         [HttpDelete]
         public abstract IActionResult Delete();
 
-        protected IActionResult DeleteAll(DbSet<TDbFormat> dbSet)
-        {
-            List<TDbFormat> records = dbSet.ToList();
-            dbSet.RemoveRange(records);
-            return TrySaveData(() => ConvertAllToDTO(records));
-        }
+        protected IActionResult DeleteAll(DbSet<TDbFormat> dbSet) => ModifyRange(dbSet.ToList(), dbSet.RemoveRange);
 
         protected IActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
@@ -60,11 +52,15 @@ namespace Backend.Controllers
             pk: pk
         );
 
-        List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        protected IActionResult ModifyRange(List<TDbFormat> records, Action<List<TDbFormat>> action)
+        {
+            action(records);
+            return TrySaveData(() => ConvertAllToDTO(records));
+        }
 
-        IActionResult TrySave(TDbFormat data) => TrySaveData(data.ConvertType);
+        protected List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
 
-        IActionResult TrySaveData<T>(Func<T> convert)
+        protected IActionResult TrySaveData<T>(Func<T> convert)
         {
             try
             {
@@ -81,12 +77,12 @@ namespace Backend.Controllers
             }
         }
 
+        IActionResult TrySave(TDbFormat data) => TrySaveData(data.ConvertType);
+
         IActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, IActionResult> handleRequest, params object?[]? pk)
         {
             TDbFormat? record = dbSet.Find(pk);
             return record != null ? handleRequest(record) : NotFound();
         }
-
-        IActionResult CheckIfBadRequest(Func<IActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
     }
 }

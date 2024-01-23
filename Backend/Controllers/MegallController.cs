@@ -19,6 +19,9 @@ namespace Backend.Controllers
 
         public override IActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
+        [HttpPost("batch")]
+        public IActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
+
         [HttpPut("{vonal}/{allomas}")]
         public IActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
