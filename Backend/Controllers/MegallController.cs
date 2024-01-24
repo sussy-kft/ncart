@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public class MegallController : TablaController<Megall, MegallDTO>
+    public partial class MegallController : TablaController<Megall, MegallDTO>
     {
         public MegallController(AppDbContext context) : base(context)
         {
@@ -18,9 +18,6 @@ namespace Backend.Controllers
         public IActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
 
         public override IActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
-
-        [HttpPost("batch")]
-        public IActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
 
         [HttpPut("{vonal}/{allomas}")]
         public IActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
@@ -37,5 +34,11 @@ namespace Backend.Controllers
 
         [HttpDelete("{vonal}/{allomas}")]
         public IActionResult Delete(int vonal, int allomas) => Delete(context.Megallok, vonal, allomas);
+    }
+
+    public partial class MegallController
+    {
+        [HttpPost("batch")]
+        public IActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
     }
 }

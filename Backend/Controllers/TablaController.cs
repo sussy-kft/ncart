@@ -41,8 +41,6 @@ namespace Backend.Controllers
         [HttpDelete]
         public abstract IActionResult Delete();
 
-        protected IActionResult DeleteAll(DbSet<TDbFormat> dbSet) => ModifyRange(dbSet.ToList(), dbSet.RemoveRange);
-
         protected IActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
             handleRequest: record => {
@@ -52,15 +50,17 @@ namespace Backend.Controllers
             pk: pk
         );
 
+        protected IActionResult DeleteAll(DbSet<TDbFormat> dbSet) => ModifyRange(dbSet.ToList(), dbSet.RemoveRange);
+
         protected IActionResult ModifyRange(List<TDbFormat> records, Action<List<TDbFormat>> action)
         {
             action(records);
-            return TrySaveData(() => ConvertAllToDTO(records));
+            return TrySave(() => ConvertAllToDTO(records));
         }
 
         protected List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
 
-        protected IActionResult TrySaveData<T>(Func<T> convert)
+        protected IActionResult TrySave<T>(Func<T> convert)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Backend.Controllers
             }
         }
 
-        IActionResult TrySave(TDbFormat data) => TrySaveData(data.ConvertType);
+        IActionResult TrySave(TDbFormat data) => TrySave(data.ConvertType);
 
         IActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, IActionResult> handleRequest, params object?[]? pk)
         {
