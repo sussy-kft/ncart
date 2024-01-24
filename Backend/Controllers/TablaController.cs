@@ -52,13 +52,13 @@ namespace Backend.Controllers
 
         protected IActionResult DeleteAll(DbSet<TDbFormat> dbSet) => ModifyRange(dbSet.ToList(), dbSet.RemoveRange);
 
-        protected IActionResult ModifyRange(List<TDbFormat> records, Action<List<TDbFormat>> action)
+        protected IActionResult ModifyRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action)
         {
             action(records);
             return TrySave(() => ConvertAllToDTO(records));
         }
 
-        protected List<TJsonFormat> ConvertAllToDTO(List<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        protected IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
 
         protected IActionResult TrySave<T>(Func<T> convert)
         {
