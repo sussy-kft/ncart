@@ -5,14 +5,14 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("jarmutipusok")]
-    public class JarmuTipusController : TablaController<JarmuTipus, JarmuTipusDTO>
+    public class JarmuTipusController : ModosithatoTablaController<JarmuTipus, JarmuTipusDTO>
     {
         public JarmuTipusController(AppDbContext context) : base(context)
         {
 
         }
 
-        public override IEnumerable<JarmuTipusDTO> Get() => Get(context.JarmuTipusok);
+        public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
 
         [HttpGet("{id}")]
         public ActionResult Get(int id) => Get(context.JarmuTipusok, id);
@@ -20,7 +20,7 @@ namespace Backend.Controllers
         public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
         
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
+        public ActionResult Put(int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
             dbSet: context.JarmuTipusok,
             data: ujJarmuTipus,
             updateRecord: (jarmuTipus, ujJarmuTipus) => {

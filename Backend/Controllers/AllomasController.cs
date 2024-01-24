@@ -5,14 +5,14 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("allomasok")]
-    public class AllomasController : TablaController<Allomas, AllomasDTO>
+    public class AllomasController : KulonModosithatoTablaController<Allomas, AllomasDTO>
     {
         public AllomasController(AppDbContext context) : base(context)
         {
 
         }
 
-        public override IEnumerable<AllomasDTO> Get() => Get(context.Allomasok);
+        public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
         [HttpGet("{id}")]
         public ActionResult Get(int id) => Get(context.Allomasok, id);
@@ -26,6 +26,20 @@ namespace Backend.Controllers
             updateRecord: (allomas, ujAllomas) => {
                 allomas.Nev = ujAllomas.Nev;
                 allomas.Koord = ujAllomas.Koord;
+            },
+            pk: id
+        );
+
+        [HttpPatch("{id}")]
+        public ActionResult Patch(int id, [FromBody] AllomasPatchDTO ujAllomas) => Patch(
+            dbSet: context.Allomasok,
+            updateRecord: record => {
+                CheckIfNotNull(ujAllomas.Nev, nev => {
+                    record.Nev = nev;
+                });
+                CheckIfNotNull(ujAllomas.Koord, koord => {
+                    record.Koord = koord;
+                });
             },
             pk: id
         );

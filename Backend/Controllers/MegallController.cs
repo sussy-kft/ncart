@@ -5,14 +5,14 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController : TablaController<Megall, MegallDTO>
+    public partial class MegallController : KulonModosithatoTablaController<Megall, MegallDTO>
     {
         public MegallController(AppDbContext context) : base(context)
         {
 
         }
 
-        public override IEnumerable<MegallDTO> Get() => Get(context.Megallok);
+        public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
         public ActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
@@ -26,6 +26,20 @@ namespace Backend.Controllers
             updateRecord: (megall, ujMegall) => {
                 megall.ElozoMegallo = ujMegall.ElozoMegallo;
                 megall.HanyPerc = ujMegall.HanyPerc;
+            },
+            pk: (vonal, allomas)
+        );
+
+        [HttpPatch("{vonal}/{allomas}")]
+        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatchDTO ujMegall) => Patch(
+            dbSet: context.Megallok,
+            updateRecord: record => {
+                CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
+                    record.ElozoMegallo = elozoMegallo;
+                });
+                CheckIfNotNull(ujMegall.HanyPerc, hanyPerc => {
+                    record.HanyPerc = hanyPerc;
+                });
             },
             pk: (vonal, allomas)
         );

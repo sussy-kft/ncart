@@ -12,10 +12,7 @@ namespace Backend.Controllers
 
         }
 
-        public override IEnumerable<InditasDTO> Get() => Get(context.Inditasok);
-
-        [HttpGet("{vonal}/{nap}/{inditasIdeje}")]
-        public ActionResult Get(int vonal, byte nap, short inditasIdeje) => Get(context.Inditasok, vonal, nap, inditasIdeje);
+        public override IEnumerable<InditasDTO> Get() => GetAll(context.Inditasok);
 
         public override ActionResult Post([FromBody] InditasDTO data) => Post(context.Inditasok, data);
 

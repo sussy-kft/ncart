@@ -5,14 +5,14 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public class VonalController : TablaController<Vonal, VonalDTO>
+    public class VonalController : KulonModosithatoTablaController<Vonal, VonalDTO>
     {
         public VonalController(AppDbContext context) : base(context)
         {
 
         }
 
-        public override IEnumerable<VonalDTO> Get() => Get(context.Vonalak);
+        public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
 
         [HttpGet("{id}")]
         public ActionResult Get(int id) => Get(context.Vonalak, id);
@@ -28,6 +28,26 @@ namespace Backend.Controllers
                 vonal.JarmuTipus = ujVonal.JarmuTipus;
                 vonal.KezdoAll = ujVonal.KezdoAll;
                 vonal.Vegall = ujVonal.Vegall;
+            },
+            pk: id
+        );
+
+        [HttpPatch("{id}")]
+        public ActionResult Patch(int id, [FromBody] VonalPatchDTO ujVonal) => Patch(
+            dbSet: context.Vonalak,
+            updateRecord: record => {
+                CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
+                    record.VonalSzam = vonalSzam;
+                });
+                CheckIfNotNull(ujVonal.JarmuTipus, jarmuTipus => {
+                    record.JarmuTipus = jarmuTipus;
+                });
+                CheckIfNotNull(ujVonal.KezdoAll, kezdoAll => {
+                    record.KezdoAll = kezdoAll;
+                });
+                CheckIfNotNull(ujVonal.Vegall, vegall => {
+                    record.Vegall = vegall;
+                });
             },
             pk: id
         );

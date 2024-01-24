@@ -16,9 +16,7 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
-        protected IEnumerable<TJsonFormat> Get(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
-
-        protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
+        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
         [HttpPost]
         public abstract ActionResult Post([FromBody] TJsonFormat data);
@@ -28,15 +26,6 @@ namespace Backend.Controllers
             dbSet.Add(dbFormat);
             return TrySave(dbFormat);
         });
-
-        protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(
-            dbSet: dbSet,
-            handleRequest: record => {
-                updateRecord(record, data.ConvertType());
-                return TrySave(record);
-            },
-            pk: pk
-        ));
 
         [HttpDelete]
         public abstract ActionResult Delete();
@@ -77,9 +66,9 @@ namespace Backend.Controllers
             }
         }
 
-        ObjectResult TrySave(TDbFormat data) => TrySave(data.ConvertType);
+        protected ObjectResult TrySave(TDbFormat data) => TrySave(data.ConvertType);
 
-        ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk)
+        protected ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk)
         {
             TDbFormat? record = dbSet.Find(pk);
             return record != null ? handleRequest(record) : NotFound();

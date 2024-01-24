@@ -16,38 +16,7 @@ namespace Backend.DTOs
             Id = Id,
             Email = Email,
             Jelszo = Jelszo,
-            Engedelyek = ((Func<byte>)(() => {
-                byte engedelyek = 0;
-                Engedelyek.ForEach(engedely => {
-                    try
-                    {
-                        if (Enum.TryParse(engedely, out Engedelyek result))
-                        {
-                            engedelyek |= (byte)result;
-                        }
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        // TODO: le lehetne menteni ezeknek az exception-öknek a message-eit egy txt-be
-                    }
-                    catch (ArgumentException e)
-                    {
-                        /* +----------+----------+
-                         * |          |          |
-                         * |   |      |   |      |
-                         * |   |      |   |  |   |
-                         * |   |      |   |  |   |
-                         * +----------+----------+
-                         * |          |          |
-                         * |   |  |   |   |      |
-                         * |   |  |   |   |      |
-                         * |   |  |   |   | ____ |
-                         * +----------+----------+
-                         */
-                    }
-                });
-                return engedelyek;
-            }))()
+            Engedelyek = KezeloController.ConvertEngedelyekStringListToByte(Engedelyek)
         };
     }
 }
