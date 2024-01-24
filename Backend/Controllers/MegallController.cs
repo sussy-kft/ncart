@@ -15,12 +15,12 @@ namespace Backend.Controllers
         public override IEnumerable<MegallDTO> Get() => Get(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
-        public IActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
+        public ActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
 
-        public override IActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
+        public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
         [HttpPut("{vonal}/{allomas}")]
-        public IActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
+        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
@@ -30,15 +30,15 @@ namespace Backend.Controllers
             pk: (vonal, allomas)
         );
 
-        public override IActionResult Delete() => DeleteAll(context.Megallok);
+        public override ActionResult Delete() => DeleteAll(context.Megallok);
 
         [HttpDelete("{vonal}/{allomas}")]
-        public IActionResult Delete(int vonal, int allomas) => Delete(context.Megallok, vonal, allomas);
+        public ActionResult Delete(int vonal, int allomas) => Delete(context.Megallok, vonal, allomas);
     }
 
     public partial class MegallController
     {
         [HttpPost("batch")]
-        public IActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
+        public ActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
     }
 }

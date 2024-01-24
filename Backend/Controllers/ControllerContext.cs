@@ -12,6 +12,6 @@ namespace Backend.Controllers
             this.context = context;
         }
 
-        protected IActionResult CheckIfBadRequest(Func<IActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
+        protected ActionResult CheckIfBadRequest(Func<ActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
     }
 }

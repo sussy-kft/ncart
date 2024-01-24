@@ -15,9 +15,9 @@ namespace Backend.Controllers
         public override IEnumerable<JarmuTipusDTO> Get() => Get(context.JarmuTipusok);
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.JarmuTipusok, id);
+        public ActionResult Get(int id) => Get(context.JarmuTipusok, id);
 
-        public override IActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
+        public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
         
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
@@ -29,9 +29,9 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override IActionResult Delete() => DeleteAll(context.JarmuTipusok);
+        public override ActionResult Delete() => DeleteAll(context.JarmuTipusok);
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.JarmuTipusok, id);
+        public ActionResult Delete(int id) => Delete(context.JarmuTipusok, id);
     }
 }

@@ -15,9 +15,9 @@ namespace Backend.Controllers
         public override IEnumerable<KezeloDTO> Get() => Get(context.Kezelok);
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.Kezelok, id);
+        public ActionResult Get(int id) => Get(context.Kezelok, id);
 
-        public override IActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
+        public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => Put(
@@ -31,10 +31,10 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override IActionResult Delete() => DeleteAll(context.Kezelok);
+        public override ActionResult Delete() => DeleteAll(context.Kezelok);
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.Kezelok, id);
+        public ActionResult Delete(int id) => Delete(context.Kezelok, id);
     }
 
     public enum Engedelyek

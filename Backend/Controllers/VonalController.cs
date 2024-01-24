@@ -15,12 +15,12 @@ namespace Backend.Controllers
         public override IEnumerable<VonalDTO> Get() => Get(context.Vonalak);
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id) => Get(context.Vonalak, id);
+        public ActionResult Get(int id) => Get(context.Vonalak, id);
 
-        public override IActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);
+        public override ActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] VonalDTO ujVonal) => Put(
+        public ActionResult Put(int id, [FromBody] VonalDTO ujVonal) => Put(
             dbSet: context.Vonalak,
             data: ujVonal,
             updateRecord: (vonal, ujVonal) => {
@@ -32,9 +32,9 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override IActionResult Delete() => DeleteAll(context.Vonalak);
+        public override ActionResult Delete() => DeleteAll(context.Vonalak);
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Delete(context.Vonalak, id);
+        public ActionResult Delete(int id) => Delete(context.Vonalak, id);
     }
 }
