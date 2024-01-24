@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("kezelok")]
-    public class KezeloController : TablaController<Kezelo, KezeloDTO>
+    public partial class KezeloController : TablaController<Kezelo, KezeloDTO>
     {
         public KezeloController(AppDbContext context) : base(context)
         {
@@ -35,5 +35,27 @@ namespace Backend.Controllers
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id) => Delete(context.Kezelok, id);
+    }
+
+    public enum Engedelyek
+    {
+        SzerkesztokFelvetele = 1,
+        JaratokSzerkesztese = 1 << 1
+    }
+
+    public partial class KezeloController
+    {
+        static IReadOnlyList<string> OsszesEngedelyNev { get; }
+
+        public static IReadOnlyList<Engedelyek> OsszesEngedely { get; }
+
+        static KezeloController()
+        {
+            OsszesEngedely = Enum.GetValues<Engedelyek>();
+            OsszesEngedelyNev = OsszesEngedely.ToList().ConvertAll(engedely => engedely.ToString());
+        }
+
+        [HttpGet("engedelyek")]
+        public IEnumerable<string> GetEngedelyek() => OsszesEngedelyNev;
     }
 }

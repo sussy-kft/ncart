@@ -1,5 +1,5 @@
-﻿using Backend.ModelDTOBases;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Backend.ModelDTOBases;
 
 namespace Backend.DTOs
 {

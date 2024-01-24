@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.ModelDTOBases;
+using Backend.Controllers;
 
 namespace Backend.Models
 {
@@ -13,15 +14,13 @@ namespace Backend.Models
         [Required, PersonalData] public string Jelszo { get; set; }
         [Required] public byte Engedelyek { get; set; }
 
-        static readonly Engedelyek[] engedelyek = Enum.GetValues<Engedelyek>();
-
         public KezeloDTO ConvertType() => new KezeloDTO {
             Id = Id,
             Email = Email,
             Jelszo = Jelszo,
             Engedelyek = ((Func<List<string>>)(() => {
                 List<string> engedelyek = new List<string>();
-                foreach (Engedelyek engedely in Kezelo.engedelyek)
+                foreach (Engedelyek engedely in KezeloController.OsszesEngedely)
                 {
                     if ((Engedelyek & (byte)engedely) != 0)
                     {

@@ -9,8 +9,7 @@ namespace Backend.DTOs
         public int Id { get; set; }
         [Required] public Vector2 Koord { get; set; }
 
-        public Allomas ConvertType() => new Allomas
-        {
+        public Allomas ConvertType() => new Allomas {
             Id = Id,
             Nev = Nev,
             Koord = Koord

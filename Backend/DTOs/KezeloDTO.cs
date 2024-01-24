@@ -1,15 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.ModelDTOBases;
 using Backend.Models;
+using Backend.Controllers;
 
 namespace Backend.DTOs
 {
-    public enum Engedelyek
-    {
-        SzerkesztokFelvetele = 1,
-        JaratokSzerkesztese = 1 << 1
-    }
-
     public class KezeloDTO : KezeloBase, IConvertible<Kezelo>
     {
         public int Id { get; set; }
@@ -23,39 +18,33 @@ namespace Backend.DTOs
             Jelszo = Jelszo,
             Engedelyek = ((Func<byte>)(() => {
                 byte engedelyek = 0;
-                ((Func<List<Engedelyek>>)(() => {
-                    List<Engedelyek> engedelyek = new List<Engedelyek>();
-                    Engedelyek.ForEach(engedely => {
-                        try
+                Engedelyek.ForEach(engedely => {
+                    try
+                    {
+                        if (Enum.TryParse(engedely, out Engedelyek result))
                         {
-                            if (Enum.TryParse(engedely, out Engedelyek result))
-                            {
-                                engedelyek.Add(result);
-                            }
+                            engedelyek |= (byte)result;
                         }
-                        catch (InvalidOperationException e)
-                        {
-                            // TODO: le lehetne menteni ezeknek az exception-öknek a message-eit egy txt-be
-                        }
-                        catch (ArgumentException e)
-                        {
-                            /* +----------+----------+
-                             * |          |          |
-                             * |   |      |   |      |
-                             * |   |      |   |  |   |
-                             * |   |      |   |  |   |
-                             * +----------+----------+
-                             * |          |          |
-                             * |   |  |   |   |      |
-                             * |   |  |   |   |      |
-                             * |   |  |   |   | ____ |
-                             * +----------+----------+
-                             */
-                        }
-                    });
-                    return engedelyek;
-                }))().ForEach(engedely => {
-                    engedelyek |= (byte)engedely;
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        // TODO: le lehetne menteni ezeknek az exception-öknek a message-eit egy txt-be
+                    }
+                    catch (ArgumentException e)
+                    {
+                        /* +----------+----------+
+                         * |          |          |
+                         * |   |      |   |      |
+                         * |   |      |   |  |   |
+                         * |   |      |   |  |   |
+                         * +----------+----------+
+                         * |          |          |
+                         * |   |  |   |   |      |
+                         * |   |  |   |   |      |
+                         * |   |  |   |   | ____ |
+                         * +----------+----------+
+                         */
+                    }
                 });
                 return engedelyek;
             }))()
