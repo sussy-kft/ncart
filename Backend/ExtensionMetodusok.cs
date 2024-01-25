@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.ModelDTOBases;
+using Backend.Controllers;
 
-namespace Backend.Controllers
+namespace Backend
 {
-    public static class TablaControllerMetodusok
+    public static class ExtensionMetodusok
     {
         public static ActionResult Get<TDbFormat, TJsonFormat>(this TablaController<TDbFormat, TJsonFormat> controller, DbSet<TDbFormat> dbSet, params object?[]? pk)
             where TDbFormat : class, IConvertible<TJsonFormat>
@@ -17,7 +18,8 @@ namespace Backend.Controllers
             where TJsonFormat : class, IConvertible<TDbFormat>
             => controller.CheckAll(
                 dbSet: dbSet,
-                handleRequest: record => controller.TrySaveRecord(record, record => {
+                handleRequest: record => controller.TrySaveRecord(record, record =>
+                {
                     updateRecord(record, data.ConvertType());
                 }),
                 pk: pk
@@ -39,7 +41,7 @@ namespace Backend.Controllers
         public static ObjectResult TrySaveRange<TDbFormat, TJsonFormat>(this TablaController<TDbFormat, TJsonFormat> controller, IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action)
             where TDbFormat : class, IConvertible<TJsonFormat>
             where TJsonFormat : class, IConvertible<TDbFormat>
-            => controller.TrySave(records, action, () => ConvertAllToDTO<TDbFormat, TJsonFormat>(records))
+            => controller.TrySave(records, action, () => TablaController<TDbFormat, TJsonFormat>.ConvertAllToDTO(records))
         ;
 
         static ObjectResult TrySave<TDbFormat, TJsonFormat, TRecord, TJson>(this TablaController<TDbFormat, TJsonFormat> controller, TRecord record, Action<TRecord> action, Func<TJson> convert)
@@ -79,27 +81,5 @@ namespace Backend.Controllers
         }
 
         public static ActionResult CheckIfBadRequest(this JsonRecieverController controller, Func<ActionResult> handleRequest) => controller.ModelState.IsValid ? handleRequest() : controller.BadRequest(controller.ModelState);
-
-        public static IReadOnlyList<TJsonFormat> ConvertAllToDTO<TDbFormat, TJsonFormat>(IReadOnlyList<TDbFormat> records)
-            where TDbFormat : class, IConvertible<TJsonFormat>
-            where TJsonFormat : class, IConvertible<TDbFormat>
-            => records.ToList().ConvertAll(record => record.ConvertType())
-        ;
-
-        public static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
-        {
-            if (value != null)
-            {
-                action(value);
-            }
-        }
-
-        public static void CheckIfNotNull<T>(T? value, Action<T> action) where T : struct
-        {
-            if (value != null)
-            {
-                action((T)value);
-            }
-        }
     }
 }

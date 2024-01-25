@@ -44,10 +44,10 @@ namespace Backend.Controllers
         public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => this.Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
-                TablaControllerMetodusok.CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
+                CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
                     record.ElozoMegallo = elozoMegallo;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujMegall.HanyPerc, hanyPerc => {
+                CheckIfNotNull(ujMegall.HanyPerc, hanyPerc => {
                     record.HanyPerc = hanyPerc;
                 });
             },

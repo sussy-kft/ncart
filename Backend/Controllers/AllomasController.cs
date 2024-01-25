@@ -43,10 +43,10 @@ namespace Backend.Controllers
         public ActionResult Patch(int id, [FromBody] AllomasPatch ujAllomas) => this.Patch(
             dbSet: context.Allomasok,
             updateRecord: record => {
-                TablaControllerMetodusok.CheckIfNotNull(ujAllomas.Nev, nev => {
+                CheckIfNotNull(ujAllomas.Nev, nev => {
                     record.Nev = nev;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujAllomas.Koord, koord => {
+                CheckIfNotNull(ujAllomas.Koord, koord => {
                     record.Koord = koord;
                 });
             },

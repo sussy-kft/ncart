@@ -21,7 +21,7 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
-        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => TablaControllerMetodusok.ConvertAllToDTO<TDbFormat, TJsonFormat>(dbSet.ToList());
+        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
         [HttpPost]
         public abstract ActionResult Post([FromBody] TJsonFormat data);
@@ -45,5 +45,23 @@ namespace Backend.Controllers
         );
 
         protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => this.TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
+
+        public static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+
+        protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
+        {
+            if (value != null)
+            {
+                action(value);
+            }
+        }
+
+        protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : struct
+        {
+            if (value != null)
+            {
+                action((T)value);
+            }
+        }
     }
 }

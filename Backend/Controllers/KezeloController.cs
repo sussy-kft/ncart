@@ -45,13 +45,13 @@ namespace Backend.Controllers
         public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => this.Patch(
             dbSet: context.Kezelok,
             updateRecord: record => {
-                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Email, email => {
+                CheckIfNotNull(ujKezelo.Email, email => {
                     record.Email = email;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Jelszo, jelszo => {
+                CheckIfNotNull(ujKezelo.Jelszo, jelszo => {
                     record.Jelszo = jelszo;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Engedelyek, engedelyek => {
+                CheckIfNotNull(ujKezelo.Engedelyek, engedelyek => {
                     record.Engedelyek = ConvertEngedelyekStringListToByte(engedelyek);
                 });
             },

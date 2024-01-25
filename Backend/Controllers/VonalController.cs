@@ -45,16 +45,16 @@ namespace Backend.Controllers
         public ActionResult Patch(int id, [FromBody] VonalPatch ujVonal) => this.Patch(
             dbSet: context.Vonalak,
             updateRecord: record => {
-                TablaControllerMetodusok.CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
+                CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
                     record.VonalSzam = vonalSzam;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujVonal.JarmuTipus, jarmuTipus => {
+                CheckIfNotNull(ujVonal.JarmuTipus, jarmuTipus => {
                     record.JarmuTipus = jarmuTipus;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujVonal.KezdoAll, kezdoAll => {
+                CheckIfNotNull(ujVonal.KezdoAll, kezdoAll => {
                     record.KezdoAll = kezdoAll;
                 });
-                TablaControllerMetodusok.CheckIfNotNull(ujVonal.Vegall, vegall => {
+                CheckIfNotNull(ujVonal.Vegall, vegall => {
                     record.Vegall = vegall;
                 });
             },
