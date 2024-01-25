@@ -25,39 +25,37 @@ namespace Backend.Controllers
 
         protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
             TDbFormat dbFormat = data.ConvertType();
-            return ModifyRecord(dbFormat, record => dbSet.Add(dbFormat));
+            return TrySaveRecord(dbFormat, record => {
+                dbSet.Add(dbFormat);
+            });
         });
 
-        protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(
+        protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
             dbSet: dbSet,
-            handleRequest: record => ModifyRecord(record, record => {
+            handleRequest: record => TrySaveRecord(record, record => {
                 updateRecord(record, data.ConvertType());
             }),
             pk: pk
-        ));
+        );
 
-        protected ActionResult Patch(DbSet<TDbFormat> dbSet, Action<TDbFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(
-            dbSet: dbSet,
-            handleRequest: record => ModifyRecord(record, updateRecord),
-            pk: pk
-        ));
+        protected ActionResult Patch(DbSet<TDbFormat> dbSet, Action<TDbFormat> updateRecord, params object?[]? pk) => CheckAll(dbSet, record => TrySaveRecord(record, updateRecord), pk);
 
         [HttpDelete]
         public abstract ActionResult Delete();
 
         protected ActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
-            handleRequest: record => ModifyRecord(record, record => {
+            handleRequest: record => TrySaveRecord(record, record => {
                 dbSet.Remove(record);
             }),
             pk: pk
         );
 
-        protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => ModifyRange(dbSet.ToList(), dbSet.RemoveRange);
+        protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
 
-        ObjectResult ModifyRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
+        ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 
-        protected ObjectResult ModifyRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
+        protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
 
         ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TJson> convert)
             where TRecord : class
@@ -78,6 +76,8 @@ namespace Backend.Controllers
                 return BadRequest(e.InnerException?.Message);
             }
         }
+
+        ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
 
         protected ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk)
         {
