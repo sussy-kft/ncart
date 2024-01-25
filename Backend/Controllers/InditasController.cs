@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
+using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
     [Route("inditasok")]
-    public partial class InditasController : BatchPostableController<Inditas, InditasDTO, InditasBatchDTO>
+    public partial class InditasController : BatchPostableController<Inditas, InditasDTO, InditasController.InditasBatch>
     {
         public InditasController(AppDbContext context) : base(context)
         {
@@ -24,6 +26,29 @@ namespace Backend.Controllers
 
     public partial class InditasController
     {
-        public override ActionResult Post([FromBody] InditasBatchDTO data) => Post(context.Inditasok, data);
+        public override ActionResult Post([FromBody] InditasBatch data) => Post(context.Inditasok, data);
+
+        public class InditasBatch : IConvertible<IReadOnlyList<Inditas>>
+        {
+            [Required] public int Vonal { get; set; }
+            [Required] public List<byte> Napok { get; set; }
+            [Required] public List<short> InditasiIdopontok { get; set; }
+
+            public IReadOnlyList<Inditas> ConvertType()
+            {
+                List<Inditas> inditasok = new List<Inditas>();
+                Napok.ForEach(nap => {
+                    InditasiIdopontok.ForEach(inditasIdeje => {
+                        inditasok.Add(new Inditas
+                        {
+                            Vonal = Vonal,
+                            Nap = nap,
+                            InditasIdeje = inditasIdeje
+                        });
+                    });
+                });
+                return inditasok;
+            }
+        }
     }
 }

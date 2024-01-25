@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public class VonalController : TablaController<Vonal, VonalDTO>
+    public partial class VonalController : TablaController<Vonal, VonalDTO>
     {
         public VonalController(AppDbContext context) : base(context)
         {
@@ -32,8 +33,16 @@ namespace Backend.Controllers
             pk: id
         );
 
+        public override ActionResult Delete() => DeleteAll(context.Vonalak);
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id) => Delete(context.Vonalak, id);
+    }
+
+    public partial class VonalController
+    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] VonalPatchDTO ujVonal) => Patch(
+        public ActionResult Patch(int id, [FromBody] VonalPatch ujVonal) => Patch(
             dbSet: context.Vonalak,
             updateRecord: record => {
                 CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
@@ -52,9 +61,18 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Vonalak);
+        public class VonalPatch
+        {
+            [MaxLength(4)] public string? VonalSzam { get; set; }
+            public int? JarmuTipus { get; set; }
+            public int? KezdoAll { get; set; }
+            public int? Vegall { get; set; }
+        }
+    }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Vonalak, id);
+    public partial class VonalController
+    {
+        [HttpGet("vonalszamok")]
+        public IEnumerable<string> GetVonalSzamok() => context.Vonalak.Select(vonal => vonal.VonalSzam).Distinct();
     }
 }

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
     [Route("allomasok")]
-    public class AllomasController : TablaController<Allomas, AllomasDTO>
+    public partial class AllomasController : TablaController<Allomas, AllomasDTO>
     {
         public AllomasController(AppDbContext context) : base(context)
         {
@@ -30,8 +31,16 @@ namespace Backend.Controllers
             pk: id
         );
 
+        public override ActionResult Delete() => DeleteAll(context.Allomasok);
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id) => Delete(context.Allomasok, id);
+    }
+
+    public partial class AllomasController
+    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] AllomasPatchDTO ujAllomas) => Patch(
+        public ActionResult Patch(int id, [FromBody] AllomasPatch ujAllomas) => Patch(
             dbSet: context.Allomasok,
             updateRecord: record => {
                 CheckIfNotNull(ujAllomas.Nev, nev => {
@@ -44,9 +53,10 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Allomasok);
-
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Allomasok, id);
+        public class AllomasPatch
+        {
+            [MaxLength(64)] public string? Nev { get; set; }
+            public AllomasDTO.Vector2? Koord { get; set; }
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Backend.DTOs;
 using Backend.Models;
 
@@ -31,8 +33,16 @@ namespace Backend.Controllers
             pk: id
         );
 
+        public override ActionResult Delete() => DeleteAll(context.Kezelok);
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id) => Delete(context.Kezelok, id);
+    }
+
+    public partial class KezeloController
+    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] KezeloPatchDTO ujKezelo) => Patch(
+        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => Patch(
             dbSet: context.Kezelok,
             updateRecord: record => {
                 CheckIfNotNull(ujKezelo.Email, email => {
@@ -48,10 +58,13 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Kezelok);
+        public class KezeloPatch
+        {
+            [EmailAddress] public string? Email { get; set; }
+            [PersonalData] public string? Jelszo { get; set; }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Kezelok, id);
+            public List<string>? Engedelyek { get; set; }
+        }
     }
 
     public enum Engedelyek

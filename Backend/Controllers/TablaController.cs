@@ -4,7 +4,7 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TDbFormat, TJsonFormat> : ControllerContext
+    public abstract class TablaController<TDbFormat, TJsonFormat> : JsonRecieverController
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
