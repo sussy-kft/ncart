@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("inditasok")]
-    public class InditasController : TablaController<Inditas, InditasDTO>
+    public partial class InditasController : BatchPostableController<Inditas, InditasDTO, InditasBatchDTO>
     {
         public InditasController(AppDbContext context) : base(context)
         {
@@ -20,5 +20,10 @@ namespace Backend.Controllers
 
         [HttpDelete("{vonal}/{nap}/{inditasIdeje}")]
         public ActionResult Delete(int vonal, byte nap, short inditasIdeje) => Delete(context.Inditasok, vonal, nap, inditasIdeje);
+    }
+
+    public partial class InditasController
+    {
+        public override ActionResult Post([FromBody] InditasBatchDTO data) => Post(context.Inditasok, data);
     }
 }

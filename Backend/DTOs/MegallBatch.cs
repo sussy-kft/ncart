@@ -4,13 +4,13 @@ using Backend.Models;
 
 namespace Backend.DTOs
 {
-    public class MegallBatch : IConvertible<List<Megall>>
+    public class MegallBatch : IConvertible<IReadOnlyList<Megall>>
     {
         [Required] public int Vonal { get; set; }
 
         [Required] public List<MegallBatchElem> Megallok { get; set; }
 
-        public List<Megall> ConvertType()
+        public IReadOnlyList<Megall> ConvertType()
         {
             List<Megall> megallok = new List<Megall>();
             Megallok.ForEach(megall => {

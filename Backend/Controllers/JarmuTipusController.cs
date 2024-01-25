@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("jarmutipusok")]
-    public class JarmuTipusController : ModosithatoTablaController<JarmuTipus, JarmuTipusDTO>
+    public class JarmuTipusController : TablaController<JarmuTipus, JarmuTipusDTO>
     {
         public JarmuTipusController(AppDbContext context) : base(context)
         {

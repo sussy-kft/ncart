@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("allomasok")]
-    public class AllomasController : KulonModosithatoTablaController<Allomas, AllomasDTO>
+    public class AllomasController : TablaController<Allomas, AllomasDTO>
     {
         public AllomasController(AppDbContext context) : base(context)
         {

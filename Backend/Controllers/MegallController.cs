@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController : KulonModosithatoTablaController<Megall, MegallDTO>
+    public partial class MegallController : BatchPostableController<Megall, MegallDTO, MegallBatch>
     {
         public MegallController(AppDbContext context) : base(context)
         {
@@ -52,7 +52,6 @@ namespace Backend.Controllers
 
     public partial class MegallController
     {
-        [HttpPost("batch")]
-        public ActionResult Post([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => ModifyRange(megallBatch.ConvertType(), context.Megallok.AddRange));
+        public override ActionResult Post([FromBody] MegallBatch megallBatch) => Post(context.Megallok, megallBatch);
     }
 }

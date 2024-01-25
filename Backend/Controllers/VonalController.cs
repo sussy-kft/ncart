@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public class VonalController : KulonModosithatoTablaController<Vonal, VonalDTO>
+    public class VonalController : TablaController<Vonal, VonalDTO>
     {
         public VonalController(AppDbContext context) : base(context)
         {

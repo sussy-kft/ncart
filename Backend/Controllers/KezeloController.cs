@@ -5,7 +5,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("kezelok")]
-    public partial class KezeloController : KulonModosithatoTablaController<Kezelo, KezeloDTO>
+    public partial class KezeloController : TablaController<Kezelo, KezeloDTO>
     {
         public KezeloController(AppDbContext context) : base(context)
         {
