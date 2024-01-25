@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Backend.Controllers
+﻿namespace Backend.Controllers
 {
     public class JsonRecieverController : ControllerContext
     {
@@ -8,7 +6,5 @@ namespace Backend.Controllers
         {
 
         }
-
-        protected ActionResult CheckIfBadRequest(Func<ActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
     }
 }

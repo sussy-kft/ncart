@@ -17,12 +17,12 @@ namespace Backend.Controllers
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
-        public ActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
+        public ActionResult Get(int vonal, int allomas) => this.Get(context.Megallok, vonal, allomas);
 
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
         [HttpPut("{vonal}/{allomas}")]
-        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
+        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => this.Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
@@ -41,13 +41,13 @@ namespace Backend.Controllers
     public partial class MegallController
     {
         [HttpPatch("{vonal}/{allomas}")]
-        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => Patch(
+        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => this.Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
-                CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
+                TablaControllerMetodusok.CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
                     record.ElozoMegallo = elozoMegallo;
                 });
-                CheckIfNotNull(ujMegall.HanyPerc, hanyPerc => {
+                TablaControllerMetodusok.CheckIfNotNull(ujMegall.HanyPerc, hanyPerc => {
                     record.HanyPerc = hanyPerc;
                 });
             },

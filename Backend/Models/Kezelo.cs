@@ -20,7 +20,7 @@ namespace Backend.Models
             Jelszo = Jelszo,
             Engedelyek = ((Func<List<string>>)(() => {
                 List<string> engedelyek = new List<string>();
-                foreach (Engedelyek engedely in KezeloController.OsszesEngedely)
+                foreach (KezeloController.Engedelyek engedely in KezeloController.OsszesEngedely)
                 {
                     if ((Engedelyek & (byte)engedely) != 0)
                     {

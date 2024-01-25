@@ -15,12 +15,12 @@ namespace Backend.Controllers
         public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
 
         [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.JarmuTipusok, id);
+        public ActionResult Get(int id) => this.Get(context.JarmuTipusok, id);
 
         public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
         
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
+        public ActionResult Put(int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => this.Put(
             dbSet: context.JarmuTipusok,
             data: ujJarmuTipus,
             updateRecord: (jarmuTipus, ujJarmuTipus) => {

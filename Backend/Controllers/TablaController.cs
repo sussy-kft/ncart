@@ -8,6 +8,11 @@ namespace Backend.Controllers
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
+        public AppDbContext Context
+        {
+            get => context;
+        }
+
         public TablaController(AppDbContext context) : base(context)
         {
             
@@ -16,91 +21,29 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
-        protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
-
-        protected static IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
+        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => TablaControllerMetodusok.ConvertAllToDTO<TDbFormat, TJsonFormat>(dbSet.ToList());
 
         [HttpPost]
         public abstract ActionResult Post([FromBody] TJsonFormat data);
 
-        protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
+        protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => this.CheckIfBadRequest(() => {
             TDbFormat dbFormat = data.ConvertType();
-            return TrySaveRecord(dbFormat, record => {
+            return this.TrySaveRecord(dbFormat, record => {
                 dbSet.Add(dbFormat);
             });
         });
 
-        protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
-            dbSet: dbSet,
-            handleRequest: record => TrySaveRecord(record, record => {
-                updateRecord(record, data.ConvertType());
-            }),
-            pk: pk
-        );
-
-        protected ActionResult Patch(DbSet<TDbFormat> dbSet, Action<TDbFormat> updateRecord, params object?[]? pk) => CheckAll(dbSet, record => TrySaveRecord(record, updateRecord), pk);
-
         [HttpDelete]
         public abstract ActionResult Delete();
 
-        protected ActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(
+        protected ActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => this.CheckIfNotFound(
             dbSet: dbSet,
-            handleRequest: record => TrySaveRecord(record, record => {
+            handleRequest: record => this.TrySaveRecord(record, record => {
                 dbSet.Remove(record);
             }),
             pk: pk
         );
 
-        protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
-
-        ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
-
-        protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
-
-        ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TJson> convert)
-            where TRecord : class
-            where TJson : class
-        {
-            action(record);
-            try
-            {
-                context.SaveChanges();
-                return Ok(convert());
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                return Conflict(e.InnerException?.Message);
-            }
-            catch (DbUpdateException e)
-            {
-                return BadRequest(e.InnerException?.Message);
-            }
-        }
-
-        ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
-
-        protected ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk)
-        {
-            TDbFormat? record = dbSet.Find(pk);
-            return record != null ? handleRequest(record) : NotFound();
-        }
-
-        protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
-        {
-            if (value != null)
-            {
-                action(value);
-            }
-        }
-
-        protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : struct
-        {
-            if (value != null)
-            {
-                action((T)value);
-            }
-        }
-
-        static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => this.TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
     }
 }

@@ -16,12 +16,12 @@ namespace Backend.Controllers
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
         [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.Allomasok, id);
+        public ActionResult Get(int id) => this.Get(context.Allomasok, id);
 
         public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] AllomasDTO ujAllomas) => Put(
+        public ActionResult Put(int id, [FromBody] AllomasDTO ujAllomas) => this.Put(
             dbSet: context.Allomasok,
             data: ujAllomas,
             updateRecord: (allomas, ujAllomas) => {
@@ -40,13 +40,13 @@ namespace Backend.Controllers
     public partial class AllomasController
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] AllomasPatch ujAllomas) => Patch(
+        public ActionResult Patch(int id, [FromBody] AllomasPatch ujAllomas) => this.Patch(
             dbSet: context.Allomasok,
             updateRecord: record => {
-                CheckIfNotNull(ujAllomas.Nev, nev => {
+                TablaControllerMetodusok.CheckIfNotNull(ujAllomas.Nev, nev => {
                     record.Nev = nev;
                 });
-                CheckIfNotNull(ujAllomas.Koord, koord => {
+                TablaControllerMetodusok.CheckIfNotNull(ujAllomas.Koord, koord => {
                     record.Koord = koord;
                 });
             },

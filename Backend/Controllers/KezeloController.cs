@@ -17,12 +17,12 @@ namespace Backend.Controllers
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
 
         [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.Kezelok, id);
+        public ActionResult Get(int id) => this.Get(context.Kezelok, id);
 
         public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => Put(
+        public ActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => this.Put(
             dbSet: context.Kezelok,
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
@@ -42,16 +42,16 @@ namespace Backend.Controllers
     public partial class KezeloController
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => Patch(
+        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => this.Patch(
             dbSet: context.Kezelok,
             updateRecord: record => {
-                CheckIfNotNull(ujKezelo.Email, email => {
+                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Email, email => {
                     record.Email = email;
                 });
-                CheckIfNotNull(ujKezelo.Jelszo, jelszo => {
+                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Jelszo, jelszo => {
                     record.Jelszo = jelszo;
                 });
-                CheckIfNotNull(ujKezelo.Engedelyek, engedelyek => {
+                TablaControllerMetodusok.CheckIfNotNull(ujKezelo.Engedelyek, engedelyek => {
                     record.Engedelyek = ConvertEngedelyekStringListToByte(engedelyek);
                 });
             },
@@ -67,14 +67,14 @@ namespace Backend.Controllers
         }
     }
 
-    public enum Engedelyek
-    {
-        SzerkesztokFelvetele = 1,
-        JaratokSzerkesztese = 1 << 1
-    }
-
     public partial class KezeloController
     {
+        public enum Engedelyek
+        {
+            SzerkesztokFelvetele = 1,
+            JaratokSzerkesztese = 1 << 1
+        }
+
         static IReadOnlyList<string> OsszesEngedelyNev { get; }
 
         public static IReadOnlyList<Engedelyek> OsszesEngedely { get; }
