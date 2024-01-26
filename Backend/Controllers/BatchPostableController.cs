@@ -17,6 +17,6 @@ namespace Backend.Controllers
         [HttpPost("batch")]
         public abstract ActionResult Post([FromBody] TBatchFormat data);
 
-        protected ActionResult Post(DbSet<TDbFormat> dbSet, TBatchFormat data) => this.CheckIfBadRequest(() => this.TrySaveRange(data.ConvertType(), dbSet.AddRange));
+        protected ActionResult Post(DbSet<TDbFormat> dbSet, TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
     }
 }

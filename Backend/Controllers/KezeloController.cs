@@ -17,12 +17,12 @@ namespace Backend.Controllers
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
 
         [HttpGet("{id}")]
-        public ActionResult Get(int id) => this.Get(context.Kezelok, id);
+        public ActionResult Get(int id) => Get(context.Kezelok, id);
 
         public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => this.Put(
+        public ActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => Put(
             dbSet: context.Kezelok,
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
@@ -42,7 +42,7 @@ namespace Backend.Controllers
     public partial class KezeloController
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => this.Patch(
+        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => Patch(
             dbSet: context.Kezelok,
             updateRecord: record => {
                 CheckIfNotNull(ujKezelo.Email, email => {

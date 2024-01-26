@@ -16,12 +16,12 @@ namespace Backend.Controllers
         public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
 
         [HttpGet("{id}")]
-        public ActionResult Get(int id) => this.Get(context.Vonalak, id);
+        public ActionResult Get(int id) => Get(context.Vonalak, id);
 
         public override ActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] VonalDTO ujVonal) => this.Put(
+        public ActionResult Put(int id, [FromBody] VonalDTO ujVonal) => Put(
             dbSet: context.Vonalak,
             data: ujVonal,
             updateRecord: (vonal, ujVonal) => {
@@ -42,7 +42,7 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] VonalPatch ujVonal) => this.Patch(
+        public ActionResult Patch(int id, [FromBody] VonalPatch ujVonal) => Patch(
             dbSet: context.Vonalak,
             updateRecord: record => {
                 CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {

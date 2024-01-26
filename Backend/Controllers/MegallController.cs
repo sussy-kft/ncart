@@ -17,12 +17,12 @@ namespace Backend.Controllers
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
-        public ActionResult Get(int vonal, int allomas) => this.Get(context.Megallok, vonal, allomas);
+        public ActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
 
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
         [HttpPut("{vonal}/{allomas}")]
-        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => this.Put(
+        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
@@ -41,7 +41,7 @@ namespace Backend.Controllers
     public partial class MegallController
     {
         [HttpPatch("{vonal}/{allomas}")]
-        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => this.Patch(
+        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
                 CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
