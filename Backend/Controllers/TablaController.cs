@@ -4,7 +4,7 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TDbFormat, TJsonFormat> : JsonRecieverController
+    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat> : JsonRecieverController
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
@@ -41,6 +41,8 @@ namespace Backend.Controllers
 
         protected ActionResult Patch(DbSet<TDbFormat> dbSet, Action<TDbFormat> updateRecord, params object?[]? pk) => CheckAll(dbSet, record => TrySaveRecord(record, updateRecord), pk);
 
+        public abstract ActionResult Delete([FromRoute] TPrimaryKey pk);
+
         [HttpDelete]
         public abstract ActionResult Delete();
 
@@ -56,7 +58,7 @@ namespace Backend.Controllers
 
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 
-        protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => TablaController<TDbFormat, TJsonFormat>.ConvertAllToDTO(records));
+        protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
 
         ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TJson> convert)
             where TRecord : class

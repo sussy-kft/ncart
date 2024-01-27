@@ -7,7 +7,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController : BatchPostableController<Megall, MegallDTO, MegallController.MegallBatch>
+    public partial class MegallController : BatchPostableController<(int vonal, int allomas), Megall, MegallDTO, MegallController.MegallBatch>
     {
         public MegallController(AppDbContext context) : base(context)
         {
@@ -16,32 +16,35 @@ namespace Backend.Controllers
 
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
-        [HttpGet("{vonal}/{allomas}")]
-        public ActionResult Get(int vonal, int allomas) => Get(context.Megallok, vonal, allomas);
-
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
+        public override ActionResult Delete() => DeleteAll(context.Megallok);
+
+        [HttpDelete("{vonal}/{allomas}")]
+        public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
+    }
+
+    public partial class MegallController : INonFullPkTablaController<(int vonal, int allomas)>
+    {
+        [HttpGet("{vonal}/{allomas}")]
+        public ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+    }
+
+    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallDTO, MegallController.MegallPatch>
+    {
         [HttpPut("{vonal}/{allomas}")]
-        public ActionResult Put(int vonal, int allomas, [FromBody] MegallDTO ujMegall) => Put(
+        public ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
                 megall.ElozoMegallo = ujMegall.ElozoMegallo;
                 megall.HanyPerc = ujMegall.HanyPerc;
             },
-            pk: (vonal, allomas)
+            pk: (pk.vonal, pk.allomas)
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Megallok);
-
-        [HttpDelete("{vonal}/{allomas}")]
-        public ActionResult Delete(int vonal, int allomas) => Delete(context.Megallok, vonal, allomas);
-    }
-
-    public partial class MegallController
-    {
         [HttpPatch("{vonal}/{allomas}")]
-        public ActionResult Patch(int vonal, int allomas, [FromBody] MegallPatch ujMegall) => Patch(
+        public ActionResult Patch([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallPatch ujMegall) => Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
                 CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
@@ -51,7 +54,7 @@ namespace Backend.Controllers
                     record.HanyPerc = hanyPerc;
                 });
             },
-            pk: (vonal, allomas)
+            pk: (pk.vonal, pk.allomas)
         );
 
         public class MegallPatch

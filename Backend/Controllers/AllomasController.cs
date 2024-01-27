@@ -6,7 +6,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("allomasok")]
-    public partial class AllomasController : TablaController<Allomas, AllomasDTO>
+    public partial class AllomasController : TablaController<int, Allomas, AllomasDTO>
     {
         public AllomasController(AppDbContext context) : base(context)
         {
@@ -15,13 +15,24 @@ namespace Backend.Controllers
 
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
-        [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.Allomasok, id);
-
         public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
 
+        public override ActionResult Delete() => DeleteAll(context.Allomasok);
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
+    }
+
+    public partial class AllomasController : IIdentityPkTablaController
+    {
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
+    }
+
+    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasDTO, AllomasController.AllomasPatch>
+    {
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] AllomasDTO ujAllomas) => Put(
+        public ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
             dbSet: context.Allomasok,
             data: ujAllomas,
             updateRecord: (allomas, ujAllomas) => {
@@ -31,16 +42,8 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Allomasok);
-
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Allomasok, id);
-    }
-
-    public partial class AllomasController
-    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] AllomasPatch ujAllomas) => Patch(
+        public ActionResult Patch([FromRoute] int id, [FromBody] AllomasPatch ujAllomas) => Patch(
             dbSet: context.Allomasok,
             updateRecord: record => {
                 CheckIfNotNull(ujAllomas.Nev, nev => {

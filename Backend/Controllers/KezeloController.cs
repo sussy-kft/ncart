@@ -7,7 +7,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("kezelok")]
-    public partial class KezeloController : TablaController<Kezelo, KezeloDTO>
+    public partial class KezeloController : TablaController<int, Kezelo, KezeloDTO>
     {
         public KezeloController(AppDbContext context) : base(context)
         {
@@ -16,13 +16,24 @@ namespace Backend.Controllers
 
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
 
-        [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.Kezelok, id);
-
         public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
 
+        public override ActionResult Delete() => DeleteAll(context.Kezelok);
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
+    }
+
+    public partial class KezeloController : IIdentityPkTablaController
+    {
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
+    }
+
+    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloDTO, KezeloController.KezeloPatch>
+    {
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] KezeloDTO ujKezelo) => Put(
+        public ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
             dbSet: context.Kezelok,
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
@@ -33,16 +44,8 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Kezelok);
-
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Kezelok, id);
-    }
-
-    public partial class KezeloController
-    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] KezeloPatch ujKezelo) => Patch(
+        public ActionResult Patch([FromRoute] int id, [FromBody] KezeloPatch ujKezelo) => Patch(
             dbSet: context.Kezelok,
             updateRecord: record => {
                 CheckIfNotNull(ujKezelo.Email, email => {

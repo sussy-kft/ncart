@@ -7,7 +7,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("inditasok")]
-    public partial class InditasController : BatchPostableController<Inditas, InditasDTO, InditasController.InditasBatch>
+    public partial class InditasController : BatchPostableController<(int vonal, byte nap, short inditasIdeje), Inditas, InditasDTO, InditasController.InditasBatch>
     {
         public InditasController(AppDbContext context) : base(context)
         {
@@ -21,7 +21,7 @@ namespace Backend.Controllers
         public override ActionResult Delete() => DeleteAll(context.Inditasok);
 
         [HttpDelete("{vonal}/{nap}/{inditasIdeje}")]
-        public ActionResult Delete(int vonal, byte nap, short inditasIdeje) => Delete(context.Inditasok, vonal, nap, inditasIdeje);
+        public override ActionResult Delete([FromRoute] (int vonal, byte nap, short inditasIdeje) pk) => Delete(context.Inditasok, pk.vonal, pk.nap, pk.inditasIdeje);
     }
 
     public partial class InditasController

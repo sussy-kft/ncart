@@ -6,7 +6,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public partial class VonalController : TablaController<Vonal, VonalDTO>
+    public partial class VonalController : TablaController<int, Vonal, VonalDTO>
     {
         public VonalController(AppDbContext context) : base(context)
         {
@@ -15,13 +15,24 @@ namespace Backend.Controllers
 
         public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
 
-        [HttpGet("{id}")]
-        public ActionResult Get(int id) => Get(context.Vonalak, id);
-
         public override ActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);
 
+        public override ActionResult Delete() => DeleteAll(context.Vonalak);
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Vonalak, id);
+    }
+
+    public partial class VonalController : IIdentityPkTablaController
+    {
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute] int id) => Get(context.Vonalak, id);
+    }
+
+    public partial class VonalController : IPatchableIdentityPkTablaController<VonalDTO, VonalController.VonalPatch>
+    {
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] VonalDTO ujVonal) => Put(
+        public ActionResult Put([FromRoute] int id, [FromBody] VonalDTO ujVonal) => Put(
             dbSet: context.Vonalak,
             data: ujVonal,
             updateRecord: (vonal, ujVonal) => {
@@ -33,16 +44,8 @@ namespace Backend.Controllers
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.Vonalak);
-
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id) => Delete(context.Vonalak, id);
-    }
-
-    public partial class VonalController
-    {
         [HttpPatch("{id}")]
-        public ActionResult Patch(int id, [FromBody] VonalPatch ujVonal) => Patch(
+        public ActionResult Patch([FromRoute] int id, [FromBody] VonalPatch ujVonal) => Patch(
             dbSet: context.Vonalak,
             updateRecord: record => {
                 CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
