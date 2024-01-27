@@ -9,7 +9,7 @@ namespace Backend.Controllers
         where TJsonFormat : class, IConvertible<TDbFormat>
         where TBatchFormat : class, IConvertible<IReadOnlyList<TDbFormat>>
     {
-        public BatchPostableController(AppDbContext context) : base(context)
+        protected BatchPostableController(AppDbContext context) : base(context)
         {
 
         }

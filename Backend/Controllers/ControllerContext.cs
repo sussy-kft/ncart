@@ -7,7 +7,7 @@ namespace Backend.Controllers
     {
         protected AppDbContext context { get; }
 
-        public ControllerContext(AppDbContext context) : base()
+        protected ControllerContext(AppDbContext context) : base()
         {
             this.context = context;
         }

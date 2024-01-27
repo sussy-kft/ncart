@@ -8,7 +8,7 @@ namespace Backend.Controllers
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
-        public TablaController(AppDbContext context) : base(context)
+        protected TablaController(AppDbContext context) : base(context)
         {
             
         }
@@ -32,8 +32,7 @@ namespace Backend.Controllers
 
         protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
             dbSet: dbSet,
-            handleRequest: record => TrySaveRecord(record, record =>
-            {
+            handleRequest: record => TrySaveRecord(record, record => {
                 updateRecord(record, data.ConvertType());
             }),
             pk: pk
@@ -80,7 +79,7 @@ namespace Backend.Controllers
             }
         }
 
-        public static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
 
         ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
 
@@ -89,8 +88,6 @@ namespace Backend.Controllers
             TDbFormat? record = dbSet.Find(pk);
             return record != null ? handleRequest(record) : NotFound();
         }
-
-        protected ActionResult CheckIfBadRequest(Func<ActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {
