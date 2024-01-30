@@ -56,6 +56,11 @@ namespace Backend
                 .WithOne(megall => megall._Vonal)
                 .HasForeignKey(megall => megall.Vonal)
             ;
+            modelBuilder.Entity<Allomas>()
+                .HasMany(allomas => allomas._ElozoMegallok)
+                .WithOne(megall => megall._ElozoMegallo)
+                .HasForeignKey(megall => megall.ElozoMegallo)
+            ;
             modelBuilder.Entity<Inditas>()
                 .ToTable(tableBuilder => {
                     tableBuilder.HasCheckConstraint($"CK_Inditasok_{nameof(Inditas.Nap)}_Between", $"{nameof(Inditas.Nap)} >= 1 AND {nameof(Inditas.Nap)} <= 8");

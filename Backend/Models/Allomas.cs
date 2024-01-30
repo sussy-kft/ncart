@@ -12,6 +12,7 @@ namespace Backend.Models
         public List<Vonal> _VonalakKezdoAll { get; set; }
         public List<Vonal> _VonalakVegall { get; set; }
         public List<Megall> _Megallok { get; set; }
+        public List<Megall> _ElozoMegallok { get; set; }
 
         public AllomasDTO ConvertType() => new AllomasDTO {
             Id = Id,

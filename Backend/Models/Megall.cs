@@ -13,6 +13,7 @@ namespace Backend.Models
 
         [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
         [ForeignKey(nameof(Allomas))] public Allomas _Allomas { get; set; }
+        [ForeignKey(nameof(ElozoMegallo))] public Allomas _ElozoMegallo { get; set; }
 
         public MegallDTO ConvertType() => new MegallDTO {
             Vonal = Vonal,
