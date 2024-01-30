@@ -32,6 +32,38 @@ namespace Backend.Controllers
 
     public partial class MegallController
     {
+        public override ActionResult Post([FromBody] MegallBatch megallBatch) => Post(context.Megallok, megallBatch);
+
+        public class MegallBatch : IConvertible<IReadOnlyList<Megall>>
+        {
+            [Required] public int Vonal { get; set; }
+
+            [Required] public List<MegallBatchElem> Megallok { get; set; }
+
+            public IReadOnlyList<Megall> ConvertType()
+            {
+                List<Megall> megallok = new List<Megall>();
+                Megallok.ForEach(megall => {
+                    megallok.Add(new Megall
+                    {
+                        Vonal = Vonal,
+                        Allomas = megall.Allomas,
+                        ElozoMegallo = megall.ElozoMegallo,
+                        HanyPerc = megall.HanyPerc
+                    });
+                });
+                return megallok;
+            }
+
+            public class MegallBatchElem : MegallBase
+            {
+                [Required] public int Allomas { get; set; }
+            }
+        }
+    }
+
+    public partial class MegallController
+    {
         [HttpPut("{vonal}/{allomas}")]
         public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
@@ -64,38 +96,6 @@ namespace Backend.Controllers
         {
             public int? ElozoMegallo { get; set; }
             public byte? HanyPerc { get; set; }
-        }
-    }
-
-    public partial class MegallController
-    {
-        public override ActionResult Post([FromBody] MegallBatch megallBatch) => Post(context.Megallok, megallBatch);
-
-        public class MegallBatch : IConvertible<IReadOnlyList<Megall>>
-        {
-            [Required] public int Vonal { get; set; }
-
-            [Required] public List<MegallBatchElem> Megallok { get; set; }
-
-            public IReadOnlyList<Megall> ConvertType()
-            {
-                List<Megall> megallok = new List<Megall>();
-                Megallok.ForEach(megall => {
-                    megallok.Add(new Megall
-                    {
-                        Vonal = Vonal,
-                        Allomas = megall.Allomas,
-                        ElozoMegallo = megall.ElozoMegallo,
-                        HanyPerc = megall.HanyPerc
-                    });
-                });
-                return megallok;
-            }
-
-            public class MegallBatchElem : MegallBase
-            {
-                [Required] public int Allomas { get; set; }
-            }
         }
     }
 
