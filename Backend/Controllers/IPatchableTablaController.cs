@@ -2,7 +2,7 @@
 
 namespace Backend.Controllers
 {
-    public interface IPatchableTablaController<TPrimaryKey, TPutFormat, TPatchFormat> : IPuttableTablaController<TPrimaryKey, TPutFormat>
+    public interface IPatchableTablaController<TPrimaryKey, TPatchFormat>
     {
         ActionResult Patch([FromRoute] TPrimaryKey pk, [FromBody] TPatchFormat data);
     }

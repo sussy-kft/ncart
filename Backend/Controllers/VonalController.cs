@@ -23,16 +23,16 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Vonalak, id);
     }
 
-    public partial class VonalController : IIdentityPkTablaController
+    public partial class VonalController
     {
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id) => Get(context.Vonalak, id);
+        public override ActionResult Get([FromRoute] int id) => Get(context.Vonalak, id);
     }
 
-    public partial class VonalController : IPatchableIdentityPkTablaController<VonalDTO, VonalController.VonalPatch>
+    public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
     {
         [HttpPut("{id}")]
-        public ActionResult Put([FromRoute] int id, [FromBody] VonalDTO ujVonal) => Put(
+        public override ActionResult Put([FromRoute] int id, [FromBody] VonalDTO ujVonal) => Put(
             dbSet: context.Vonalak,
             data: ujVonal,
             updateRecord: (vonal, ujVonal) => {

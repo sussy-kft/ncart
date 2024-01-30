@@ -23,16 +23,16 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
     }
 
-    public partial class AllomasController : IIdentityPkTablaController
+    public partial class AllomasController
     {
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
+        public override ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
     }
 
-    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasDTO, AllomasController.AllomasPatch>
+    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
     {
         [HttpPut("{id}")]
-        public ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
+        public override ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
             dbSet: context.Allomasok,
             data: ujAllomas,
             updateRecord: (allomas, ujAllomas) => {

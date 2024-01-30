@@ -16,6 +16,8 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
+        public virtual ActionResult Get([FromRoute] TPrimaryKey pk) => throw new NotSupportedException("How the fuck did you manage to get this error?");
+
         protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
         protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
@@ -29,6 +31,8 @@ namespace Backend.Controllers
                 dbSet.Add(dbFormat);
             });
         });
+
+        public virtual ActionResult Put([FromRoute] TPrimaryKey pk, [FromBody] TJsonFormat data) => StatusCode(405);
 
         protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
             dbSet: dbSet,

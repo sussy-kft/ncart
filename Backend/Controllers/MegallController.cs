@@ -24,16 +24,16 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
     }
 
-    public partial class MegallController : INonFullPkTablaController<(int vonal, int allomas)>
+    public partial class MegallController
     {
         [HttpGet("{vonal}/{allomas}")]
-        public ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
     }
 
-    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallDTO, MegallController.MegallPatch>
+    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
     {
         [HttpPut("{vonal}/{allomas}")]
-        public ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
+        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {

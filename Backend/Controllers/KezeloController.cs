@@ -24,16 +24,16 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
     }
 
-    public partial class KezeloController : IIdentityPkTablaController
+    public partial class KezeloController
     {
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
+        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
     }
 
-    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloDTO, KezeloController.KezeloPatch>
+    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
     {
         [HttpPut("{id}")]
-        public ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
+        public override ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
             dbSet: context.Kezelok,
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
