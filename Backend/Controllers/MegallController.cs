@@ -30,7 +30,7 @@ namespace Backend.Controllers
         public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
     }
 
-    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
+    public partial class MegallController
     {
         [HttpPut("{vonal}/{allomas}")]
         public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
@@ -42,7 +42,10 @@ namespace Backend.Controllers
             },
             pk: (pk.vonal, pk.allomas)
         );
+    }
 
+    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
+    {
         [HttpPatch("{vonal}/{allomas}")]
         public ActionResult Patch([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallPatch ujMegall) => Patch(
             dbSet: context.Megallok,

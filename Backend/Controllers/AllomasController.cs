@@ -29,7 +29,7 @@ namespace Backend.Controllers
         public override ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
     }
 
-    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
+    public partial class AllomasController
     {
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
@@ -41,7 +41,10 @@ namespace Backend.Controllers
             },
             pk: id
         );
+    }
 
+    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
+    {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] AllomasPatch ujAllomas) => Patch(
             dbSet: context.Allomasok,

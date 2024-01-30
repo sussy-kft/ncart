@@ -29,7 +29,7 @@ namespace Backend.Controllers
         public override ActionResult Get([FromRoute] int id) => Get(context.Vonalak, id);
     }
 
-    public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
+    public partial class VonalController
     {
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] VonalDTO ujVonal) => Put(
@@ -43,7 +43,10 @@ namespace Backend.Controllers
             },
             pk: id
         );
+    }
 
+    public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
+    {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] VonalPatch ujVonal) => Patch(
             dbSet: context.Vonalak,

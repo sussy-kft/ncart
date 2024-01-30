@@ -30,7 +30,7 @@ namespace Backend.Controllers
         public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
     }
 
-    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
+    public partial class KezeloController
     {
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
@@ -43,7 +43,10 @@ namespace Backend.Controllers
             },
             pk: id
         );
+    }
 
+    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
+    {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] KezeloPatch ujKezelo) => Patch(
             dbSet: context.Kezelok,
