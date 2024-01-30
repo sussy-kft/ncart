@@ -168,6 +168,27 @@ namespace Backend.Migrations
                 ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2
                 CHECK (dbo.Max2Vonal({nameof(Vonal.VonalSzam)}) = 1)
             ");
+            migrationBuilder.Sql($@"
+                CREATE FUNCTION dbo.UgyanolyanJarmuTipus(@{nameof(Vonal.VonalSzam)} nvarchar(4)) RETURNS BIT AS
+                BEGIN
+	                DECLARE @ret BIT = 1
+	                IF (
+		                SELECT COUNT(*)
+		                FROM (
+			                SELECT DISTINCT {nameof(Vonal.JarmuTipus)}
+			                FROM Vonalak
+			                WHERE {nameof(Vonal.VonalSzam)} = @{nameof(Vonal.VonalSzam)}
+		                ) xd
+	                ) > 1
+		                SET @ret = 0
+	                RETURN @ret
+                END
+            ");
+            migrationBuilder.Sql($@"
+                ALTER TABLE Vonalak
+                ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz
+                CHECK (dbo.UgyanolyanJarmuTipus({nameof(Vonal.VonalSzam)}) = 1)
+            ");
         }
 
         /// <inheritdoc />
@@ -180,6 +201,7 @@ namespace Backend.Migrations
             migrationBuilder.DropTable(name: "Allomasok");
             migrationBuilder.DropTable(name: "JarmuTipusok");
             migrationBuilder.Sql("DROP FUNCTION dbo.Max2Vonal");
+            migrationBuilder.Sql("DROP FUNCTION dbo.UgyanolyanJarmuTipus");
         }
     }
 }
