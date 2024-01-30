@@ -1,16 +1,7 @@
 ﻿using Backend.DTOs;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
-using System.Text.Json.Nodes;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Backend.Controllers
 {
@@ -39,6 +30,90 @@ namespace Backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            (Vonal[] vonalak, Megall[] megallok, Inditas[] indulasok) adatok = NewMethod(tervezesiFeltetelek);
+
+            List<Megall> jelenlegiVonalak = adatok.megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan).ToList();
+            List<Megall> uticelVonalak = adatok.megallok.Where(x => x.Allomas == tervezesiFeltetelek.hova).ToList();
+            List<Csomopont> csomopontok = new List<Csomopont>();
+
+            List<int> bV = uticelVonalak.Select(x => x.Vonal).ToList();
+
+            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
+                return Ok(jelenlegiVonalak);
+
+            foreach (var item in bV)
+            {
+                if (jelenlegiVonalak.Select(x => x.Vonal).Contains(item))
+                {
+                    return Ok(item);
+                }
+            }
+
+
+            List<int> tmp = jelenlegiVonalak.Select(x => x.Vonal).ToList();
+
+            jelenlegiVonalak = adatok.megallok.Where(x => tmp.Contains(x.Vonal)).ToList();
+
+            foreach (var item in jelenlegiVonalak)
+            {
+                csomopontok.Add(new Csomopont(null, item));
+            }
+
+            jelenlegiVonalak.ForEach(item =>
+            {
+                csomopontok.Add(new Csomopont(null, item));
+            });
+
+            for (int ix = 0; ix < csomopontok.Count; ix++)
+            {
+                List<Megall> masikpont = adatok.megallok.Where(x => x.ElozoMegallo == csomopontok[ix].megallo.Allomas && x.Vonal != csomopontok[ix].megallo.Vonal).ToList();
+                jelenlegiVonalak = new List<Megall>();
+                foreach (var item in masikpont)
+                {
+                    var fdsjhkl = adatok.megallok.Where(x => item.Vonal == x.Vonal).ToList();
+                    jelenlegiVonalak = jelenlegiVonalak.Concat(fdsjhkl).ToList();
+                }
+
+                foreach (var item2 in jelenlegiVonalak)
+                {
+                    Csomopont csomopont = new Csomopont(csomopontok[ix], item2);
+                    if (!csomopont.ismetlodes(csomopont.megallo))
+                        csomopontok.Add(csomopont);
+
+                    if (bV.Contains(csomopont.megallo.Vonal))
+                    {
+                        var a46t35 = csomopont.utvonal();
+                        //List<Valasz> valasz= new List<Valasz>();
+                        //foreach (var item3 in a46t35)
+                        //{
+                        //    valasz.Add(new Valasz(item3._Vonal.VonalSzam));
+                        //    Megall most = item3;
+                        //    List<Megall> ut = megallok.Where(x=> x.Vonal==item3.Vonal).ToList();
+                        //    short ido = most.HanyPerc;
+
+                        //    valasz.Last().megallok.Add(most);
+                        //    while (ut.Where(x => x.Allomas == most.ElozoMegallo).Count() > 0)
+                        //    {
+                        //        ido += most.HanyPerc;
+                        //        valasz.Last().megallok.Add(most);
+                        //        most = ut.Where(x => x.Allomas == most.ElozoMegallo).FirstOrDefault();
+                        //    }
+
+                        //    valasz.Last().ido = ido;
+
+                        //    }
+                        return Ok("kys");
+                    }
+
+                }
+
+
+            }
+            return NotFound();
+        }
+
+        private (Vonal[] vonalok, Megall[] megallok, Inditas[] indulasok) NewMethod(TervezesiFeltetelekDTO tervezesiFeltetelek)
+        {
             var vonalak = context.Vonalak
                .Where(x => !tervezesiFeltetelek.vonalKivetel.Contains(x.VonalSzam))
                .Where(x => !tervezesiFeltetelek.jarmuKivetel.Contains(x.JarmuTipus))
@@ -51,95 +126,16 @@ namespace Backend.Controllers
                             ? x.InditasIdeje < tervezesiFeltetelek.mikor
                             : x.InditasIdeje >= tervezesiFeltetelek.mikor)
                 .ToArray();
-
-            List<Megall> a = megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan).ToList();
-            List<Megall> b = megallok.Where(x => x.Allomas == tervezesiFeltetelek.hova).ToList();
-            List<Csomopont> csomopontok = new List<Csomopont>();
-
-            int[] bV = b.Select(x => x.Vonal).ToArray();
-
-            bool van = false;
-
-            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
-                return Ok(a[0]);
-
-            foreach (var item in bV)
-            {
-                if (a.Select(x => x.Vonal).Contains(item))
-                {
-                    var adfg = a.Select(x => x.Vonal).Contains(item);
-                    return Ok(item);
-                }
-            }
-
-
-            List<int> tmp =a.Select(x=>x.Vonal).ToList();
-            
-            a = megallok.Where(x=> tmp.Contains(x.Vonal)).ToList();
-
-            foreach (var item in a)
-            {
-                csomopontok.Add(new Csomopont(null, item));
-            }
-
-            while (!van)
-            {
-                for (int ix = 0; ix < csomopontok.Count; ix++)
-                {
-                    List<Megall> masikpont = megallok.Where(x => x.ElozoMegallo == csomopontok[ix].megallo.Allomas && x.Vonal != csomopontok[ix].megallo.Vonal).ToList();
-                    a = new List<Megall>();
-                    foreach (var item in masikpont)
-                    {
-                        var fdsjhkl = megallok.Where(x => item.Vonal == x.Vonal).ToList();
-                        a = a.Concat(fdsjhkl).ToList();
-                    }
-                    
-                    foreach (var item2 in a)
-                    {
-                        Csomopont csomopont = new Csomopont(csomopontok[ix], item2);
-                        if (!csomopont.ismetlodes(csomopont.megallo))
-                            csomopontok.Add(csomopont);
-
-                        if (bV.Contains(csomopont.megallo.Vonal))
-                        {
-                            var a46t35 = csomopont.utvonal();
-                            //List<Valasz> valasz= new List<Valasz>();
-                            //foreach (var item3 in a46t35)
-                            //{
-                            //    valasz.Add(new Valasz(item3._Vonal.VonalSzam));
-                            //    Megall most = item3;
-                            //    List<Megall> ut = megallok.Where(x=> x.Vonal==item3.Vonal).ToList();
-                            //    short ido = most.HanyPerc;
-                                
-                            //    valasz.Last().megallok.Add(most);
-                            //    while (ut.Where(x => x.Allomas == most.ElozoMegallo).Count() > 0)
-                            //    {
-                            //        ido += most.HanyPerc;
-                            //        valasz.Last().megallok.Add(most);
-                            //        most = ut.Where(x => x.Allomas == most.ElozoMegallo).FirstOrDefault();
-                            //    }
-
-                            //    valasz.Last().ido = ido;
-
-                            //    }
-                            return Ok();
-                        }
-
-                    }
-
-
-                }
-            }
-            return Ok();
+            return (vonalak, megallok, inditasok);
         }
     }
 
     class Csomopont
     {
-        public Csomopont elozoCsomopont { get; set; }
+        public Csomopont? elozoCsomopont { get; set; }
         public Megall megallo {  get; set; }
 
-        public Csomopont(Csomopont csomopont, Megall megallo)
+        public Csomopont(Csomopont? csomopont, Megall megallo)
         {
             elozoCsomopont = csomopont;
             this.megallo = megallo;
@@ -166,12 +162,12 @@ namespace Backend.Controllers
     
     class Valasz
     {
-        public string vonal {  get; set; }
+        public int vonal {  get; set; }
         public List<Megall> megallok { get; set; }
         public short ido { get; set; }
         public short indilasiIdo {  get; set; }
 
-        public Valasz(string vonal)
+        public Valasz(int vonal)
         {
             this.vonal = vonal;
             megallok = new List<Megall>();
