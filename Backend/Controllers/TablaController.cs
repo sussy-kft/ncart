@@ -11,7 +11,7 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
-        public virtual ActionResult Get([FromRoute] TPrimaryKey pk) => throw new NotSupportedException("How the fuck did you manage to get this error?");
+        public virtual ActionResult Get([FromRoute] TPrimaryKey pk) => StatusCode(405);
 
         protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
