@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Controllers
 {
     [ApiController, Route("dQw4w9WgXcQ")]
-    public class UtvonalSzamitasController(AppDbContext context) : ControllerBase
+    public class UtvonalSzamitasController(AppDbContext context) : JsonRecieverController (context)
     {
-        private AppDbContext context { get; } = context;
-
         [HttpPost("legrovidebb")]
         public IActionResult legrovidebb([FromBody] TervezesiFeltetelekDTO tervezesiFeltetelek)
         {
