@@ -1,14 +1,7 @@
-﻿using Azure.Core;
-using Backend.DTOs;
+﻿using Backend.DTOs;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using Microsoft.VisualBasic;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json.Serialization;
 
 namespace Backend.Controllers
 {
@@ -44,13 +37,13 @@ namespace Backend.Controllers
                 return Ok(lehetsegesMegallok);
             
 
-            foreach (var item in bV)
+            foreach (int item in bV)
             {
                 if (lehetsegesMegallok.Select(x => x.Vonal).Contains(item))
                 {
-                    var a = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, new Csomopont(new(null, megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item).First()), megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal) && x.Allomas==tervezesiFeltetelek.hova).First()));
-                    if (a is not null)
-                        return Ok(a);
+                    List<ValaszVonal>? valasz = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, new Csomopont(new(null, megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item).First()), megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal) && x.Allomas == tervezesiFeltetelek.hova).First()));
+                    if (valasz is not null)
+                        return Ok(valasz);
                 }
             }
             
@@ -135,9 +128,9 @@ namespace Backend.Controllers
                     IEnumerable<Inditas> lehetsegesIndulasok = getLehetsegesIndulasok(tervezesiFeltetelek, valasz, valaszVonal, jx, idopontok);
                     if (lehetsegesIndulasok.ToList().Count > 0)
                     {
-                        jelenNap = jelenNapSzamitas(tervezesiFeltetelek, valasz, jelenNap, valaszVonal, jx);
+                        jelenNap = jelenNapSzamitas(valasz, valaszVonal, jelenNap, jx, tervezesiFeltetelek.indulas_e);
                         valaszVonal.nap = (valasz.Count > 0 ? valasz.Last().getDateOnlyNap().AddDays(jx) : DateOnly.Parse(tervezesiFeltetelek.datum)).ToString();
-                        valaszVonal.indulasiIdo = indulasiIdo(tervezesiFeltetelek, valaszVonal, lehetsegesIndulasok);
+                        valaszVonal.indulasiIdo = indulasiIdo(lehetsegesIndulasok, tervezesiFeltetelek.indulas_e);
                         valasz.Add(valaszVonal);
                         break;
                     }
@@ -149,16 +142,16 @@ namespace Backend.Controllers
             return valasz;
         }
 
-        private static short indulasiIdo(TervezesiFeltetelekDTO tervezesiFeltetelek, ValaszVonal valaszVonal, IEnumerable<Inditas> lehetsegesIndulasok)
+        private static short indulasiIdo(IEnumerable<Inditas> lehetsegesIndulasok, bool indulas_e)
         {
-            return tervezesiFeltetelek.indulas_e
+            return indulas_e
                 ? lehetsegesIndulasok.Aggregate((min, x) => x.InditasIdeje < min.InditasIdeje ? x : min).InditasIdeje
                 : lehetsegesIndulasok.Aggregate((min, x) => x.InditasIdeje >= min.InditasIdeje ? x : min).InditasIdeje;
         }
 
-        private static int jelenNapSzamitas(TervezesiFeltetelekDTO tervezesiFeltetelek, List<ValaszVonal> valasz, int jelenNap, ValaszVonal valaszVonal, int jx)
+        private static int jelenNapSzamitas(List<ValaszVonal> valasz, ValaszVonal valaszVonal, int jelenNap, int jx, bool indulas_e)
         {
-            return tervezesiFeltetelek.indulas_e
+            return indulas_e
                 ? (valasz.Count > 0 ? jx + (int)valasz.Last().getDateOnlyNap().DayOfWeek + ((valasz.Last().ido + valasz.Last().indulasiIdo) / 1440) : (7 + jelenNap + jx) % 7)
                 : (valasz.Count > 0 ? jx + jelenNap + ((valasz.Last().indulasiIdo - valaszVonal.ido) / 1440) : (7 + jelenNap + jx) % 7);
         }
@@ -215,7 +208,7 @@ namespace Backend.Controllers
         public int vonal { get; set; } = vonal;
         public List<MegallDTO> megallok { get; set; } = [];
         public short ido { get; set; } = 0;
-        public string nap { get; set; }
+        public string nap { get; set; } = DateTime.MinValue.ToString();
         public short indulasiIdo { get; set; } = 0;
     
         public DateOnly getDateOnlyNap()
