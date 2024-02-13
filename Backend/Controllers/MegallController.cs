@@ -7,13 +7,8 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController : BatchPostableController<(int vonal, int allomas), Megall, MegallDTO, MegallController.MegallBatch>
+    public partial class MegallController(AppDbContext context) : BatchPostableController<(int vonal, int allomas), Megall, MegallDTO, MegallController.MegallBatch>(context)
     {
-        public MegallController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);

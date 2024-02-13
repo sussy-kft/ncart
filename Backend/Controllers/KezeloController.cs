@@ -7,13 +7,8 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("kezelok")]
-    public partial class KezeloController : TablaController<int, Kezelo, KezeloDTO>
+    public partial class KezeloController(AppDbContext context) : TablaController<int, Kezelo, KezeloDTO>(context)
     {
-        public KezeloController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
 
         public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);

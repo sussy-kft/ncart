@@ -6,13 +6,8 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("allomasok")]
-    public partial class AllomasController : TablaController<int, Allomas, AllomasDTO>
+    public partial class AllomasController(AppDbContext context) : TablaController<int, Allomas, AllomasDTO>(context)
     {
-        public AllomasController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
         public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);

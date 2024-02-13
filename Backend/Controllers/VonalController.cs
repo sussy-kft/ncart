@@ -6,13 +6,8 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak")]
-    public partial class VonalController : TablaController<int, Vonal, VonalDTO>
+    public partial class VonalController(AppDbContext context) : TablaController<int, Vonal, VonalDTO>(context)
     {
-        public VonalController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
 
         public override ActionResult Post([FromBody] VonalDTO data) => Post(context.Vonalak, data);

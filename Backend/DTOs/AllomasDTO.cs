@@ -26,8 +26,7 @@ namespace Backend.DTOs
                 const long yComparator = ~0L >> 32;
                 int xAsInt = (int)((num & xComparator) >> 32);
                 int yAsInt = (int)(num & yComparator);
-                return new Vector2
-                {
+                return new Vector2 {
                     X = *(float*)&xAsInt,
                     Y = *(float*)&yAsInt
                 };

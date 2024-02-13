@@ -5,13 +5,8 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("jarmutipusok")]
-    public partial class JarmuTipusController : TablaController<int, JarmuTipus, JarmuTipusDTO>
+    public partial class JarmuTipusController(AppDbContext context) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context)
     {
-        public JarmuTipusController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
 
         public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);

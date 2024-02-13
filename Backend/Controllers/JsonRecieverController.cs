@@ -2,13 +2,8 @@
 
 namespace Backend.Controllers
 {
-    public abstract class JsonRecieverController : ControllerContext
+    public abstract class JsonRecieverController(AppDbContext context) : ControllerContext(context)
     {
-        protected JsonRecieverController(AppDbContext context) : base(context)
-        {
-
-        }
-
         protected ActionResult CheckIfBadRequest(Func<ActionResult> handleRequest) => ModelState.IsValid ? handleRequest() : BadRequest(ModelState);
     }
 }

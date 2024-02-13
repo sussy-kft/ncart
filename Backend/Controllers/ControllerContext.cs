@@ -3,13 +3,8 @@
 namespace Backend.Controllers
 {
     [ApiController]
-    public abstract class ControllerContext : ControllerBase
+    public abstract class ControllerContext(AppDbContext context) : ControllerBase()
     {
-        protected AppDbContext context { get; }
-
-        protected ControllerContext(AppDbContext context) : base()
-        {
-            this.context = context;
-        }
+        protected AppDbContext context { get; } = context;
     }
 }

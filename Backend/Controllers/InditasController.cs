@@ -7,13 +7,8 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("inditasok")]
-    public partial class InditasController : BatchPostableController<(int vonal, byte nap, short inditasIdeje), Inditas, InditasDTO, InditasController.InditasBatch>
+    public partial class InditasController(AppDbContext context) : BatchPostableController<(int vonal, byte nap, short inditasIdeje), Inditas, InditasDTO, InditasController.InditasBatch>(context)
     {
-        public InditasController(AppDbContext context) : base(context)
-        {
-
-        }
-
         public override IEnumerable<InditasDTO> Get() => GetAll(context.Inditasok);
 
         public override ActionResult Post([FromBody] InditasDTO data) => Post(context.Inditasok, data);

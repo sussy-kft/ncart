@@ -4,15 +4,10 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat> : JsonRecieverController
+    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context) : JsonRecieverController(context)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
-        protected TablaController(AppDbContext context) : base(context)
-        {
-            
-        }
-
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
