@@ -11,18 +11,26 @@ namespace Backend.Controllers
     {
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
+        [HttpGet("{vonal}/{allomas}")]
+        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
+
+        [HttpPut("{vonal}/{allomas}")]
+        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
+            dbSet: context.Megallok,
+            data: ujMegall,
+            updateRecord: (megall, ujMegall) => {
+                megall.ElozoMegallo = ujMegall.ElozoMegallo;
+                megall.HanyPerc = ujMegall.HanyPerc;
+            },
+            pk: (pk.vonal, pk.allomas)
+        );
 
         public override ActionResult Delete() => DeleteAll(context.Megallok);
 
         [HttpDelete("{vonal}/{allomas}")]
         public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
-    }
-
-    public partial class MegallController
-    {
-        [HttpGet("{vonal}/{allomas}")]
-        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
     }
 
     public partial class MegallController
@@ -39,8 +47,7 @@ namespace Backend.Controllers
             {
                 List<Megall> megallok = new List<Megall>();
                 Megallok.ForEach(megall => {
-                    megallok.Add(new Megall
-                    {
+                    megallok.Add(new Megall {
                         Vonal = Vonal,
                         Allomas = megall.Allomas,
                         ElozoMegallo = megall.ElozoMegallo,
@@ -55,20 +62,6 @@ namespace Backend.Controllers
                 [Required] public int Allomas { get; set; }
             }
         }
-    }
-
-    public partial class MegallController
-    {
-        [HttpPut("{vonal}/{allomas}")]
-        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
-            dbSet: context.Megallok,
-            data: ujMegall,
-            updateRecord: (megall, ujMegall) => {
-                megall.ElozoMegallo = ujMegall.ElozoMegallo;
-                megall.HanyPerc = ujMegall.HanyPerc;
-            },
-            pk: (pk.vonal, pk.allomas)
-        );
     }
 
     public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>

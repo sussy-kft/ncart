@@ -10,22 +10,11 @@ namespace Backend.Controllers
     {
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
-        public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
-
-        public override ActionResult Delete() => DeleteAll(context.Allomasok);
-
-        [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
-    }
-
-    public partial class AllomasController
-    {
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
-    }
 
-    public partial class AllomasController
-    {
+        public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
+
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
             dbSet: context.Allomasok,
@@ -36,6 +25,11 @@ namespace Backend.Controllers
             },
             pk: id
         );
+
+        public override ActionResult Delete() => DeleteAll(context.Allomasok);
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
     }
 
     public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
