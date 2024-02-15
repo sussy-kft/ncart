@@ -40,11 +40,11 @@ namespace Backend.Migrations
 	                RETURN @ret
                 END
             ");
-            migrationBuilder.Sql($@"
-                ALTER TABLE Vonalak
-                ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz
-                CHECK (dbo.UgyanolyanJarmuTipus({nameof(Vonal.VonalSzam)}) = 1)
-            ");
+            migrationBuilder.AddCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz",
+                table: "Vonalak",
+                sql: $"dbo.UgyanolyanJarmuTipus({nameof(Vonal.VonalSzam)}) = 1"
+            );
         }
 
         /// <inheritdoc />

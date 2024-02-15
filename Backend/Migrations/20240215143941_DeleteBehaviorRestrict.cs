@@ -1,5 +1,5 @@
-﻿using Backend.Models;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Backend.Models;
 
 #nullable disable
 

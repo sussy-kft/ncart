@@ -1,5 +1,5 @@
-﻿using Backend.Models;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Backend.Models;
 
 #nullable disable
 
@@ -28,11 +28,11 @@ namespace Backend.Migrations
 	                RETURN @ret
                 END
             ");
-            migrationBuilder.Sql($@"
-                ALTER TABLE Megallok
-                ADD CONSTRAINT CK_Megallok_LetezoMegallo
-                CHECK (dbo.LetezoMegallo({nameof(Megall.Vonal)}, {nameof(Megall.ElozoMegallo)}) = 1)
-            ");
+            migrationBuilder.AddCheckConstraint(
+                name: "CK_Megallok_LetezoMegallo",
+                table: "Megallok",
+                sql: $"dbo.LetezoMegallo({nameof(Megall.Vonal)}, {nameof(Megall.ElozoMegallo)}) = 1"
+            );
         }
 
         /// <inheritdoc />
