@@ -15,10 +15,10 @@ namespace Backend.Migrations
                 name: "FK_Megallok_Allomasok_Allomas",
                 table: "Megallok"
             );
-            migrationBuilder.DropForeignKey(
-                name: "FK_Megallok_Allomasok_ElozoMegallo",
-                table: "Megallok"
-            );
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Megallok_Allomasok_ElozoMegallo",
+            //    table: "Megallok"
+            //);
             migrationBuilder.DropForeignKey(
                 name: "FK_Megallok_Vonalak_Vonal",
                 table: "Megallok"
@@ -43,14 +43,14 @@ namespace Backend.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict
             );
-            migrationBuilder.AddForeignKey(
-                name: "FK_Megallok_Allomasok_ElozoMegallo",
-                table: "Megallok",
-                column: "ElozoMegallo",
-                principalTable: "Allomasok",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict
-            );
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Megallok_Allomasok_ElozoMegallo",
+            //    table: "Megallok",
+            //    column: "ElozoMegallo",
+            //    principalTable: "Allomasok",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Restrict
+            //);
             migrationBuilder.AddForeignKey(
                 name: "FK_Megallok_Vonalak_Vonal",
                 table: "Megallok",
@@ -120,10 +120,10 @@ namespace Backend.Migrations
                 name: "FK_Megallok_Allomasok_Allomas",
                 table: "Megallok"
             );
-            migrationBuilder.DropForeignKey(
-                name: "FK_Megallok_Allomasok_ElozoMegallo",
-                table: "Megallok"
-            );
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Megallok_Allomasok_ElozoMegallo",
+            //    table: "Megallok"
+            //);
             migrationBuilder.DropForeignKey(
                 name: "FK_Megallok_Vonalak_Vonal",
                 table: "Megallok"
@@ -148,14 +148,14 @@ namespace Backend.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade
             );
-            migrationBuilder.AddForeignKey(
-                name: "FK_Megallok_Allomasok_ElozoMegallo",
-                table: "Megallok",
-                column: "ElozoMegallo",
-                principalTable: "Allomasok",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade
-            );
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Megallok_Allomasok_ElozoMegallo",
+            //    table: "Megallok",
+            //    column: "ElozoMegallo",
+            //    principalTable: "Allomasok",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade
+            //);
             migrationBuilder.AddForeignKey(
                 name: "FK_Megallok_Vonalak_Vonal",
                 table: "Megallok",

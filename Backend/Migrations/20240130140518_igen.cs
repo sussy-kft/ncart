@@ -22,7 +22,7 @@ namespace Backend.Migrations
                 column: "ElozoMegallo",
                 principalTable: "Allomasok",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade
+                onDelete: ReferentialAction.Restrict // Ezt elkúrtuk... Nem kicsit..., nagyon
             );
             migrationBuilder.Sql($@"
                 CREATE FUNCTION dbo.UgyanolyanJarmuTipus(@{nameof(Vonal.VonalSzam)} nvarchar(4)) RETURNS BIT AS
