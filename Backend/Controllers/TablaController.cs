@@ -11,7 +11,7 @@ namespace Backend.Controllers
         [HttpGet]
         public abstract IEnumerable<TJsonFormat> Get();
 
-        public virtual ActionResult Get([FromRoute] TPrimaryKey pk) => StatusCode(405);
+        public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
         protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
@@ -27,7 +27,7 @@ namespace Backend.Controllers
             });
         });
 
-        public virtual ActionResult Put([FromRoute] TPrimaryKey pk, [FromBody] TJsonFormat data) => StatusCode(405);
+        public abstract ActionResult Put([FromRoute] TPrimaryKey pk, [FromBody] TJsonFormat data);
 
         protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
             dbSet: dbSet,
@@ -87,6 +87,8 @@ namespace Backend.Controllers
             TDbFormat? record = dbSet.Find(pk);
             return record != null ? handleRequest(record) : NotFound();
         }
+
+        protected StatusCodeResult Status405() => StatusCode(405);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {

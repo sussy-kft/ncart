@@ -22,7 +22,7 @@ namespace Backend.Migrations
                 column: "ElozoMegallo",
                 principalTable: "Allomasok",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict
+                onDelete: ReferentialAction.Cascade
             );
             migrationBuilder.Sql($@"
                 CREATE FUNCTION dbo.UgyanolyanJarmuTipus(@{nameof(Vonal.VonalSzam)} nvarchar(4)) RETURNS BIT AS
@@ -57,6 +57,10 @@ namespace Backend.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Megallok_ElozoMegallo",
                 table: "Megallok"
+            );
+            migrationBuilder.DropCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz",
+                table: "Vonalak"
             );
             migrationBuilder.Sql("DROP FUNCTION dbo.UgyanolyanJarmuTipus");
         }

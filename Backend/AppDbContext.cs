@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(IConfiguration config) : DbContext
     {
-        IConfiguration config;
+        IConfiguration config { get; } = config;
 
         public DbSet<Kezelo> Kezelok { get; set; }
         public DbSet<JarmuTipus> JarmuTipusok { get; set; }
@@ -13,11 +13,6 @@ namespace Backend
         public DbSet<Vonal> Vonalak { get; set; }
         public DbSet<Inditas> Inditasok { get; set; }
         public DbSet<Megall> Megallok { get; set; }
-
-        public AppDbContext(IConfiguration config)
-        {
-            this.config = config;
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,21 +25,25 @@ namespace Backend
                 .HasMany(jarmuTipus => jarmuTipus._Vonalak)
                 .WithOne(vonal => vonal._JarmuTipus)
                 .HasForeignKey(vonal => vonal.JarmuTipus)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._VonalakKezdoAll)
                 .WithOne(vonal => vonal._KezdoAll)
                 .HasForeignKey(vonal => vonal.KezdoAll)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._VonalakVegall)
                 .WithOne(vonal => vonal._Vegall)
                 .HasForeignKey(vonal => vonal.Vegall)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._Megallok)
                 .WithOne(megall => megall._Allomas)
                 .HasForeignKey(megall => megall.Allomas)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Vonal>()
                 .HasMany(vonal => vonal._Inditasok)
@@ -55,11 +54,13 @@ namespace Backend
                 .HasMany(vonal => vonal._Megallok)
                 .WithOne(megall => megall._Vonal)
                 .HasForeignKey(megall => megall.Vonal)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._ElozoMegallok)
                 .WithOne(megall => megall._ElozoMegallo)
                 .HasForeignKey(megall => megall.ElozoMegallo)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Inditas>()
                 .ToTable(tableBuilder => {

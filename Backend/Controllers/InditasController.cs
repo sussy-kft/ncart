@@ -11,7 +11,13 @@ namespace Backend.Controllers
     {
         public override IEnumerable<InditasDTO> Get() => GetAll(context.Inditasok);
 
+        [HttpGet("{vonal}/{nap}/{inditasIdeje}")]
+        public override ActionResult Get([FromRoute] (int vonal, byte nap, short inditasIdeje) pk) => Status405();
+
         public override ActionResult Post([FromBody] InditasDTO data) => Post(context.Inditasok, data);
+
+        [HttpPut("{vonal}/{nap}/{inditasIdeje}")]
+        public override ActionResult Put([FromRoute] (int vonal, byte nap, short inditasIdeje) pk, [FromBody] InditasDTO data) => Status405();
 
         public override ActionResult Delete() => DeleteAll(context.Inditasok);
 
@@ -34,8 +40,7 @@ namespace Backend.Controllers
                 List<Inditas> inditasok = new List<Inditas>();
                 Napok.ForEach(nap => {
                     InditasiIdopontok.ForEach(inditasIdeje => {
-                        inditasok.Add(new Inditas
-                        {
+                        inditasok.Add(new Inditas {
                             Vonal = Vonal,
                             Nap = nap,
                             InditasIdeje = inditasIdeje
