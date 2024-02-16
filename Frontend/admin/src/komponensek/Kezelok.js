@@ -1,7 +1,12 @@
+import Lekerdezes from "./Lekerdezes";
+
 function Kezelok()
 {
     return (
-        <div>Kezelők</div>
+        <>
+            <div>Kezelők</div>
+            <Lekerdezes url={"kezelok"}/>
+        </>
     );
 }
 

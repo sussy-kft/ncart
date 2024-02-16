@@ -1,7 +1,12 @@
+import Lekerdezes from "./Lekerdezes";
+
 function JarmuTipusok()
 {
     return (
-        <div>Jármű típusok</div>
+        <>
+            <div>Jármű típusok</div>
+            <Lekerdezes url={"jarmutipusok"}/>
+        </>
     );
 }
 

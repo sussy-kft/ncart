@@ -1,7 +1,12 @@
+import Lekerdezes from "./Lekerdezes";
+
 function Inditasok()
 {
     return (
-        <div>Indítások</div>
+        <>
+            <div>Indítások</div>
+            <Lekerdezes url={"inditasok"}/>
+        </>
     );
 }
 

@@ -1,7 +1,12 @@
+import Lekerdezes from "./Lekerdezes";
+
 function Vonalak()
 {
     return (
-        <div>Vonalak</div>
+        <>
+            <div>Vonalak</div>
+            <Lekerdezes url={"vonalak"}/>
+        </>
     );
 }
 

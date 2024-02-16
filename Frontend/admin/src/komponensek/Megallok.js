@@ -1,7 +1,10 @@
 function Megallok()
 {
     return (
-        <div>Megállok</div>
+        <>
+            <div>Megállok</div>
+            <div>Nincs út</div>
+        </>
     );
 }
 
