@@ -1,3 +1,4 @@
+import InfoPanel from "./InfoPanel";
 import Lekerdezes from "./Lekerdezes";
 
 function Allomasok()
@@ -6,6 +7,7 @@ function Allomasok()
         <>
             <div>Állomások</div>
             <Lekerdezes url={"allomasok"}/>
+            <InfoPanel/>
         </>
     );
 }

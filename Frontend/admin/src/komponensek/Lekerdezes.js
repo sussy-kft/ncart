@@ -1,7 +1,19 @@
 import React from "react";
 import Axios from "axios";
+import Table from "react-bootstrap/Table";
+import Button from 'react-bootstrap/Button';
+import PopUpPanel from "./PopUpPanel";
+import InfoPanel from "./InfoPanel";
+import { useState } from 'react';
 
 function Lekerdezes(props) {
+  const [show, setShow] = useState(false);
+  const [id, setId] = useState(-1);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
+
   const [post, setPost] = React.useState(null);
   React.useEffect(() => {
     Axios.get("https://localhost:44339/" + props.url)
@@ -9,27 +21,34 @@ function Lekerdezes(props) {
         setPost(response.data);
       })
       .catch((error) => {
-        setPost("Hiba");
+        <InfoPanel text={error.message}/>
       });
   }, []);
 
   if (!post) return null;
 
   return (
-    <div>
-      <table>
+    <>
+      <Table striped bordered hover>
         <thead>
           <tr>
-            {fejlecElem(post[0])}
+            {fejlecElem(post[0]??[])}
+            <th>Módosítás</th>
+            <th>Törlés</th>
           </tr>
         </thead>
         <tbody>
-          {post.map((row, i) => (
-            <tr key={i}>{cellaElem(row)}</tr>
+          {post.map((row, ix) => (
+            <tr key={ix}>
+              {cellaElem(row)}
+              <td><Button key="primary" variant="primary">Módosítás</Button></td>
+              <td><Button key="danger" variant="danger" onClick={() =>{xd(row.id)}}>Törlés</Button></td>
+            </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </Table>
+      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} getId={()=>{return id}}/>
+    </>
   );
 }
 

@@ -8,6 +8,7 @@ import Vonalak from "./komponensek/Vonalak";
 import Allomasok from "./komponensek/Allomasok";
 import Inditasok from "./komponensek/Inditasok";
 import Megallok from "./komponensek/Megallok";
+import 'bootstrap/dist/css/bootstrap.css';
 
 function App() {
   return (
