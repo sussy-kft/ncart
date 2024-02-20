@@ -1,12 +1,14 @@
 
 import React from 'react';
-import Axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import deleteImage from '../delete.gif';
-import InfoPanel from './InfoPanel';
+import { InfoPanelContext } from '../context/InfoPanelContext';
+import { useContext } from 'react';
 
 function PopUpPanel(props) {
+  const addpanel = useContext(InfoPanelContext);
+  
   return (
     <>
       <Modal
@@ -27,7 +29,7 @@ function PopUpPanel(props) {
           <Button variant="secondary" onClick={props.handleClose}>
             Mégse
           </Button>
-          <Button variant="danger" onClick={() => {torles(props.url, props.getId()); props.handleClose()}}>
+          <Button variant="danger" onClick={() => {props.a(props.url, props.getId(), addpanel, addpanel); props.handleClose()}}>
             Törlés
           </Button>
         </Modal.Footer>
@@ -36,14 +38,4 @@ function PopUpPanel(props) {
   );
 }
 
-function torles(url, id) {
-  
-    Axios.delete("https://localhost:44339/"+ url + "/" + id)
-      .then((response) => {
-        <InfoPanel text={response.data}/>
-      })
-      .catch((error) => {
-        <InfoPanel text={error.message}/>
-      });
-}
 export default PopUpPanel;

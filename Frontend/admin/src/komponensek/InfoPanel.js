@@ -4,7 +4,7 @@ import Toast from 'react-bootstrap/Toast';
 function InfoPanel(props) {
     const [show, setShow] = useState(true);
   
-    return (
+    return ( 
     <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
           <Toast.Header>
             <img

@@ -1,10 +1,9 @@
 import React from "react";
-import Axios from "axios";
 import Table from "react-bootstrap/Table";
 import Button from 'react-bootstrap/Button';
 import PopUpPanel from "./PopUpPanel";
-import InfoPanel from "./InfoPanel";
 import { useState } from 'react';
+import AxiosImpostor from "../model/Axios";
 
 function Lekerdezes(props) {
   const [show, setShow] = useState(false);
@@ -13,16 +12,10 @@ function Lekerdezes(props) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
-
+  const Axios = new AxiosImpostor();
   const [post, setPost] = React.useState(null);
   React.useEffect(() => {
-    Axios.get("https://localhost:44339/" + props.url)
-      .then((response) => {
-        setPost(response.data);
-      })
-      .catch((error) => {
-        <InfoPanel text={error.message}/>
-      });
+    Axios.get(props.url, null, setPost, props.addInfoPanel);
   }, []);
 
   if (!post) return null;
@@ -47,7 +40,7 @@ function Lekerdezes(props) {
           ))}
         </tbody>
       </Table>
-      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} getId={()=>{return id}}/>
+      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} getId={()=>id} a={Axios.delete}/>
     </>
   );
 }
