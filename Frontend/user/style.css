@@ -1,0 +1,90 @@
+@font-face {
+    font-family: bai;
+    src: url(fonts/bai/baijamjuree/BaiJamjuree-Regular.ttf);
+}
+* {
+    font-family: "bai";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+body {
+    background-color: rgb(20, 69, 125);
+}
+body main nav {
+    padding: 20px;
+    background-color: rgb(13, 40, 64);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 40px;
+    border-bottom: 4px solid rgb(255, 231, 33);
+}
+a {
+    text-decoration: none;
+}
+#menu1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+#menu2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+#menu2 div a:hover {
+    color: rgb(255, 231, 33);
+    border-bottom: 4px solid rgb(255, 231, 33);
+}
+body main nav img {
+    width: 100px;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 4px solid rgb(255, 231, 33);
+    width: 100%;
+    height: auto;
+}
+#head1 {
+    padding: 50px;
+}
+#head2 {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+#head4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+#head3{
+    width: 100%;
+}
+#head4 h1 {
+    color: rgb(255, 231, 33);
+}
+#head5 {
+    font-size: 25px;
+}
+video {
+    height: 100%;
+}
+#vid {
+    border-left: 4px solid rgb(255, 231, 33);
+    object-fit: fill;
+    width: 100%;
+}
+#history{
+    background-color: rgb(13, 40, 64);
+    border-bottom: 4px solid rgb(255, 231, 33);
+    display: flex;
+    justify-content: space-between;
+}
