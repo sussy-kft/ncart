@@ -9,10 +9,8 @@ function Kezelok()
     return (
         <>
             <div>Kezelők</div>
-            <InfoPanelProvider>
-                <Lekerdezes url={"kezelok"}/>
-                <div>{InfoPanels}</div>
-            </InfoPanelProvider>
+            <Lekerdezes url={"kezelok"}/>
+            <div>{InfoPanels}</div>
         </>
     );
 }

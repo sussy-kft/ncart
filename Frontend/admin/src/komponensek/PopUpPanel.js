@@ -7,7 +7,7 @@ import { InfoPanelContext } from '../context/InfoPanelContext';
 import { useContext } from 'react';
 
 function PopUpPanel(props) {
-  const addpanel = useContext(InfoPanelContext);
+  const {addInfoPanel} = useContext(InfoPanelContext);
   
   return (
     <>
@@ -29,7 +29,7 @@ function PopUpPanel(props) {
           <Button variant="secondary" onClick={props.handleClose}>
             Mégse
           </Button>
-          <Button variant="danger" onClick={() => {props.a(props.url, props.getId(), addpanel, addpanel); props.handleClose()}}>
+          <Button variant="danger" onClick={() => {props.a(props.url, props.getId(), addInfoPanel, addInfoPanel); props.handleClose()}}>
             Törlés
           </Button>
         </Modal.Footer>

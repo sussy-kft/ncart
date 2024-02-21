@@ -1,18 +1,14 @@
+import { InfoPanelContext } from "../context/InfoPanelContext";
 import Lekerdezes from "./Lekerdezes";
 import React from 'react';
 
 function Allomasok()
 {
-    const [InfoPanels, setInfoPanels] = React.useState([]);
-
-    function addInfoPanel(panel) {
-        setInfoPanels([...InfoPanels, panel]);
-    }    
-
+    const {InfoPanels} = React.createContext(InfoPanelContext);
     return (
         <>
             <div>Állomások</div>
-            <Lekerdezes url={"allomasok"} addInfoPanel={addInfoPanel}/>
+            <Lekerdezes url={"allomasok"}/>
             <div>{InfoPanels}</div>
         </>
     );
