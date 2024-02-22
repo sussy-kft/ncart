@@ -2,7 +2,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import deleteImage from '../delete.gif';
+import deleteImage from '../media/delete.gif';
 import { InfoPanelContext } from '../context/InfoPanelContext';
 import { useContext } from 'react';
 
