@@ -29,7 +29,7 @@ function PopUpPanel(props) {
           <Button variant="secondary" onClick={props.handleClose}>
             Mégse
           </Button>
-          <Button variant="danger" onClick={() => {props.a(props.url, props.getId(), addInfoPanel, addInfoPanel); props.handleClose()}}>
+          <Button variant="danger" onClick={() => {props.a(props.url, props.id, addInfoPanel, addInfoPanel); props.handleClose()}}>
             Törlés
           </Button>
         </Modal.Footer>

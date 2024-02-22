@@ -40,7 +40,7 @@ function Lekerdezes(props) {
           ))}
         </tbody>
       </Table>
-      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} getId={()=>id} a={Axios.delete}/>
+      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} id={id} a={Axios.delete}/>
     </>
   );
 }
