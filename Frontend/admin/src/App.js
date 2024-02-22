@@ -2,11 +2,7 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import NoPage from "./komponensek/NoPage";
-import Kezelok from "./komponensek/Kezelok";
-import JarmuTipusok from "./komponensek/JarmuTipusok";
-import Vonalak from "./komponensek/Vonalak";
-import Allomasok from "./komponensek/Allomasok";
-import Inditasok from "./komponensek/Inditasok";
+import SzerkesztoOldal from "./komponensek/SzerkesztoOldal";
 import Megallok from "./komponensek/Megallok";
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -16,12 +12,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route path="/kezelok" element={<Kezelok />} />
-            <Route path="/jarmuTipusok" element={<JarmuTipusok />} />
-            <Route path="/vonalak" element={<Vonalak />} />
-            <Route path="/allomasok" element={<Allomasok />} />
-            <Route path="/inditasok" element={<Inditasok />} />
-            <Route path="/megallok" element={<Megallok />} />
+            <Route key="kezelok" path="/kezelok" element={<SzerkesztoOldal cim={"Kezelők"} url={"kezelok"}/>} />
+            <Route key="jarmutipusok" path="/jarmuTipusok" element={<SzerkesztoOldal cim={"Járműtípusok"} url={"jarmutipusok"}/>} />
+            <Route key="vonalak" path="/vonalak" element={<SzerkesztoOldal cim={"Vonalak"} url={"vonalak"}/>} />
+            <Route key="allomasok" path="/allomasok" element={<SzerkesztoOldal cim={"Állomások"} url={"allomasok"}/>} />
+            <Route key="inditasok" path="/inditasok" element={<SzerkesztoOldal cim={"Indítások"} url={"inditasok"}/>} />
+            <Route key="megallok" path="/megallok" element={<Megallok />} />
             <Route path="*" element={<NoPage />} />
           </Route>
         </Routes>
