@@ -16,7 +16,8 @@ function Lekerdezes(props) {
   const [post, setPost] = React.useState(null);
   React.useEffect(() => {
     Axios.get(props.url, null, setPost, props.addInfoPanel);
-  }, []);
+    console.log("Lekerdezes");
+  }, [props.url]);
 
   if (!post) return null;
 

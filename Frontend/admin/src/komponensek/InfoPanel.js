@@ -13,7 +13,7 @@ function InfoPanel(props) {
               alt=""
             />
             <strong className="me-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
+            <small>Most</small>
           </Toast.Header>
           <Toast.Body className='text-white'>{props.text}</Toast.Body>
     </Toast>

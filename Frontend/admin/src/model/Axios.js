@@ -15,7 +15,9 @@ class AxiosImpostor{
 
     delete(url, id, callback, errorCallback) {
         axios.delete("https://localhost:44339/" + url + "/" + id)
-        .then(() => {
+        .then(response => {
+            console.log(response.data);
+            console.log(response);
             callback(<InfoPanel bg={"success"} text={"A törlés sikeres volt!"}/>);
         })
         .catch(error => {
