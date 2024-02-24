@@ -4,11 +4,18 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import deleteImage from '../media/delete.gif';
 import { InfoPanelContext } from '../context/InfoPanelContext';
-import { useContext } from 'react';
+import { useContext, useId } from 'react';
+import { AxiosContext } from '../context/AxiosContext';
 
 function PopUpPanel(props) {
   const {addInfoPanel} = useContext(InfoPanelContext);
-  
+  const {destroy} = useContext(AxiosContext);
+
+  const a = () => {
+    destroy(props.url, props.id, addInfoPanel, addInfoPanel); 
+    props.handleClose();
+  }
+
   return (
     <>
       <Modal
@@ -29,7 +36,7 @@ function PopUpPanel(props) {
           <Button variant="secondary" onClick={props.handleClose}>
             Mégse
           </Button>
-          <Button variant="danger" onClick={() => {props.a(props.url, props.id, addInfoPanel, addInfoPanel); props.handleClose()}}>
+          <Button variant="danger" onClick={a}>
             Törlés
           </Button>
         </Modal.Footer>

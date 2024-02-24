@@ -1,23 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import Table from "react-bootstrap/Table";
 import Button from 'react-bootstrap/Button';
 import PopUpPanel from "./PopUpPanel";
 import { useState } from 'react';
-import AxiosImpostor from "../model/Axios";
+import { AxiosContext } from "../context/AxiosContext";
 
 function Lekerdezes(props) {
+
+  const {axiosId, get} = useContext(AxiosContext);
+  console.log(axiosId);
+
   const [show, setShow] = useState(false);
   const [id, setId] = useState(-1);
+  const [post, setPost] = React.useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
-  const Axios = new AxiosImpostor();
-  const [post, setPost] = React.useState(null);
+  
   React.useEffect(() => {
-    Axios.get(props.url, null, setPost, props.addInfoPanel);
+    setPost(get(props.url, null, setPost, props.addInfoPanel));
     console.log("Lekerdezes");
-  }, [props.url]);
+  }, [props.url, axiosId]);
 
   if (!post) return null;
 
@@ -41,7 +45,7 @@ function Lekerdezes(props) {
           ))}
         </tbody>
       </Table>
-      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} id={id} a={Axios.delete}/>
+      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} id={id}/>
     </>
   );
 }

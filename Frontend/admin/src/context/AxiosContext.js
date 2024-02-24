@@ -1,9 +1,14 @@
+import { createContext, useId } from 'react';
+import React from 'react';
 import axios from 'axios';
 import InfoPanel from '../komponensek/InfoPanel';
 
-class AxiosImpostor{
-   
-    get(url, keys, callback, errorCallback) {
+export const AxiosContext = createContext();
+
+export const AxiosProvider = ({ children }) => {
+    const [axiosId, setAxiosId] = React.useState(Math.random());
+
+    const get = (url, keys, callback, errorCallback) => {
         axios.get("https://localhost:44339/" + url)
         .then(response => {
             callback(response.data);
@@ -13,11 +18,12 @@ class AxiosImpostor{
         });
     }
 
-    delete(url, id, callback, errorCallback) {
+    const destroy = (url, id, callback, errorCallback) => {
         axios.delete("https://localhost:44339/" + url + "/" + id)
         .then(response => {
             console.log(response.data);
             console.log(response);
+            setAxiosId(Math.random());
             callback(<InfoPanel bg={"success"} text={"A törlés sikeres volt!"}/>);
         })
         .catch(error => {
@@ -25,6 +31,10 @@ class AxiosImpostor{
             errorCallback(<InfoPanel bg={"danger"} text={error.message}/>);
         })
     }
+    
+    return (
+        <AxiosContext.Provider value={{axiosId, get, destroy}}>
+            {children}  
+        </AxiosContext.Provider>
+    );
 }
-
-export default AxiosImpostor
