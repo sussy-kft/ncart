@@ -12,31 +12,30 @@ function Lekerdezes(props) {
 
   const [show, setShow] = useState(false);
   const [id, setId] = useState(-1);
-  const [post, setPost] = React.useState(null);
+  const [adatok, setAdatok] = React.useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
   
   React.useEffect(() => {
-    setPost(get(props.url, null, setPost, props.addInfoPanel));
-    console.log("Lekerdezes");
+    setAdatok(get(props.url, null, setAdatok, props.addInfoPanel));
   }, [props.url, axiosId]);
 
-  if (!post) return null;
+  if (!adatok) return null;
 
   return (
     <>
       <Table striped bordered hover>
         <thead>
           <tr>
-            {fejlecElem(post[0]??[])}
-            <th>Módosítás</th>
-            <th>Törlés</th>
+            {fejlecElem(adatok[0]??[])}
+            {adatok[0] && <th>Módosítás</th>}
+            {adatok[0] && <th>Törlés</th>}
           </tr>
         </thead>
         <tbody>
-          {post.map((row, ix) => (
+          {adatok.map((row, ix) => (
             <tr key={ix}>
               {cellaElem(row)}
               <td><Button key="primary" variant="primary">Módosítás</Button></td>

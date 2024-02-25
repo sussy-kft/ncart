@@ -14,11 +14,9 @@ export const DarkModeProvider = ({ children }) => {
     return (
         <DarkModeContext.Provider value={{darkMode, setDarkMode, getText}}>
             <HelmetProvider>
-            <Helmet htmlAttributes={{"data-bs-theme": darkMode}}>
-            </Helmet>
-            {children}
+                <Helmet htmlAttributes={{"data-bs-theme": darkMode}}/>
+                {children}
             </HelmetProvider>
-            {console.log(darkMode)}  
         </DarkModeContext.Provider>
     );
 }

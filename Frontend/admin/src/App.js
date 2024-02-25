@@ -17,7 +17,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route key="kezelok" path="/kezelok" element={<SzerkesztoOldal cim={"Kezelők"} url={"kezelok"} />} />
-                <Route key="jarmutipusok" path="/jarmuTipusok" element={<SzerkesztoOldal cim={"Járműtípusok"} url={"jarmutipusok"} />} />
+                <Route key="jarmutipusok" path="/jarmutipusok" element={<SzerkesztoOldal cim={"Járműtípusok"} url={"jarmutipusok"} />} />
                 <Route key="vonalak" path="/vonalak" element={<SzerkesztoOldal cim={"Vonalak"} url={"vonalak"} />} />
                 <Route key="allomasok" path="/allomasok" element={<SzerkesztoOldal cim={"Állomások"} url={"allomasok"} />} />
                 <Route key="inditasok" path="/inditasok" element={<SzerkesztoOldal cim={"Indítások"} url={"inditasok"} />} />

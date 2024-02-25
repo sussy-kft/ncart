@@ -12,7 +12,7 @@ function PopUpPanel(props) {
   const {destroy} = useContext(AxiosContext);
 
   const a = () => {
-    destroy(props.url, props.id, addInfoPanel, addInfoPanel); 
+    destroy(props.url, props.id); 
     props.handleClose();
   }
 
