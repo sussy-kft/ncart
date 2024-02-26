@@ -88,6 +88,12 @@ namespace Backend.Controllers
             return record != null ? handleRequest(record) : NotFound();
         }
 
+        protected ActionResult NotFoundIfQueryIsEmpty<T>(Func<IReadOnlyList<T>> query)
+        {
+            IReadOnlyList<T> queryResult = query();
+            return queryResult.Count > 0 ? Ok(queryResult) : NotFound();
+        }
+
         protected StatusCodeResult Status405() => StatusCode(405);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class

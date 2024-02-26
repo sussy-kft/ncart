@@ -68,6 +68,18 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpGet("vonalszamok")]
-        public IEnumerable<string> GetVonalSzamok() => context.Vonalak.Select(vonal => vonal.VonalSzam).Distinct();
+        public IEnumerable<string> GetVonalSzamok() => context
+            .Vonalak
+            .Select(vonal => vonal.VonalSzam)
+            .Distinct()
+        ;
+
+        [HttpGet("odavissza/{vonalSzam}")]
+        public ActionResult GetOdaVissza(string vonalSzam) => NotFoundIfQueryIsEmpty(() => context
+            .Vonalak
+            .Where(vonal => vonal.VonalSzam == vonalSzam)
+            .Select(vonal => vonal.Id)
+            .ToList()
+        );
     }
 }
