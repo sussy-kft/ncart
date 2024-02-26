@@ -78,7 +78,6 @@ namespace Backend.Controllers
         public ActionResult GetOdaVissza(string vonalSzam) => NotFoundIfQueryIsEmpty(() => context
             .Vonalak
             .Where(vonal => vonal.VonalSzam == vonalSzam)
-            .Select(vonal => vonal.Id)
             .ToList()
         );
     }
