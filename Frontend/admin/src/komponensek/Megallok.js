@@ -8,7 +8,7 @@ function Megallok()
 
     return (
         <>
-            <div>Megállok</div>
+            <h1>Megállok</h1>
             <div>Nincs út</div>
             <ToastContainer position="top-end" className="position-fixed">{InfoPanels}</ToastContainer>
         </>

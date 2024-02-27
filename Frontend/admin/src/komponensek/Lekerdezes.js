@@ -22,7 +22,7 @@ function Lekerdezes(props) {
     setAdatok(get(props.url, null, setAdatok, props.addInfoPanel));
   }, [props.url, axiosId]);
 
-  if (!adatok) return null;
+  if (!adatok) return <h1>Betöltés...</h1>;
 
   return (
     <>
