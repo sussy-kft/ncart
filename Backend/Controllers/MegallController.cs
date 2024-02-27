@@ -89,12 +89,73 @@ namespace Backend.Controllers
 
     public partial class MegallController
     {
-        [HttpGet("{vonalId}")]
-        public ActionResult GetOdaVissza(int vonalId) => NotFoundIfQueryIsEmpty(() => context
-            .Megallok
-            .Where(megall => megall.Vonal == vonalId)
-            .Select(megall => megall._Allomas)
-            .ToList()
-        );
+        [HttpGet("vonalmegallok/{vonalSzam}/{jarmuTipus}")]
+        public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus)
+        {
+            IReadOnlyList<Vonal> vonalak = context
+                .Vonalak
+                .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
+                .ToList();
+            ;
+            int vonalakCount = vonalak.Count();
+            return vonalakCount > 0
+                ? ((Func<ActionResult>)(() => {
+                    List<VonalMegallok> vonalMegallok = [];
+                    try
+                    {
+                        vonalak.ToList().ForEach(vonal => {
+                            vonalMegallok.Add(new VonalMegallok() {
+                                Vonal = vonal,
+                                Megallok = ((Func<List<Megall>>)(() => {
+                                    IReadOnlyList<Megall> megallok = context
+                                        .Megallok
+                                        .Where(megall => megall.Vonal == vonal.Id)
+                                        .ToList()
+                                    ;
+                                    List<Megall> rendezettMegallok = [megallok.Kivalaszt(megall => megall.ElozoMegallo == vonal.KezdoAll)];
+                                    int legutobbiAllomasId = rendezettMegallok[0].Allomas;
+                                    while (legutobbiAllomasId != vonal.Vegall)
+                                    {
+                                        rendezettMegallok.Add(megallok.Kivalaszt(megall => megall.ElozoMegallo == legutobbiAllomasId));
+                                        legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                    }
+                                    return rendezettMegallok;
+                                }))()
+                            });
+                        });
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        return Status500;
+                    }
+                    catch (IndexOutOfRangeException e)
+                    {
+                        return Status500;
+                    }
+                    return Ok(vonalakCount == 1
+                        ? new OdaVissza() {
+                            Oda = vonalMegallok[0]
+                        }
+                        : new OdaVissza() {
+                            Oda = vonalMegallok[0],
+                            Vissza = vonalMegallok[1]
+                        }
+                    );
+                }))()
+                : NotFound()
+            ;
+        }
+
+        class OdaVissza
+        {
+            public VonalMegallok Oda { get; set; }
+            public VonalMegallok? Vissza { get; set; }
+        }
+
+        class VonalMegallok
+        {
+            public Vonal Vonal { get; set; }
+            public List<Megall> Megallok { get; set; }
+        }
     }
 }

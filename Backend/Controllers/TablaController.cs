@@ -94,7 +94,9 @@ namespace Backend.Controllers
             return queryResult.Count > 0 ? Ok(queryResult) : NotFound();
         }
 
-        protected StatusCodeResult Status405() => StatusCode(405);
+        protected StatusCodeResult Status405 => StatusCode(405);
+
+        protected StatusCodeResult Status500 => StatusCode(500);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {
