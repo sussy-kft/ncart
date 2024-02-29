@@ -31,6 +31,8 @@ namespace Backend.Controllers
 
         [HttpDelete("{vonal}/{allomas}")]
         public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<object>("Megallok");
     }
 
     public partial class MegallController
@@ -112,11 +114,11 @@ namespace Backend.Controllers
                                         .Where(megall => megall.Vonal == vonal.Id)
                                         .ToList()
                                     ;
-                                    List<Megall> rendezettMegallok = [megallok.Kivalaszt(megall => megall.ElozoMegallo == vonal.KezdoAll)];
+                                    List<Megall> rendezettMegallok = [megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException()];
                                     int legutobbiAllomasId = rendezettMegallok[0].Allomas;
                                     while (legutobbiAllomasId != vonal.Vegall)
                                     {
-                                        rendezettMegallok.Add(megallok.Kivalaszt(megall => megall.ElozoMegallo == legutobbiAllomasId));
+                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
                                         legutobbiAllomasId = rendezettMegallok[^1].Allomas;
                                     }
                                     return rendezettMegallok;
@@ -125,10 +127,6 @@ namespace Backend.Controllers
                         });
                     }
                     catch (InvalidOperationException e)
-                    {
-                        return Status500;
-                    }
-                    catch (IndexOutOfRangeException e)
                     {
                         return Status500;
                     }

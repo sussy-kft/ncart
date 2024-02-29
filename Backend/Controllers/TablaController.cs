@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Backend.ModelDTOBases;
+using Backend.Models;
+using Backend.DTOs;
+
 
 namespace Backend.Controllers
 {
@@ -53,6 +57,72 @@ namespace Backend.Controllers
         );
 
         protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
+
+        [HttpGet("metadata")]
+        public abstract IEnumerable<IMetadataDTO<object>> Metadata();
+
+        protected IEnumerable<IMetadataDTO<object>> Metadata<TDatatype>(string tableName, params (string columnName, Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references)[] fieldOverrides) where TDatatype : class
+        {
+            IQueryable<Metadata> metadatas = context
+                .Database
+                .SqlQueryRaw<Metadata>(
+                    $@"
+                        SELECT *
+                        FROM dbo.Metadata(@{nameof(tableName)})
+                    ",
+                    new SqlParameter(nameof(tableName), tableName)
+                )
+                .Where(metadata => !metadata.IsIdentity)
+            ;
+            List<IMetadataDTO<object>> metadataDTOs = new List<IMetadataDTO<object>>();
+            metadatas
+                .Select(metadata => metadata.ColumnName)
+                .Distinct()
+                .ToList()
+                .ForEach(columnName => {
+                    IQueryable<Metadata> thisColumnNameMetadatas = metadatas.Where(metadata => metadata.ColumnName == columnName);
+                    IQueryable<Metadata> notNullConstraintNameMetadatas = thisColumnNameMetadatas.Where(metadata => metadata.ConstraintName != null);
+                    Metadata metadata = thisColumnNameMetadatas.First();
+                    (bool isPartOfPk, string? references) constraints = notNullConstraintNameMetadatas.Count() > 0
+                        ? (
+                            notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("PK")).Count() > 0,
+                            ((Func<string?>)(() => {
+                                IQueryable<Metadata> foreignKeys = notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("FK"));
+                                return foreignKeys.Count() > 0
+                                    ? foreignKeys
+                                        .Select(metadata => metadata.ConstraintName!)
+                                        .First()
+                                        .Split("_")[2]
+                                    : null
+                                ;
+                            }))()
+                        )
+                        : (false, null)
+                    ;
+                    (Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references) thisColumnNameFieldOverride = fieldOverrides.SelectFirst(out (string columnName, Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references) value, fieldOverride => fieldOverride.columnName == columnName) ? (value.datatype, value.references) : (null, null);
+                    string? references = thisColumnNameFieldOverride.references != null ? thisColumnNameFieldOverride.references(metadata) : constraints.references;
+                    metadataDTOs.Add(thisColumnNameFieldOverride.datatype != null
+                        ? new MetadataDTO<TDatatype> {
+                            ColumnName = metadata.ColumnName,
+                            DataType = thisColumnNameFieldOverride.datatype(metadata),
+                            IsNullable = metadata.IsNullable,
+                            IsPartOfPK = constraints.isPartOfPk,
+                            References = references,
+                            CharacterMaximumLength = metadata.CharacterMaximumLength,
+                        }
+                        : new MetadataDTO<string> {
+                            ColumnName = metadata.ColumnName,
+                            DataType = metadata.DataType,
+                            IsNullable = metadata.IsNullable,
+                            IsPartOfPK = constraints.isPartOfPk,
+                            References = references,
+                            CharacterMaximumLength = metadata.CharacterMaximumLength,
+                        }
+                    );
+                })
+            ;
+            return metadataDTOs;
+        }
 
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 

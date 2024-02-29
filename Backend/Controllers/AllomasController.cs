@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
@@ -30,6 +31,33 @@ namespace Backend.Controllers
 
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<IReadOnlyList<MetadataDTO<string>>>(
+            "Allomasok",
+            (
+                "Koord",
+                metadata => [
+                    new MetadataDTO<string> {
+                        ColumnName = "X",
+                        DataType = "float",
+                        IsNullable = false,
+                        IsPartOfPK = false,
+                        References = null,
+                        CharacterMaximumLength = null,
+                    },
+                    new MetadataDTO<string>
+                    {
+                        ColumnName = "Y",
+                        DataType = "float",
+                        IsNullable = false,
+                        IsPartOfPK = false,
+                        References = null,
+                        CharacterMaximumLength = null,
+                    }
+                ],
+                null
+            )
+        );
     }
 
     public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>

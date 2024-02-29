@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.ModelDTOBases;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
@@ -23,6 +24,8 @@ namespace Backend.Controllers
 
         [HttpDelete("{vonal}/{nap}/{inditasIdeje}")]
         public override ActionResult Delete([FromRoute] (int vonal, byte nap, short inditasIdeje) pk) => Delete(context.Inditasok, pk.vonal, pk.nap, pk.inditasIdeje);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<object>("Inditasok");
     }
 
     public partial class InditasController

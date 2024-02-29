@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Backend.DTOs;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
@@ -32,6 +33,13 @@ namespace Backend.Controllers
 
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata(
+            "Kezelok",
+            ("Email", metadata => "email", null),
+            ("Jelszo", metadata => "password", null),
+            ("Engedelyek", metadata => "nvarchar[]", metadata => "Engedelyek")
+        );
     }
 
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>

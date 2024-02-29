@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
@@ -34,17 +33,7 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Vonalak, id);
 
-        /*[HttpGet("metadata")]
-        public ActionResult Metadata() => Ok(context
-            .Database
-            .SqlQuery<Metadata>($@"
-                SELECT *
-                FROM dbo.Metadata('Vonalak')
-            ")
-            .ToList()
-        );*/
-
-        // TODO: Metadata class
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<object>("Vonalak");
     }
 
     public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
