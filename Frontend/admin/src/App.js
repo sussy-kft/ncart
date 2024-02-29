@@ -7,12 +7,14 @@ import Megallok from "./komponensek/Megallok";
 import 'bootstrap/dist/css/bootstrap.css';
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { AxiosProvider } from "./context/AxiosContext";
+import { MetaAdatProvider } from "./context/MetaAdatContext";
 
 function App() {
   return (
     <div className="App" >
       <DarkModeProvider>
         <AxiosProvider>
+          <MetaAdatProvider>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Layout />}>
@@ -26,6 +28,7 @@ function App() {
               </Route>
             </Routes>
           </BrowserRouter>
+          </MetaAdatProvider>
         </AxiosProvider>
       </DarkModeProvider>
     </div>

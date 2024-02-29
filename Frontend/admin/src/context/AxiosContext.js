@@ -1,4 +1,4 @@
-import { createContext, useId } from 'react';
+import { createContext } from 'react';
 import React from 'react';
 import axios from 'axios';
 import InfoPanel from '../komponensek/InfoPanel';
@@ -9,15 +9,15 @@ export const AxiosContext = createContext();
 export const AxiosProvider = ({ children }) => {
     const [axiosId, setAxiosId] = React.useState(Math.random());
     const {addInfoPanel} = React.useContext(InfoPanelContext);
-    const baseUrl = "https://localhost:44339/";
+    const baseUrl = "https://localhost:7078/";
 
-    const get = (url, keys, callback, errorCallback) => {
+    const getAll = (url, callback) => {
         axios.get(baseUrl + url)
         .then(response => {
             callback(response.data);
         })
         .catch(error => {
-            errorCallback(<InfoPanel bg={"danger"} text={error.message}/>);
+            addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
         });
     }
 
@@ -41,7 +41,7 @@ export const AxiosProvider = ({ children }) => {
             console.log(response.data);
             console.log(response);
             setAxiosId(Math.random());
-            addInfoPanel(<InfoPanel bg={"success"} text={"A frissítés sikeres volt!"}/>);
+            addInfoPanel(<InfoPanel bg={"success"} text={"Az új adat rögzítése sikeres volt!"}/>);
         })
         .catch(error => {
             //error.code
@@ -64,7 +64,7 @@ export const AxiosProvider = ({ children }) => {
     }
     
     return (
-        <AxiosContext.Provider value={{axiosId, get, destroy, post, patch}}>
+        <AxiosContext.Provider value={{axiosId, getAll, destroy, post, patch}}>
             {children}  
         </AxiosContext.Provider>
     );

@@ -4,10 +4,13 @@ import Button from 'react-bootstrap/Button';
 import PopUpPanel from "./PopUpPanel";
 import { useState } from 'react';
 import { AxiosContext } from "../context/AxiosContext";
+import { MetaAdatContext } from "../context/MetaAdatContext";
 
 function Lekerdezes(props) {
 
-  const {axiosId, get} = useContext(AxiosContext);
+  const {axiosId, getAll} = useContext(AxiosContext);
+  const {getPKs} = useContext(MetaAdatContext);
+  console.log(getPKs());
   console.log(axiosId);
 
   const [show, setShow] = useState(false);
@@ -19,7 +22,7 @@ function Lekerdezes(props) {
   const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
   
   React.useEffect(() => {
-    setAdatok(get(props.url, null, setAdatok, props.addInfoPanel));
+    setAdatok(getAll(props.url, setAdatok));
   }, [props.url, axiosId]);
 
   if (!adatok) return <h1>Betöltés...</h1>;
@@ -51,23 +54,23 @@ function Lekerdezes(props) {
 
 function fejlecElem(elem) {
   const tmp = [];
-  {Object.keys(elem).map( key => {
+  tmp.push(Object.keys(elem).map( key => {
     if (typeof elem[key] !== "object") 
-      tmp.push(<th key={key}>{key}</th>)
+      return <th key={key}>{key}</th>
     else 
-      tmp.push(fejlecElem(elem[key]));
-  })}
+      return fejlecElem(elem[key]);
+  }))
   return tmp;
 }
 
 function cellaElem(elem) {
   const tmp = [];
-  Object.keys(elem).map( key => {
+  tmp.push(Object.keys(elem).map( key => {
     if (typeof elem[key] !== "object") 
-      tmp.push(<td key={key}>{elem[key]}</td>);
+      return <td key={key}>{elem[key]}</td>
     else 
-      tmp.push(cellaElem(elem[key]));
-  });
+      return cellaElem(elem[key])
+  }))
   return tmp;
 }
 export default Lekerdezes;
