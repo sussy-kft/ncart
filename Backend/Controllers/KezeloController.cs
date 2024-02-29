@@ -34,12 +34,12 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata(
-            "Kezelok",
-            ("Email", metadata => "email", null),
-            ("Jelszo", metadata => "password", null),
-            ("Engedelyek", metadata => "nvarchar[]", metadata => "Engedelyek")
-        );
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Kezelok")
+            .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Email", _ => "email")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Jelszo", _ => "password")
+        ;
     }
 
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>

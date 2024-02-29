@@ -32,7 +32,7 @@ namespace Backend.Controllers
         [HttpDelete("{vonal}/{allomas}")]
         public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<object>("Megallok");
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Megallok");
     }
 
     public partial class MegallController

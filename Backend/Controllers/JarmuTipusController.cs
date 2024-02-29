@@ -30,6 +30,6 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.JarmuTipusok, id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata<object>("JarmuTipusok");
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("JarmuTipusok");
     }
 }

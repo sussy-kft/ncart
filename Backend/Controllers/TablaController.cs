@@ -61,7 +61,7 @@ namespace Backend.Controllers
         [HttpGet("metadata")]
         public abstract IEnumerable<IMetadataDTO<object>> Metadata();
 
-        protected IEnumerable<IMetadataDTO<object>> Metadata<TDatatype>(string tableName, params (string columnName, Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references)[] fieldOverrides) where TDatatype : class
+        protected IQueryable<IMetadataDTO<string>> Metadata(string tableName)
         {
             IQueryable<Metadata> metadatas = context
                 .Database
@@ -74,7 +74,7 @@ namespace Backend.Controllers
                 )
                 .Where(metadata => !metadata.IsIdentity)
             ;
-            List<IMetadataDTO<object>> metadataDTOs = new List<IMetadataDTO<object>>();
+            List<IMetadataDTO<string>> metadataDTOs = new List<IMetadataDTO<string>>();
             metadatas
                 .Select(metadata => metadata.ColumnName)
                 .Distinct()
@@ -99,29 +99,17 @@ namespace Backend.Controllers
                         )
                         : (false, null)
                     ;
-                    (Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references) thisColumnNameFieldOverride = fieldOverrides.SelectFirst(out (string columnName, Func<Metadata, TDatatype>? datatype, Func<Metadata, string?>? references) value, fieldOverride => fieldOverride.columnName == columnName) ? (value.datatype, value.references) : (null, null);
-                    string? references = thisColumnNameFieldOverride.references != null ? thisColumnNameFieldOverride.references(metadata) : constraints.references;
-                    metadataDTOs.Add(thisColumnNameFieldOverride.datatype != null
-                        ? new MetadataDTO<TDatatype> {
-                            ColumnName = metadata.ColumnName,
-                            DataType = thisColumnNameFieldOverride.datatype(metadata),
-                            IsNullable = metadata.IsNullable,
-                            IsPartOfPK = constraints.isPartOfPk,
-                            References = references,
-                            CharacterMaximumLength = metadata.CharacterMaximumLength,
-                        }
-                        : new MetadataDTO<string> {
-                            ColumnName = metadata.ColumnName,
-                            DataType = metadata.DataType,
-                            IsNullable = metadata.IsNullable,
-                            IsPartOfPK = constraints.isPartOfPk,
-                            References = references,
-                            CharacterMaximumLength = metadata.CharacterMaximumLength,
-                        }
-                    );
+                    metadataDTOs.Add(new MetadataDTO<string> {
+                        ColumnName = metadata.ColumnName,
+                        DataType = metadata.DataType,
+                        IsNullable = metadata.IsNullable,
+                        IsPartOfPK = constraints.isPartOfPk,
+                        References = constraints.references,
+                        CharacterMaximumLength = metadata.CharacterMaximumLength,
+                    });
                 })
             ;
-            return metadataDTOs;
+            return metadataDTOs.AsQueryable();
         }
 
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
