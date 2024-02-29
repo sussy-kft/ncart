@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Backend.ModelDTOBases;
+using Backend.Models;
+using Backend.DTOs;
+
 
 namespace Backend.Controllers
 {
@@ -54,6 +58,60 @@ namespace Backend.Controllers
 
         protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
 
+        [HttpGet("metadata")]
+        public abstract IEnumerable<IMetadataDTO<object>> Metadata();
+
+        protected IQueryable<IMetadataDTO<string>> Metadata(string tableName)
+        {
+            IQueryable<Metadata> metadatas = context
+                .Database
+                .SqlQueryRaw<Metadata>(
+                    $@"
+                        SELECT *
+                        FROM dbo.Metadata(@{nameof(tableName)})
+                    ",
+                    new SqlParameter(nameof(tableName), tableName)
+                )
+                .Where(metadata => !metadata.IsIdentity)
+            ;
+            List<IMetadataDTO<string>> metadataDTOs = new List<IMetadataDTO<string>>();
+            metadatas
+                .Select(metadata => metadata.ColumnName)
+                .Distinct()
+                .ToList()
+                .ForEach(columnName => {
+                    IQueryable<Metadata> thisColumnNameMetadatas = metadatas.Where(metadata => metadata.ColumnName == columnName);
+                    IQueryable<Metadata> notNullConstraintNameMetadatas = thisColumnNameMetadatas.Where(metadata => metadata.ConstraintName != null);
+                    Metadata metadata = thisColumnNameMetadatas.First();
+                    (bool isPartOfPk, string? references) constraints = notNullConstraintNameMetadatas.Count() > 0
+                        ? (
+                            notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("PK")).Count() > 0,
+                            ((Func<string?>)(() => {
+                                IQueryable<Metadata> foreignKeys = notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("FK"));
+                                return foreignKeys.Count() > 0
+                                    ? foreignKeys
+                                        .Select(metadata => metadata.ConstraintName!)
+                                        .First()
+                                        .Split("_")[2]
+                                    : null
+                                ;
+                            }))()
+                        )
+                        : (false, null)
+                    ;
+                    metadataDTOs.Add(new MetadataDTO<string> {
+                        ColumnName = metadata.ColumnName,
+                        DataType = metadata.DataType,
+                        IsNullable = metadata.IsNullable,
+                        IsPartOfPK = constraints.isPartOfPk,
+                        References = constraints.references,
+                        CharacterMaximumLength = metadata.CharacterMaximumLength,
+                    });
+                })
+            ;
+            return metadataDTOs.AsQueryable();
+        }
+
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 
         protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
@@ -88,7 +146,15 @@ namespace Backend.Controllers
             return record != null ? handleRequest(record) : NotFound();
         }
 
-        protected StatusCodeResult Status405() => StatusCode(405);
+        protected ActionResult NotFoundIfQueryIsEmpty<T>(Func<IReadOnlyList<T>> query)
+        {
+            IReadOnlyList<T> queryResult = query();
+            return queryResult.Count > 0 ? Ok(queryResult) : NotFound();
+        }
+
+        protected StatusCodeResult Status405 => StatusCode(405);
+
+        protected StatusCodeResult Status500 => StatusCode(500);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {

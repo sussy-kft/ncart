@@ -32,6 +32,8 @@ namespace Backend.Controllers
 
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => Delete(context.Vonalak, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Vonalak");
     }
 
     public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
@@ -68,6 +70,10 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpGet("vonalszamok")]
-        public IEnumerable<string> GetVonalSzamok() => context.Vonalak.Select(vonal => vonal.VonalSzam).Distinct();
+        public IEnumerable<string> GetVonalSzamok() => context
+            .Vonalak
+            .Select(vonal => vonal.VonalSzam)
+            .Distinct()
+        ;
     }
 }

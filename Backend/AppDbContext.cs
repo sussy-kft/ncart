@@ -72,6 +72,11 @@ namespace Backend
                     tableBuilder.HasCheckConstraint($"CK_Inditasok_{nameof(Inditas.InditasIdeje)}_Between", $"{nameof(Inditas.InditasIdeje)} >= 0 AND {nameof(Inditas.InditasIdeje)} < 1440");
                 })
             ;
+            modelBuilder.Entity<Vonal>()
+                .ToTable(tableBuilder => {
+                    tableBuilder.HasCheckConstraint($"CK_Vonalak_{nameof(Vonal.KezdoAll)}_Es_{nameof(Vonal.Vegall)}_Nem_Egegyeznek", $"{nameof(Vonal.KezdoAll)} <> {nameof(Vonal.Vegall)}");
+                })
+            ;
         }
     }
 }
