@@ -31,7 +31,7 @@ function Layout()
                 Állomások
               </Nav.Link>
               <Nav.Link as={Link} key="jarmuTipusok" to="/jarmuTipusok">
-                Jármű típusok
+                Járműtípusok
               </Nav.Link>
               <Nav.Link as={Link} key="vonalak" to="/vonalak">
                 Vonalak

@@ -6,13 +6,16 @@ import deleteImage from '../media/delete.gif';
 import { InfoPanelContext } from '../context/InfoPanelContext';
 import { useContext, useId } from 'react';
 import { AxiosContext } from '../context/AxiosContext';
+import { MetaadatContext } from '../context/MetaadatContext';
 
 function PopUpPanel(props) {
   const {addInfoPanel} = useContext(InfoPanelContext);
   const {destroy} = useContext(AxiosContext);
+  const {url, getPKs} = useContext(MetaadatContext);
 
   const a = () => {
-    destroy(props.url, props.id); 
+    console.log(props.id);
+    destroy(url, props.id); 
     props.handleClose();
   }
 

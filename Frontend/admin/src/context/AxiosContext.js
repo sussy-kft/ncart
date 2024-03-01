@@ -21,8 +21,10 @@ export const AxiosProvider = ({ children }) => {
         });
     }
 
-    const destroy = (url, id) => {
-        axios.delete(baseUrl + url + "/" + id)
+    const destroy = (url, ids) => {
+        console.log(baseUrl + url + "/" + ids);
+        console.log(ids);
+        axios.delete(baseUrl + url + "/" + ids)
         .then(response => {
             console.log(response.data);
             console.log(response);
@@ -36,6 +38,8 @@ export const AxiosProvider = ({ children }) => {
     }
 
     const post = (url, item) => {
+        console.log(item);
+        console.log(baseUrl + url);
         axios.post(baseUrl + url, item)
         .then(response => {
             console.log(response.data);

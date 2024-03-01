@@ -4,14 +4,12 @@ import Button from 'react-bootstrap/Button';
 import PopUpPanel from "./PopUpPanel";
 import { useState } from 'react';
 import { AxiosContext } from "../context/AxiosContext";
-import { MetaAdatContext } from "../context/MetaAdatContext";
+import { MetaadatContext } from "../context/MetaadatContext";
 
 function Lekerdezes(props) {
 
   const {axiosId, getAll} = useContext(AxiosContext);
-  const {getPKs} = useContext(MetaAdatContext);
-  console.log(getPKs());
-  console.log(axiosId);
+  const {url, getPKs} = useContext(MetaadatContext);
 
   const [show, setShow] = useState(false);
   const [id, setId] = useState(-1);
@@ -19,11 +17,20 @@ function Lekerdezes(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const xd= (ix) => { setId(ix); handleShow();console.log(ix);}
+  const xd= (row) => { 
+    const tmp = [];
+    getPKs().map((key, ix) => {
+      tmp[ix] = row[key.charAt(0).toLowerCase() + key.slice(1)];
+    })
+    setId(tmp.join("/"));
+    console.log(tmp);
+    handleShow()
+    console.log(row);
+  }
   
   React.useEffect(() => {
-    setAdatok(getAll(props.url, setAdatok));
-  }, [props.url, axiosId]);
+    setAdatok(getAll(url, setAdatok));
+  }, [url, axiosId]);
 
   if (!adatok) return <h1>Betöltés...</h1>;
 
@@ -42,12 +49,12 @@ function Lekerdezes(props) {
             <tr key={ix}>
               {cellaElem(row)}
               <td><Button key="primary" variant="primary">Módosítás</Button></td>
-              <td><Button key="danger" variant="danger" onClick={() =>{xd(row.id)}}>Törlés</Button></td>
+              <td><Button key="danger" variant="danger" onClick={() =>{xd(row)}}>Törlés</Button></td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} url={props.url} id={id}/>
+      <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} id={id}/>
     </>
   );
 }

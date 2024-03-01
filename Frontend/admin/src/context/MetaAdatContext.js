@@ -1,99 +1,41 @@
-import { createContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import React from 'react';
+import { AxiosContext } from './AxiosContext';
 
-export const MetaAdatContext = createContext();
+export const MetaadatContext = createContext();
 
-export const MetaAdatProvider = ({ children }) => {
+export const MetaadatProvider = ({ children }) => {
+    const {getAll} = useContext(AxiosContext)
+
+    const [url, setUrl] = React.useState("");
+    const [metaadat, setMetaadat] = React.useState();
     
-    const testget = [
-        {
-            "columnName": "Nev",
-            "dataType": "nvarchar",
-            "isNullable": false,
-            "partOfPK": false,
-            "references": null,
-            "characterMaximumLength": 64
-        },
-        {
-            "columnName": "Koord",
-            "dataType": [
-                {
-                    "columnName": "X",
-                    "dataType": [
-                        {
-                            "columnName": "X",
-                            "dataType": "float",
-                            "isNullable": false,
-                            "partOfPK": false,
-                            "references": null,
-                            "characterMaximumLength": null
-                        },
-                        {
-                            "columnName": "Y",
-                            "dataType": "float",
-                            "isNullable": false,
-                            "partOfPK": false,
-                            "references": null,
-                            "characterMaximumLength": null
-                        }
-                    ],
-                    "isNullable": false,
-                    "partOfPK": false,
-                    "references": null,
-                    "characterMaximumLength": null
-                },
-                {
-                    "columnName": "Y",
-                    "dataType": [
-                        {
-                            "columnName": "X",
-                            "dataType": "float",
-                            "isNullable": false,
-                            "partOfPK": false,
-                            "references": null,
-                            "characterMaximumLength": null
-                        },
-                        {
-                            "columnName": "Y",
-                            "dataType": "float",
-                            "isNullable": false,
-                            "partOfPK": false,
-                            "references": null,
-                            "characterMaximumLength": null
-                        }
-                    ],
-                    "isNullable": false,
-                    "partOfPK": false,
-                    "references": null,
-                    "characterMaximumLength": null
-                }
-            ],
-            "isNullable": false,
-            "partOfPK": false,
-            "references": null,
-            "characterMaximumLength": null
-        }
-    ] 
-
+    React.useEffect(() => {
+        if(url!=="")
+            getAll(url+"/metadata", setMetaadat);
+    }, [url]);
+    
     const getPKs = () => {
+        if(metaadat===undefined)
+        return null
         function PKKereses(lista) {
             let tmp=[];
-            lista.map((input, ix) => {
+            lista.map((input)=> {
                 if (Array.isArray(input.dataType))
-                tmp = tmp.concat(PKKereses(input.dataType));
-            else if (input.partOfPK)
-            tmp.push(input.columnName);
+                    tmp = tmp.concat(PKKereses(input.dataType));
+                else if (input.isPartOfPK)
+                    tmp.push(input.columnName);
             });
             return tmp;
         }
 
-        let tmp = PKKereses(testget);
+        let tmp = PKKereses(metaadat);
         return tmp.length > 0 ? tmp : ["id"];
     }
 
     return (
-        <MetaAdatContext.Provider value={{testget, getPKs}}>
+        <MetaadatContext.Provider value={{metaadat, getPKs, url, setUrl}}>
             {children}  
-        </MetaAdatContext.Provider>
+        </MetaadatContext.Provider>
     );
 }

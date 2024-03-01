@@ -4,14 +4,13 @@ import { AxiosContext } from '../context/AxiosContext';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { MetaAdatContext } from '../context/MetaAdatContext';
+import { MetaadatContext } from '../context/MetaadatContext';
 
 function InputMezo(props) {
     const { post } = useContext(AxiosContext);
-    const { testget } = useContext(MetaAdatContext);
+    const { metaadat, url } = useContext(MetaadatContext);
 
-    const [validated, setValidated] = React.useState(false);   
-    const [input, setInput] = React.useState([]);
+    const [validated, setValidated] = React.useState(false);
     const [adatok, setAdatok] = React.useState({});
 
     const handleChange = (event) => {
@@ -19,9 +18,10 @@ function InputMezo(props) {
         const value = event.target.value;
         setAdatok(values => ({ ...values, [name]: value }))
     }
-    console.log(adatok);
 
     const generateInput = (lista) => {
+        if(lista===undefined)
+        return null
         let tmp = [];
         lista.map((input, ix) => {
             if (Array.isArray(input.dataType))
@@ -53,7 +53,7 @@ function InputMezo(props) {
         event.preventDefault();        
         if (form.checkValidity()) {
             event.stopPropagation();
-            post(props.url, adatokGenerator(testget));
+            post(url, adatokGenerator(metaadat));
         };
         setValidated(true);
     }
@@ -70,14 +70,12 @@ function InputMezo(props) {
         return tmp;
     }
 
-    useEffect(() => {
-        setInput(generateInput(testget));
-    }, []);
+    if (!metaadat) return <h1>Betöltés...</h1>
 
     return (
         <Form noValidate validated={validated} onSubmit={(event) => kuldes(event)}>
             <Row className='mb-4'>
-                {generateInput(testget)}
+                {generateInput(metaadat)}
             </Row>
             <Button type="submit">
                 Küldés
@@ -91,7 +89,14 @@ function typeConverter(type) {
         case "nvarchar":
             return "text";
         case "float":
+        case "int":
+        case "smallint":
+        case "tinyint":
             return "number";
+        case "email":
+            return "email";
+        case "password":
+            return "password";
         default:
             return "text";
     }
@@ -101,8 +106,14 @@ function maxConverter(type){
     switch (type) {
         case "float":
             return 3.4028235e+38
-        case "int":
+        case "bigint":
             return Number.MAX_SAFE_INTEGER
+        case "int":
+            return Math.pow(2, 31) - 1
+        case "smallint":
+            return Math.pow(2, 15) - 1
+        case "tinyint":
+            return Math.pow(2, 8) - 1
         default:
             return null;
     }
@@ -112,8 +123,14 @@ function minConverter(type){
     switch (type) {
         case "float":
             return -3.4028235e+38
-        case "int":
-            return Number.MIN_SAFE_INTEGER
+            case "bigint":
+                return Number.MIN_SAFE_INTEGER
+            case "int":
+                return -Math.pow(2, 31) - 1
+            case "smallint":
+                return -Math.pow(2, 15) - 1
+            case "tinyint":
+                return 0
         default:
             return null;
     }
