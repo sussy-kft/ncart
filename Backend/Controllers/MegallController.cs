@@ -11,18 +11,28 @@ namespace Backend.Controllers
     {
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
+        [HttpGet("{vonal}/{allomas}")]
+        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
+
+        [HttpPut("{vonal}/{allomas}")]
+        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
+            dbSet: context.Megallok,
+            data: ujMegall,
+            updateRecord: (megall, ujMegall) => {
+                megall.ElozoMegallo = ujMegall.ElozoMegallo;
+                megall.HanyPerc = ujMegall.HanyPerc;
+            },
+            pk: (pk.vonal, pk.allomas)
+        );
 
         public override ActionResult Delete() => DeleteAll(context.Megallok);
 
         [HttpDelete("{vonal}/{allomas}")]
         public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
-    }
 
-    public partial class MegallController
-    {
-        [HttpGet("{vonal}/{allomas}")]
-        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Megallok");
     }
 
     public partial class MegallController
@@ -39,8 +49,7 @@ namespace Backend.Controllers
             {
                 List<Megall> megallok = new List<Megall>();
                 Megallok.ForEach(megall => {
-                    megallok.Add(new Megall
-                    {
+                    megallok.Add(new Megall {
                         Vonal = Vonal,
                         Allomas = megall.Allomas,
                         ElozoMegallo = megall.ElozoMegallo,
@@ -55,20 +64,6 @@ namespace Backend.Controllers
                 [Required] public int Allomas { get; set; }
             }
         }
-    }
-
-    public partial class MegallController
-    {
-        [HttpPut("{vonal}/{allomas}")]
-        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
-            dbSet: context.Megallok,
-            data: ujMegall,
-            updateRecord: (megall, ujMegall) => {
-                megall.ElozoMegallo = ujMegall.ElozoMegallo;
-                megall.HanyPerc = ujMegall.HanyPerc;
-            },
-            pk: (pk.vonal, pk.allomas)
-        );
     }
 
     public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
@@ -96,26 +91,55 @@ namespace Backend.Controllers
 
     public partial class MegallController
     {
-        [HttpGet("{vonalSzam}")]
-        public ActionResult GetOdaVissza(string vonalSzam)
+        [HttpGet("vonalmegallok/{vonalSzam}/{jarmuTipus}")]
+        public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus)
         {
-            IReadOnlyList<VonalMegallok> vonalMegallok = context.Vonalak
-                .Where(vonal => vonal.VonalSzam == vonalSzam)
-                .Select(vonal => new VonalMegallok {
-                    Vonal = vonal.Id,
-                    Megallok = vonal._Megallok.Select(megall => megall.Allomas).ToList()
-                })
-                .ToList()
+            IReadOnlyList<Vonal> vonalak = context
+                .Vonalak
+                .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
+                .ToList();
             ;
-            return vonalMegallok.Count > 0
-                ? Ok(vonalMegallok.Count == 1
-                    ? new OdaVissza {
-                        Oda = vonalMegallok[0]
+            int vonalakCount = vonalak.Count();
+            return vonalakCount > 0
+                ? ((Func<ActionResult>)(() => {
+                    List<VonalMegallok> vonalMegallok = [];
+                    try
+                    {
+                        vonalak.ToList().ForEach(vonal => {
+                            vonalMegallok.Add(new VonalMegallok() {
+                                Vonal = vonal,
+                                Megallok = ((Func<List<Megall>>)(() => {
+                                    IReadOnlyList<Megall> megallok = context
+                                        .Megallok
+                                        .Where(megall => megall.Vonal == vonal.Id)
+                                        .ToList()
+                                    ;
+                                    List<Megall> rendezettMegallok = [megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException()];
+                                    int legutobbiAllomasId = rendezettMegallok[0].Allomas;
+                                    while (legutobbiAllomasId != vonal.Vegall)
+                                    {
+                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
+                                        legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                    }
+                                    return rendezettMegallok;
+                                }))()
+                            });
+                        });
                     }
-                    : new OdaVissza {
-                        Oda = vonalMegallok[0],
-                        Vissza = vonalMegallok[1]
-                    })
+                    catch (InvalidOperationException e)
+                    {
+                        return Status500;
+                    }
+                    return Ok(vonalakCount == 1
+                        ? new OdaVissza() {
+                            Oda = vonalMegallok[0]
+                        }
+                        : new OdaVissza() {
+                            Oda = vonalMegallok[0],
+                            Vissza = vonalMegallok[1]
+                        }
+                    );
+                }))()
                 : NotFound()
             ;
         }
@@ -128,8 +152,8 @@ namespace Backend.Controllers
 
         class VonalMegallok
         {
-            public int Vonal { get; set; }
-            public List<int> Megallok { get; set; }
+            public Vonal Vonal { get; set; }
+            public List<Megall> Megallok { get; set; }
         }
     }
 }

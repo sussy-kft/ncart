@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Backend.DTOs;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
@@ -11,22 +12,13 @@ namespace Backend.Controllers
     {
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
 
+        [HttpGet("{id}")]
+        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
+
         public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
 
         public override ActionResult Delete() => DeleteAll(context.Kezelok);
 
-        [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
-    }
-
-    public partial class KezeloController
-    {
-        [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
-    }
-
-    public partial class KezeloController
-    {
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
             dbSet: context.Kezelok,
@@ -38,6 +30,16 @@ namespace Backend.Controllers
             },
             pk: id
         );
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Kezelok")
+            .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Email", _ => "email")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Jelszo", _ => "password")
+        ;
     }
 
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>

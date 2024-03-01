@@ -3,6 +3,7 @@ using Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240215143941_DeleteBehaviorRestrict")]
+    partial class DeleteBehaviorRestrict
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,10 +164,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("Vegall");
 
-                    b.ToTable("Vonalak", t =>
-                        {
-                            t.HasCheckConstraint("CK_Vonalak_KezdoAll_Es_Vegall_Nem_Egegyeznek", "KezdoAll <> Vegall");
-                        });
+                    b.ToTable("Vonalak");
                 });
 
             modelBuilder.Entity("Backend.Models.Inditas", b =>

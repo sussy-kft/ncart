@@ -22,7 +22,7 @@ namespace Backend.Migrations
                 column: "ElozoMegallo",
                 principalTable: "Allomasok",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict
+                onDelete: ReferentialAction.Restrict // Ezt elkúrtuk... Nem kicsit..., nagyon
             );
             migrationBuilder.Sql($@"
                 CREATE FUNCTION dbo.UgyanolyanJarmuTipus(@{nameof(Vonal.VonalSzam)} nvarchar(4)) RETURNS BIT AS
@@ -40,11 +40,11 @@ namespace Backend.Migrations
 	                RETURN @ret
                 END
             ");
-            migrationBuilder.Sql($@"
-                ALTER TABLE Vonalak
-                ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz
-                CHECK (dbo.UgyanolyanJarmuTipus({nameof(Vonal.VonalSzam)}) = 1)
-            ");
+            migrationBuilder.AddCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz",
+                table: "Vonalak",
+                sql: $"dbo.UgyanolyanJarmuTipus({nameof(Vonal.VonalSzam)}) = 1"
+            );
         }
 
         /// <inheritdoc />
@@ -57,6 +57,10 @@ namespace Backend.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Megallok_ElozoMegallo",
                 table: "Megallok"
+            );
+            migrationBuilder.DropCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.JarmuTipus)}_Ugyanaz",
+                table: "Vonalak"
             );
             migrationBuilder.Sql("DROP FUNCTION dbo.UgyanolyanJarmuTipus");
         }

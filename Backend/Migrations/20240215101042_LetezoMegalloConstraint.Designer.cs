@@ -3,6 +3,7 @@ using Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240215101042_LetezoMegalloConstraint")]
+    partial class LetezoMegalloConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,10 +164,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("Vegall");
 
-                    b.ToTable("Vonalak", t =>
-                        {
-                            t.HasCheckConstraint("CK_Vonalak_KezdoAll_Es_Vegall_Nem_Egegyeznek", "KezdoAll <> Vegall");
-                        });
+                    b.ToTable("Vonalak");
                 });
 
             modelBuilder.Entity("Backend.Models.Inditas", b =>
@@ -183,19 +183,19 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.Allomas", "_Allomas")
                         .WithMany("_Megallok")
                         .HasForeignKey("Allomas")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Allomas", "_ElozoMegallo")
                         .WithMany("_ElozoMegallok")
                         .HasForeignKey("ElozoMegallo")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Vonal", "_Vonal")
                         .WithMany("_Megallok")
                         .HasForeignKey("Vonal")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("_Allomas");
@@ -210,19 +210,19 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.JarmuTipus", "_JarmuTipus")
                         .WithMany("_Vonalak")
                         .HasForeignKey("JarmuTipus")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Allomas", "_KezdoAll")
                         .WithMany("_VonalakKezdoAll")
                         .HasForeignKey("KezdoAll")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Allomas", "_Vegall")
                         .WithMany("_VonalakVegall")
                         .HasForeignKey("Vegall")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("_JarmuTipus");
