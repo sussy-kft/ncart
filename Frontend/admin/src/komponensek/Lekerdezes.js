@@ -20,7 +20,7 @@ function Lekerdezes(props) {
   const xd= (row) => { 
     const tmp = [];
     getPKs().map((key, ix) => {
-      tmp[ix] = row[key.charAt(0).toLowerCase() + key.slice(1)];
+      tmp[ix] = row[key[0].toLowerCase() + key.slice(1)];
     })
     setId(tmp.join("/"));
     console.log(tmp);
