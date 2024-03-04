@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
