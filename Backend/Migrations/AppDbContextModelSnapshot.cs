@@ -163,8 +163,12 @@ namespace Backend.Migrations
 
                     b.ToTable("Vonalak", t =>
                         {
+                            t.HasTrigger("Uj_Vonal_Vegallomas");
+
                             t.HasCheckConstraint("CK_Vonalak_KezdoAll_Es_Vegall_Nem_Egegyeznek", "KezdoAll <> Vegall");
                         });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("Backend.Models.Inditas", b =>

@@ -7,17 +7,23 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController(AppDbContext context) : BatchPostableController<(int vonal, int allomas), Megall, MegallDTO, MegallController.MegallBatch>(context)
+    public partial class MegallController(AppDbContext context) : BatchPostableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context)
     {
+        public class PK
+        {
+            public int vonal { get; set; }
+            public int allomas { get; set; }
+        }
+
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
-        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+        public override ActionResult Get([FromRoute] PK pk) => Get(context.Megallok, pk.vonal, pk.allomas);
 
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
         [HttpPut("{vonal}/{allomas}")]
-        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
+        public override ActionResult Put([FromRoute] PK pk, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
@@ -30,7 +36,7 @@ namespace Backend.Controllers
         public override ActionResult Delete() => DeleteAll(context.Megallok);
 
         [HttpDelete("{vonal}/{allomas}")]
-        public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
+        public override ActionResult Delete([FromRoute] PK pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
 
         public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Megallok");
     }

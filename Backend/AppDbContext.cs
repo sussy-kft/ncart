@@ -16,7 +16,7 @@ namespace Backend
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DbConnection"));
+            optionsBuilder.UseSqlServer(config.GetConnectionString("DbConnection")).LogTo(message => System.Diagnostics.Debug.WriteLine(message));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,6 +75,13 @@ namespace Backend
             modelBuilder.Entity<Vonal>()
                 .ToTable(tableBuilder => {
                     tableBuilder.HasCheckConstraint($"CK_Vonalak_{nameof(Vonal.KezdoAll)}_Es_{nameof(Vonal.Vegall)}_Nem_Egegyeznek", $"{nameof(Vonal.KezdoAll)} <> {nameof(Vonal.Vegall)}");
+                    tableBuilder.HasTrigger("Uj_Vonal_Vegallomas");
+                })
+            ;
+            modelBuilder.Entity<Megall>()
+                .ToTable(tableBuilder => {
+                    tableBuilder.HasTrigger("Megallo_Beszur");
+                    tableBuilder.HasTrigger("Megallo_Torol");
                 })
             ;
         }
