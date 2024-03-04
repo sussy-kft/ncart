@@ -11,8 +11,10 @@ export const MetaadatProvider = ({ children }) => {
     const [metaadat, setMetaadat] = React.useState();
     
     React.useEffect(() => {
+        setMetaadat(undefined);
         if(url!=="")
             getAll(url+"/metadata", setMetaadat);
+        console.log(metaadat);
     }, [url]);
     
     const getPKs = () => {
@@ -33,8 +35,29 @@ export const MetaadatProvider = ({ children }) => {
         return tmp.length > 0 ? tmp : ["id"];
     }
 
+    const findKey = (key) => {
+        console.log(metaadat);
+        if(metaadat===undefined)
+            return null
+        function keyFinder(lista) {
+            for (const input of lista) {
+                console.log(input.columnName[0].toLowerCase() + input.columnName.slice(1) + " " + key);
+                if (Array.isArray(input.dataType)){
+                    const tmp = keyFinder(input.dataType);
+                    if(tmp !== undefined)
+                        return tmp
+                }
+                else if (input.columnName[0].toLowerCase() + input.columnName.slice(1) == key) {
+                    return input;
+                }
+            }
+        }
+
+        return keyFinder(metaadat);
+    }
+
     return (
-        <MetaadatContext.Provider value={{metaadat, getPKs, url, setUrl}}>
+        <MetaadatContext.Provider value={{metaadat, getPKs, findKey, url, setUrl}}>
             {children}  
         </MetaadatContext.Provider>
     );

@@ -9,7 +9,7 @@ export const AxiosContext = createContext();
 export const AxiosProvider = ({ children }) => {
     const [axiosId, setAxiosId] = React.useState(Math.random());
     const {addInfoPanel} = React.useContext(InfoPanelContext);
-    const baseUrl = "https://localhost:44339/";
+    const baseUrl = "https://localhost:7078/";
 
     const getAll = (url, callback) => {
         axios.get(baseUrl + url)
@@ -54,7 +54,9 @@ export const AxiosProvider = ({ children }) => {
     }
 
     const patch = (url, id, item) => {
-        axios.patch(baseUrl + url + "/" + id, item)
+        console.log(item);
+        console.log(baseUrl + url + "/" + id);
+        axios.put(baseUrl + url + "/" + id, item)
         .then(response => {
             console.log(response.data);
             console.log(response);
