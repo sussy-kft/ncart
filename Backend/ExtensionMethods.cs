@@ -28,6 +28,7 @@ namespace Backend
             List<IMetadataDTO<T>> overriddenMetadataDTOs = [];
             metadataDTOs.ToList().ForEach(metadataDTO => {
                 overriddenMetadataDTOs.Add(!predicate(metadataDTO) ? metadataDTO : new MetadataDTO<TDataType> {
+                    ColumnIndex = metadataDTO.ColumnIndex,
                     ColumnName = metadataDTO.ColumnName,
                     DataType = dataType(metadataDTO),
                     IsNullable = metadataDTO.IsNullable,

@@ -2,6 +2,7 @@
 {
     public class MetadataDTO<TDataType> : IMetadataDTO<TDataType>
     {
+        public long ColumnIndex { get; set; }
         public string ColumnName { get; set; }
         public TDataType DataType { get; set; }
         public bool IsNullable { get; set; }
