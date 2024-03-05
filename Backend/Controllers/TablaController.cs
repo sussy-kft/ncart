@@ -4,6 +4,8 @@ using Microsoft.Data.SqlClient;
 using Backend.ModelDTOBases;
 using Backend.Models;
 using Backend.DTOs;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 namespace Backend.Controllers
@@ -67,7 +69,7 @@ namespace Backend.Controllers
                 .Database
                 .SqlQueryRaw<Metadata>(
                     $@"
-                        SELECT *
+                        SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS [ColumnIndex], *
                         FROM dbo.Metadata(@{nameof(tableName)})
                     ",
                     new SqlParameter(nameof(tableName), tableName)
@@ -76,7 +78,7 @@ namespace Backend.Controllers
             ;
             List<IMetadataDTO<string>> metadataDTOs = new List<IMetadataDTO<string>>();
             metadatas
-                .Select(metadata => metadata.ColumnName)
+                .Select(group => group.ColumnName)
                 .Distinct()
                 .ToList()
                 .ForEach(columnName => {
@@ -100,6 +102,7 @@ namespace Backend.Controllers
                         : (false, null)
                     ;
                     metadataDTOs.Add(new MetadataDTO<string> {
+                        ColumnIndex = metadata.ColumnIndex,
                         ColumnName = metadata.ColumnName,
                         DataType = metadata.DataType,
                         IsNullable = metadata.IsNullable,
@@ -109,7 +112,7 @@ namespace Backend.Controllers
                     });
                 })
             ;
-            return metadataDTOs.AsQueryable();
+            return metadataDTOs.AsQueryable().OrderBy(metadataDTO => metadataDTO.ColumnIndex);
         }
 
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);

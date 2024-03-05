@@ -2,6 +2,7 @@
 {
     public interface IMetadataDTO<out TDataType>
     {
+        long ColumnIndex { get; }
         string ColumnName { get; }
         TDataType DataType { get; }
         bool IsNullable { get; }

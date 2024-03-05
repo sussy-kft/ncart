@@ -16,7 +16,10 @@ namespace Backend
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DbConnection")).LogTo(message => System.Diagnostics.Debug.WriteLine(message));
+            optionsBuilder
+                .UseSqlServer(config.GetConnectionString("DbConnection"))
+                //.LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+            ;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
