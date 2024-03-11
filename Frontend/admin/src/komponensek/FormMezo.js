@@ -75,6 +75,7 @@ function FormMezo(props) {
 
     return (
         <Form noValidate validated={validated} onSubmit={(event) => kuldes(event)}>
+            <h2>Új adat hozzáadása:</h2>
             <Row className='mb-4'>
                 {generateInput(metaadat)}
             </Row>

@@ -16,7 +16,6 @@ function Kezelok(props)
 
     useEffect(() => {
         setUrl(location.pathname.substring(1))
-        console.log(location.pathname);
     }, [location]);
 
     return (

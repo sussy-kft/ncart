@@ -54,7 +54,7 @@ function Sor(props) {
         : (
             <tr key={props.ix}>
                 {cellaElem(adatok)}
-                <td><Button key="primary" variant="primary" onClick={() => setIsAdatUpdate(true)}>Módosítás</Button></td>
+                {getPKs().length === Object.keys(adatok).length || <td><Button variant="primary" onClick={() => setIsAdatUpdate(true)}>Módosítás</Button></td>}
                 <td><Button key="danger" variant="danger" onClick={() =>  props.callback(adatok) }>Törlés</Button></td>
             </tr>
         )

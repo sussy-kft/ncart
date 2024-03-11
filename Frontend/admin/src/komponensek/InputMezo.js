@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Col } from 'react-bootstrap';
 import { useContext } from 'react';
 import { AxiosContext } from '../context/AxiosContext';
@@ -7,17 +7,11 @@ function InputMezo(props) {
     const { getAll } = useContext(AxiosContext);
 
     const [opciok, setOpciok] = React.useState([]);
-    //const [engedelyek, setEngedelyek] = React.useState([]);
 
-    useState(() => {
-        if (props.input?.references !== null && props.input?.references !== undefined)
+    useEffect(() => {
+        if (props.input?.references)
             getAll(props.input?.references, setOpciok);
     }, [props.input?.references]);
-
-    // useState(() => {
-    //     getAll("kezelok/engedelyek", setEngedelyek);
-    //     console.log(engedelyek);
-    // }, []);
 
     //console.log(props.input?.dataType.substring(props.input?.dataType.length - 2))
 
@@ -33,13 +27,13 @@ function InputMezo(props) {
             max={maxConverter(props.input?.dataType) ?? ""}
             readOnly={props.readOnly ?? false}
             onChange={props.handleChange}
-            {...props.input?.references === null ? null : { as: "select" }}>
+            {...props.input?.references ? { as: "select" } : null}>
             {
-                props.input === undefined || props.input?.references === null ?
-                    null :
-                    opciok.map((opcio, index) => {
-                        return <option key={index} value={opcio.id}>{opcio.id}</option>
-                    })
+                props.input?.references ?
+                opciok.map((opcio, index) => {
+                    return <option key={index} value={opcio.id}>{opcio.id}</option>
+                })
+                : null
             }
         </Form.Control>
     ) :

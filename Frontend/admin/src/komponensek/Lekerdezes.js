@@ -17,14 +17,13 @@ function Lekerdezes(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  
   const xd = (row) => {
     const tmp = [];
-    //console.log(getPKs());
     for (const [key, value] of Object.entries(getPKs())) {
       tmp.push(row[value[0].toLowerCase() + value.slice(1)]);
     }
     setId(tmp.join("/"));
-    //console.log(tmp);
     handleShow()
     console.log(row);
   }
@@ -33,7 +32,7 @@ function Lekerdezes(props) {
     setAdatok(getAll(url, setAdatok));
   }, [url, axiosId]);
 
-  if (!adatok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
+  if (!adatok || getPKs()===null) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
 
   return (
     <>
@@ -41,7 +40,7 @@ function Lekerdezes(props) {
         <thead>
           <tr>
             {fejlecElem(adatok[0] ?? [])}
-            {adatok[0] && <th>Módosítás</th>}
+            {adatok[0] && getPKs().length !== Object.keys(adatok[0]).length && <th>Módosítás</th>}
             {adatok[0] && <th>Törlés</th>}
           </tr>
         </thead>
@@ -57,14 +56,12 @@ function Lekerdezes(props) {
 }
 
 function fejlecElem(elem) {
-  const tmp = [];
-  tmp.push(Object.keys(elem).map(key => {
+  return Object.keys(elem).map(key => {
     if (typeof elem[key] !== "object")
       return <th key={key}>{key}</th>
     else
       return fejlecElem(elem[key]);
-  }))
-  return tmp;
+  });
 }
 
 export default Lekerdezes;
