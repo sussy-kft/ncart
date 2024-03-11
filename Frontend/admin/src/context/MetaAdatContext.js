@@ -36,12 +36,10 @@ export const MetaadatProvider = ({ children }) => {
     }
 
     const findKey = (key) => {
-        console.log(metaadat);
         if(metaadat===undefined)
             return null
         function keyFinder(lista) {
             for (const input of lista) {
-                console.log(input.columnName[0].toLowerCase() + input.columnName.slice(1) + " " + key);
                 if (Array.isArray(input.dataType)){
                     const tmp = keyFinder(input.dataType);
                     if(tmp !== undefined)

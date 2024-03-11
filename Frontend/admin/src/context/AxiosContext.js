@@ -10,13 +10,17 @@ export const AxiosProvider = ({ children }) => {
     const [axiosId, setAxiosId] = React.useState(Math.random());
     const {addInfoPanel} = React.useContext(InfoPanelContext);
     const baseUrl = "https://localhost:7078/";
+    const [errorState, setErrorState] = React.useState(false);
 
     const getAll = (url, callback) => {
         axios.get(baseUrl + url)
         .then(response => {
+            setErrorState(false);
             callback(response.data);
         })
         .catch(error => {
+            if(error.code === "ERR_NETWORK")
+                setErrorState(true);
             addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
         });
     }
@@ -70,7 +74,7 @@ export const AxiosProvider = ({ children }) => {
     }
     
     return (
-        <AxiosContext.Provider value={{axiosId, getAll, destroy, post, patch}}>
+        <AxiosContext.Provider value={{axiosId, errorState, getAll, destroy, post, patch}}>
             {children}  
         </AxiosContext.Provider>
     );

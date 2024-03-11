@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import InputMezo from './InputMezo';
 import { useContext } from 'react';
@@ -10,7 +10,8 @@ function Sor(props) {
     const { url, findKey, getPKs } = useContext(MetaadatContext);
     
     const [isAdatUpdate, setIsAdatUpdate] = React.useState(false);
-    const [adatok, setAdatok] = React.useState(props.row);
+    const [adatok, setAdatok] = React.useState(structuredClone(props.row));
+    const regiAdatok = structuredClone(props.row);
 
     const handleChange = (event) => {
         function bruh(lista) {
@@ -22,7 +23,7 @@ function Sor(props) {
             }
         }
         bruh(adatok);
-        console.log(adatok);
+        //console.log(adatok);
     }
 
     const getPKadat = () => {
@@ -33,20 +34,28 @@ function Sor(props) {
             return tmp.join("/");
         }
 
+    const reset = () => {
+        setAdatok(regiAdatok);
+        setIsAdatUpdate(false);
+    }
+
+    // // useEffect(() => {
+    // //     console.log(props.row);
+    // // }, [props.row]);
 
     return isAdatUpdate
         ? (
             <tr key={props.ix}>
                 {inputCella(adatok)}
-                <td><Button variant="primary" onClick={() => patch(url, getPKadat() ,adatok )}>Küldés</Button></td>
-                <td><Button variant="danger" onClick={() => setIsAdatUpdate(false)}>Mégse</Button></td>
+                <td><Button variant="success" onClick={() => patch(url, getPKadat() ,adatok )}>Küldés</Button></td>
+                <td><Button variant="danger" onClick={reset}>Mégse</Button></td>
             </tr>
         )
         : (
             <tr key={props.ix}>
                 {cellaElem(adatok)}
                 <td><Button key="primary" variant="primary" onClick={() => setIsAdatUpdate(true)}>Módosítás</Button></td>
-                <td><Button key="danger" variant="danger" onClick={() => { props.callback(adatok) }}>Törlés</Button></td>
+                <td><Button key="danger" variant="danger" onClick={() =>  props.callback(adatok) }>Törlés</Button></td>
             </tr>
         )
 
@@ -67,10 +76,11 @@ function inputCella(elem) {
     tmp.push(Object.keys(elem).map(key => {
         
         if (key === "id"){
-            return <td><InputMezo key={key} input={props.row} readOnly={true} value={elem[key]}/></td>
+            console.log(elem, key, elem[key]);
+            return <td><p>{elem[key]}</p></td>
         }
         else if (typeof elem[key] !== "object"){
-            console.log(findKey(key));
+            //console.log(findKey(key));
             return <td><InputMezo key={key} input={findKey(key)} value={elem[key]} handleChange={handleChange} /></td>
         }
         else

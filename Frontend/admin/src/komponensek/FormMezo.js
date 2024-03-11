@@ -16,13 +16,21 @@ function FormMezo(props) {
 
     const handleChange = (event) => {
         const name = event.target.name;
+        const checked = event.target.checked;
         const value = event.target.value;
-        setAdatok(values => ({ ...values, [name]: value }))
+        if (checked === "checkbox") {
+            const engedelyek = adatok[name] ?? []
+
+            if (checked) engedelyek.push(value)
+            else engedelyek.splice(engedelyek.indexOf(value), 1)
+            setAdatok(values => ({ ...values, [name]: engedelyek }))
+        }
+        else setAdatok(values => ({ ...values, [name]: value }))
     }
 
     const generateInput = (lista) => {
         let tmp = [];
-        if(lista===undefined)
+        if (lista === undefined)
             return tmp
         lista.map((input, ix) => {
             if (Array.isArray(input.dataType))
@@ -31,9 +39,9 @@ function FormMezo(props) {
                 tmp.push(
                     <Form.Group key={input.columnName} as={Col} md="4">
                         <Form.Label>{input.columnName + ": "}
-                        <InputMezo input={input} handleChange={handleChange}/>
+                            <InputMezo input={input} handleChange={handleChange} />
                         </Form.Label>
-                        <Form.Control.Feedback type="invalid"/>
+                        <Form.Control.Feedback type="invalid" />
                     </Form.Group>
                 );
             }
@@ -43,7 +51,7 @@ function FormMezo(props) {
 
     const kuldes = (event) => {
         const form = event.currentTarget;
-        event.preventDefault();        
+        event.preventDefault();
         if (form.checkValidity()) {
             event.stopPropagation();
             post(url, adatokGenerator(metaadat));

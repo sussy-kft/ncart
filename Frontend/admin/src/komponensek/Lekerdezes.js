@@ -8,7 +8,7 @@ import Sor from "./Sor";
 
 function Lekerdezes(props) {
 
-  const { axiosId, getAll } = useContext(AxiosContext);
+  const { axiosId, errorState, getAll } = useContext(AxiosContext);
   const { url, getPKs } = useContext(MetaadatContext);
 
   const [show, setShow] = useState(false);
@@ -19,12 +19,12 @@ function Lekerdezes(props) {
   const handleShow = () => setShow(true);
   const xd = (row) => {
     const tmp = [];
-    console.log(getPKs());
+    //console.log(getPKs());
     for (const [key, value] of Object.entries(getPKs())) {
       tmp.push(row[value[0].toLowerCase() + value.slice(1)]);
     }
     setId(tmp.join("/"));
-    console.log(tmp);
+    //console.log(tmp);
     handleShow()
     console.log(row);
   }
@@ -33,7 +33,7 @@ function Lekerdezes(props) {
     setAdatok(getAll(url, setAdatok));
   }, [url, axiosId]);
 
-  if (!adatok) return <h1>Betöltés...</h1>;
+  if (!adatok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
 
   return (
     <>
