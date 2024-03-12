@@ -5,58 +5,49 @@ import { AxiosContext } from './AxiosContext';
 export const MetaadatContext = createContext();
 
 export const MetaadatProvider = ({ children }) => {
-    const {getAll} = useContext(AxiosContext)
+    const { getAll } = useContext(AxiosContext)
 
     const [url, setUrl] = React.useState("");
     const [metaadat, setMetaadat] = React.useState();
-    
+
     React.useEffect(() => {
         setMetaadat(undefined);
-        if(url!=="")
-            getAll(url+"/metadata", setMetaadat);
-        console.log(metaadat);
+        if (url)
+            getAll(url + "/metadata", setMetaadat);
     }, [url]);
-    
+
     const getPKs = () => {
-        if(metaadat===undefined)
-        return null
-        function PKKereses(lista) {
-            let tmp=[];
-            lista.map((input)=> {
+        if (!metaadat)
+            return null
+        const PKKereses = lista => {
+            return lista.flatMap( input => {
                 if (Array.isArray(input.dataType))
-                    tmp = tmp.concat(PKKereses(input.dataType));
-                else if (input.isPartOfPK)
-                    tmp.push(input.columnName);
+                    return PKKereses(input.dataType);
+                else if (input.isPartOfPK )
+                    return [input.columnName];
+                return [];
             });
-            return tmp;
         }
 
         let tmp = PKKereses(metaadat);
         return tmp.length > 0 ? tmp : ["id"];
     }
 
-    const findKey = (key) => {
-        if(metaadat===undefined)
+    const findKey = (key, lista = metaadat) => {
+        if (!lista)
             return null
-        function keyFinder(lista) {
             for (const input of lista) {
-                if (Array.isArray(input.dataType)){
-                    const tmp = keyFinder(input.dataType);
-                    if(tmp !== undefined)
-                        return tmp
-                }
-                else if (input.columnName[0].toLowerCase() + input.columnName.slice(1) == key) {
+                if (Array.isArray(input.dataType))
+                    return  findKey(key, input.dataType)
+                else if (input.columnName.toLowerCase() === key.toLowerCase())
                     return input;
-                }
             }
-        }
-
-        return keyFinder(metaadat);
+        return null
     }
 
     return (
-        <MetaadatContext.Provider value={{metaadat, getPKs, findKey, url, setUrl}}>
-            {children}  
+        <MetaadatContext.Provider value={{ metaadat, getPKs, findKey, url, setUrl }}>
+            {children}
         </MetaadatContext.Provider>
     );
 }

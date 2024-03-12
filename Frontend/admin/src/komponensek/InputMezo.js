@@ -25,7 +25,6 @@ function InputMezo(props) {
             step={"any"}
             min={minConverter(props.input?.dataType) ?? ""}
             max={maxConverter(props.input?.dataType) ?? ""}
-            readOnly={props.readOnly ?? false}
             onChange={props.handleChange}
             {...props.input?.references ? { as: "select" } : null}>
             {
@@ -36,8 +35,8 @@ function InputMezo(props) {
                 : null
             }
         </Form.Control>
-    ) :
-        (
+    ) 
+    :  (
             opciok.map((opcio, index) => {
                 return <Form.Check
                     name={props.input?.columnName}

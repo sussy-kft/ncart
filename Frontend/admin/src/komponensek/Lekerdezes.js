@@ -19,12 +19,9 @@ function Lekerdezes(props) {
   const handleShow = () => setShow(true);
   
   const xd = (row) => {
-    const tmp = [];
-    for (const [key, value] of Object.entries(getPKs())) {
-      tmp.push(row[value[0].toLowerCase() + value.slice(1)]);
-    }
-    setId(tmp.join("/"));
-    handleShow()
+    const id = getPKs().map(value => row[value[0].toLowerCase() + value.slice(1)]).join("/");
+    setId(id);
+    handleShow();
     console.log(row);
   }
 
@@ -32,7 +29,7 @@ function Lekerdezes(props) {
     setAdatok(getAll(url, setAdatok));
   }, [url, axiosId]);
 
-  if (!adatok || getPKs()===null) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
+  if (!adatok || !getPKs()) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
 
   return (
     <>
@@ -56,12 +53,11 @@ function Lekerdezes(props) {
 }
 
 function fejlecElem(elem) {
-  return Object.keys(elem).map(key => {
-    if (typeof elem[key] !== "object")
-      return <th key={key}>{key}</th>
-    else
-      return fejlecElem(elem[key]);
-  });
+  return Object.keys(elem).map(key => 
+    typeof elem[key] !== "object" 
+    ? <th key={key}>{key}</th> 
+    : fejlecElem(elem[key])
+  )
 }
 
 export default Lekerdezes;

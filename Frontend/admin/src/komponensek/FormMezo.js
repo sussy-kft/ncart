@@ -15,12 +15,10 @@ function FormMezo(props) {
     const [adatok, setAdatok] = React.useState({});
 
     const handleChange = (event) => {
-        const name = event.target.name;
-        const checked = event.target.checked;
-        const value = event.target.value;
-        if (checked === "checkbox") {
-            const engedelyek = adatok[name] ?? []
+        const { name, type, checked, value } = event.target;
 
+        if (type === "checkbox") {
+            const engedelyek = adatok[name] ?? []
             if (checked) engedelyek.push(value)
             else engedelyek.splice(engedelyek.indexOf(value), 1)
             setAdatok(values => ({ ...values, [name]: engedelyek }))
@@ -29,14 +27,10 @@ function FormMezo(props) {
     }
 
     const generateInput = (lista) => {
-        let tmp = [];
-        if (lista === undefined)
-            return tmp
-        lista.map((input, ix) => {
+        return lista?.flatMap((input) => {
             if (Array.isArray(input.dataType))
-                tmp = tmp.concat(generateInput(input.dataType));
-            else {
-                tmp.push(
+                return generateInput(input.dataType)
+            else return(
                     <Form.Group key={input.columnName} as={Col} md="4">
                         <Form.Label>{input.columnName + ": "}
                             <InputMezo input={input} handleChange={handleChange} />
@@ -44,9 +38,7 @@ function FormMezo(props) {
                         <Form.Control.Feedback type="invalid" />
                     </Form.Group>
                 );
-            }
-        });
-        return tmp;
+        }) || []
     }
 
     const kuldes = (event) => {
@@ -60,15 +52,13 @@ function FormMezo(props) {
     }
 
     function adatokGenerator(mintaAdat) {
-        let tmp = {};
-        mintaAdat.map((kulcs) => {
+        return mintaAdat.reduce((tmp, kulcs) => {
             if (Array.isArray(kulcs.dataType))
                 tmp[kulcs.columnName] = adatokGenerator(kulcs.dataType);
-            else {
+            else
                 tmp[kulcs.columnName] = adatok[kulcs.columnName];
-            }
-        });
-        return tmp;
+            return tmp;
+        }, {});
     }
 
     if (!metaadat) return <h1>Betöltés...</h1>

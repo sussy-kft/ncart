@@ -8,46 +8,38 @@ import { MetaadatContext } from '../context/MetaadatContext';
 function Sor(props) {
     const { patch } = useContext(AxiosContext);
     const { url, findKey, getPKs } = useContext(MetaadatContext);
-    
+
     const [isAdatUpdate, setIsAdatUpdate] = React.useState(false);
     const [adatok, setAdatok] = React.useState(structuredClone(props.row));
     const regiAdatok = structuredClone(props.row);
 
-    const handleChange = (event) => {
-        function bruh(lista) {
-            for (const key in lista) {
-                if (typeof lista[key] === "object")
-                    bruh(lista[key]);
-                else if (key === event.target.name[0].toLowerCase() + event.target.name.slice(1))
-                    lista[key] = event.target.value;
-            }
-        }
-        bruh(adatok);
-        //console.log(adatok);
+    const handleChange = ({ target: { name, value } }) => {
+        (function jelenAdatok(lista) {
+            Object.entries(lista).forEach(([key, val]) => {
+                if (typeof val === "object")
+                    jelenAdatok(val);
+                else if (key === name[0].toLowerCase() + name.slice(1))
+                    lista[key] = value;
+            })
+        })(adatok);
     }
 
     const getPKadat = () => {
-            let tmp = [];
-            for (const [key, value] of Object.entries(getPKs())){
-                tmp.push(adatok[value[0].toLowerCase() + value.slice(1)]);
-            }
-            return tmp.join("/");
-        }
+        return getPKs().map(value =>
+            adatok[value[0].toLowerCase() + value.slice(1)]
+        ).join("/");
+    }
 
     const reset = () => {
         setAdatok(regiAdatok);
         setIsAdatUpdate(false);
     }
 
-    // // useEffect(() => {
-    // //     console.log(props.row);
-    // // }, [props.row]);
-
     return isAdatUpdate
         ? (
             <tr key={props.ix}>
                 {inputCella(adatok)}
-                <td><Button variant="success" onClick={() => patch(url, getPKadat() ,adatok )}>Küldés</Button></td>
+                <td><Button variant="success" onClick={() => patch(url, getPKadat(), adatok)}>Küldés</Button></td>
                 <td><Button variant="danger" onClick={reset}>Mégse</Button></td>
             </tr>
         )
@@ -55,39 +47,27 @@ function Sor(props) {
             <tr key={props.ix}>
                 {cellaElem(adatok)}
                 {getPKs().length === Object.keys(adatok).length || <td><Button variant="primary" onClick={() => setIsAdatUpdate(true)}>Módosítás</Button></td>}
-                <td><Button key="danger" variant="danger" onClick={() =>  props.callback(adatok) }>Törlés</Button></td>
+                <td><Button key="danger" variant="danger" onClick={() => props.callback(adatok)}>Törlés</Button></td>
             </tr>
         )
 
 
-function cellaElem(elem) {
-    const tmp = [];
-    tmp.push(Object.keys(elem).map(key => {
-        if (typeof elem[key] !== "object")
-            return <td key={key}>{elem[key]}</td>
-        else
-            return cellaElem(elem[key])
-    }))
-    return tmp;
-}
+    function cellaElem(elem) {
+        return Object.entries(elem).map(([key, value]) =>
+            typeof value !== "object" ? <td key={key}>{value}</td> : cellaElem(value)
+        )
+    }
 
-function inputCella(elem) {
-    const tmp = [];
-    tmp.push(Object.keys(elem).map(key => {
-        
-        if (key === "id"){
-            console.log(elem, key, elem[key]);
-            return <td><p>{elem[key]}</p></td>
-        }
-        else if (typeof elem[key] !== "object"){
-            //console.log(findKey(key));
-            return <td><InputMezo key={key} input={findKey(key)} value={elem[key]} handleChange={handleChange} /></td>
-        }
-        else
-            return inputCella(elem[key])
-    }))
-    return tmp;
-}
+    function inputCella(elem) {
+        return Object.entries(elem).map(([key, value]) => {
+            console.log(findKey(key));
+            if (getPKs().find(pk => pk === key))
+                return <td><p>{value}</p></td>
+            if (typeof value !== "object")
+                return <td><InputMezo key={key} input={findKey(key)} value={value} handleChange={handleChange} /></td>
+            return inputCella(value)
+        })
+    }
 
 }
 export default Sor;
