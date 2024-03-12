@@ -9,5 +9,11 @@
         public bool IsPartOfPK { get; set; }
         public string? References { get; set; }
         public int? CharacterMaximumLength { get; set; }
+        public bool IsHidden { get; set; }
+
+        public void SetIsHiddenTrue()
+        {
+            IsHidden = true;
+        }
     }
 }

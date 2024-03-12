@@ -9,5 +9,8 @@
         bool IsPartOfPK { get; }
         string? References { get; }
         int? CharacterMaximumLength { get; }
+        bool IsHidden { get; }
+
+        void SetIsHiddenTrue();
     }
 }

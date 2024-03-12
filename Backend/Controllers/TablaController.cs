@@ -4,8 +4,6 @@ using Microsoft.Data.SqlClient;
 using Backend.ModelDTOBases;
 using Backend.Models;
 using Backend.DTOs;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 namespace Backend.Controllers
@@ -19,7 +17,7 @@ namespace Backend.Controllers
 
         public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
-        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
+        protected IQueryable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
         protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
 
@@ -101,7 +99,8 @@ namespace Backend.Controllers
                         )
                         : (false, null)
                     ;
-                    metadataDTOs.Add(new MetadataDTO<string> {
+                    metadataDTOs.Add(new MetadataDTO<string>
+                    {
                         ColumnIndex = metadata.ColumnIndex,
                         ColumnName = metadata.ColumnName,
                         DataType = metadata.DataType,
@@ -109,6 +108,7 @@ namespace Backend.Controllers
                         IsPartOfPK = constraints.isPartOfPk,
                         References = constraints.references,
                         CharacterMaximumLength = metadata.CharacterMaximumLength,
+                        IsHidden = false
                     });
                 })
             ;
@@ -139,7 +139,7 @@ namespace Backend.Controllers
             }
         }
 
-        static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        static IQueryable<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
 
         ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
 
@@ -161,7 +161,7 @@ namespace Backend.Controllers
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {
-            if (value != null)
+            if (value is not null)
             {
                 action(value);
             }
@@ -169,7 +169,7 @@ namespace Backend.Controllers
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : struct
         {
-            if (value != null)
+            if (value is not null)
             {
                 action((T)value);
             }
