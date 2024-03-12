@@ -9,7 +9,9 @@ namespace Backend.Controllers
     [Route("kezelok")]
     public partial class KezeloController(AppDbContext context) : TablaController<int, Kezelo, KezeloDTO>(context)
     {
-        public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
+        public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok).ForEach(kezeloDTO => {
+            kezeloDTO.Jelszo = "";
+        });
 
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
@@ -35,6 +37,7 @@ namespace Backend.Controllers
 
         public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Kezelok")
             .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
+            .OverrideSetIsHiddenTrue(metadataDTO => metadataDTO.ColumnName == "Jelszo")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Email", _ => "email")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Jelszo", _ => "password")
