@@ -60,7 +60,7 @@ export const AxiosProvider = ({ children }) => {
     const patch = (url, id, item) => {
         console.log(item);
         console.log(baseUrl + url + "/" + id);
-        axios.put(baseUrl + url + "/" + id, item)
+        axios.patch(baseUrl + url + "/" + id, item)
         .then(response => {
             console.log(response.data);
             console.log(response);
