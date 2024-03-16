@@ -7,21 +7,24 @@ import { MetaadatContext } from '../context/MetaadatContext';
 
 function Sor(props) {
     const { patch } = useContext(AxiosContext);
-    const { url, findKey, getPKs } = useContext(MetaadatContext);
+    const { url, findKey, getPKs, kulsoAdatok } = useContext(MetaadatContext);
 
     const [isAdatUpdate, setIsAdatUpdate] = React.useState(false);
     const [adatok, setAdatok] = React.useState(structuredClone(props.row));
     const regiAdatok = structuredClone(props.row);
 
-    const handleChange = ({ target: { name, value } }) => {
-        (function jelenAdatok(lista) {
-            Object.entries(lista).forEach(([key, val]) => {
-                if (typeof val === "object")
-                    jelenAdatok(val);
-                else if (key === name[0].toLowerCase() + name.slice(1))
-                    lista[key] = value;
-            })
-        })(adatok);
+    const handleChange = (event) => {
+        const { name, type, checked, value } = event.target;
+        
+        if (type === "checkbox") {
+            console.log();
+            const engedelyek = adatok[name[0].toLowerCase() + name.slice(1)] ?? []
+            if (checked) engedelyek.push(value)
+            else engedelyek.splice(engedelyek.indexOf(value), 1)
+            setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: engedelyek }))
+        }
+        else setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
+        console.log(adatok);
     }
 
     const getPKadat = () => {
@@ -53,14 +56,28 @@ function Sor(props) {
 
 
     function cellaElem(elem) {
-        return Object.entries(elem).map(([key, value]) =>
-            typeof value !== "object" ? <td key={key}>{value}</td> : cellaElem(value)
-        )
+        return Object.entries(elem).map(([key, value]) =>{
+            if (findKey(key)?.isHidden)
+                return null;
+            if (findKey(key)?.references)
+                return kulsoAdatok[findKey(key).references].map((opcio, index) => {
+                    return <td key={index}>{value.find(x => x==opcio)?"✔️":"❌"}</td>
+                })
+            if (typeof value !== "object")
+                return <td key={key}>{value}</td>
+            return cellaElem(value)
+        })
     }
 
     function inputCella(elem) {
         return Object.entries(elem).map(([key, value]) => {
-            console.log(findKey(key));
+            //console.log(findKey(key));
+            if (findKey(key)?.isHidden)
+                return null;
+            if (findKey(key)?.references)
+                return kulsoAdatok[findKey(key).references].map((opcio, index) => {
+                    return <td key={index}><InputMezo key={index} input={findKey(key)} value={opcio} handleChange={handleChange} checked={value.find(x => x==opcio)} pool={[opcio]}/></td>
+                })
             if (getPKs().find(pk => pk === key))
                 return <td><p>{value}</p></td>
             if (typeof value !== "object")

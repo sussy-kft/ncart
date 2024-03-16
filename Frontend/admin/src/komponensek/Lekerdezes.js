@@ -9,7 +9,7 @@ import Sor from "./Sor";
 function Lekerdezes(props) {
 
   const { axiosId, errorState, getAll } = useContext(AxiosContext);
-  const { url, getPKs } = useContext(MetaadatContext);
+  const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
 
   const [show, setShow] = useState(false);
   const [id, setId] = useState(-1);
@@ -29,7 +29,7 @@ function Lekerdezes(props) {
     setAdatok(getAll(url, setAdatok));
   }, [url, axiosId]);
 
-  if (!adatok || !getPKs()) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
+  if (!adatok || !getPKs() || !kulsoAdatok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 
 
   return (
     <>
@@ -50,14 +50,23 @@ function Lekerdezes(props) {
       <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} id={id} />
     </>
   );
+
+  function fejlecElem(elem) {
+    return Object.keys(elem).map(key => {
+      // console.log(findKey(key));
+      // console.log(kulsoAdatok);
+      if(Array.isArray(elem[key]))
+        return kulsoAdatok[findKey(key).references].map((opcio, index) => {
+          return <th key={index}>{opcio}</th>
+        })
+      if (findKey(key)?.isHidden)
+        return null;
+      if(typeof elem[key] !== "object")
+        return <th key={key}>{key}</th> 
+      return fejlecElem(elem[key])
+    })
+  }
 }
 
-function fejlecElem(elem) {
-  return Object.keys(elem).map(key => 
-    typeof elem[key] !== "object" 
-    ? <th key={key}>{key}</th> 
-    : fejlecElem(elem[key])
-  )
-}
 
 export default Lekerdezes;

@@ -37,13 +37,14 @@ function InputMezo(props) {
         </Form.Control>
     ) 
     :  (
-            opciok.map((opcio, index) => {
+            (props.pool?props.pool:opciok).map((opcio, index) => {
                 return <Form.Check
                     name={props.input?.columnName}
                     key={index}
                     value={opcio}
                     type={"checkbox"}
                     label={opcio}
+                    defaultChecked={props.checked}
                     onChange={props.handleChange}
                 />
                 //<option key={index} value={opcio}>{opcio}</option>

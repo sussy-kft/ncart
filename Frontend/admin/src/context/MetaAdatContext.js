@@ -9,6 +9,7 @@ export const MetaadatProvider = ({ children }) => {
 
     const [url, setUrl] = React.useState("");
     const [metaadat, setMetaadat] = React.useState();
+    const [kulsoAdatok, setKulsoAdatok] = React.useState();
 
     React.useEffect(() => {
         setMetaadat(undefined);
@@ -16,6 +17,38 @@ export const MetaadatProvider = ({ children }) => {
             getAll(url + "/metadata", setMetaadat);
     }, [url]);
 
+    React.useEffect(() => {
+        async function a(metaadat) {
+            setKulsoAdatok(undefined);
+            if (metaadat) {
+                let kulsoAdatok2 = {};
+                let valaszok = [];
+
+                for (const input of metaadat) {
+                    if (Array.isArray(input.dataType)) {
+                        a(input.dataType);
+                    }
+                    else if (input.references) {
+                        if (!kulsoAdatok2[input.references]) {
+                            valaszok.push( new Promise((resolve) => {
+                                getAll(input.references, (adat) => {
+                                    kulsoAdatok2[input.references] = adat;
+                                    resolve();
+                                });
+                            }))
+                        }
+                    }
+                }
+                await Promise.all(valaszok);
+                console.log("adsfs");
+                console.log(metaadat);
+                console.log(kulsoAdatok2);
+                setKulsoAdatok(kulsoAdatok2);
+            }
+        }
+        a(metaadat);
+    }, [metaadat]);
+    console.log(metaadat, kulsoAdatok);
     const getPKs = () => {
         if (!metaadat)
             return null
@@ -46,7 +79,7 @@ export const MetaadatProvider = ({ children }) => {
     }
 
     return (
-        <MetaadatContext.Provider value={{ metaadat, getPKs, findKey, url, setUrl }}>
+        <MetaadatContext.Provider value={{ metaadat, kulsoAdatok, getPKs, findKey, url, setUrl }}>
             {children}
         </MetaadatContext.Provider>
     );
