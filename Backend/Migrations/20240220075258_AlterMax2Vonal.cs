@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 #nullable disable
 
