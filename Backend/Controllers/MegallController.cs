@@ -103,7 +103,7 @@ namespace Backend.Controllers
             IReadOnlyList<Vonal> vonalak = context
                 .Vonalak
                 .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
-                .ToList();
+                .ToList()
             ;
             int vonalakCount = vonalak.Count();
             return vonalakCount > 0
@@ -114,7 +114,7 @@ namespace Backend.Controllers
                         vonalak.ToList().ForEach(vonal => {
                             vonalMegallok.Add(new VonalMegallok() {
                                 Vonal = vonal,
-                                Megallok = ((Func<List<Megall>>)(() => {
+                                Megallok = ((Func<List<MegallDTO>>)(() => {
                                     IReadOnlyList<Megall> megallok = context
                                         .Megallok
                                         .Where(megall => megall.Vonal == vonal.Id)
@@ -127,7 +127,7 @@ namespace Backend.Controllers
                                         rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
                                         legutobbiAllomasId = rendezettMegallok[^1].Allomas;
                                     }
-                                    return rendezettMegallok;
+                                    return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
                                 }))()
                             });
                         });
@@ -159,7 +159,7 @@ namespace Backend.Controllers
         class VonalMegallok
         {
             public Vonal Vonal { get; set; }
-            public List<Megall> Megallok { get; set; }
+            public List<MegallDTO> Megallok { get; set; }
         }
     }
 }
