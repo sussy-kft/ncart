@@ -113,7 +113,7 @@ namespace Backend.Controllers
                     {
                         vonalak.ToList().ForEach(vonal => {
                             vonalMegallok.Add(new VonalMegallok() {
-                                Vonal = vonal,
+                                Vonal = vonal.ConvertType(),
                                 Megallok = ((Func<List<MegallDTO>>)(() => {
                                     IReadOnlyList<Megall> megallok = context
                                         .Megallok
@@ -158,7 +158,7 @@ namespace Backend.Controllers
 
         class VonalMegallok
         {
-            public Vonal Vonal { get; set; }
+            public VonalDTO Vonal { get; set; }
             public List<MegallDTO> Megallok { get; set; }
         }
     }
