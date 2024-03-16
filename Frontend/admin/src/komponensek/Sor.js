@@ -59,7 +59,7 @@ function Sor(props) {
         return Object.entries(elem).map(([key, value]) =>{
             if (findKey(key)?.isHidden)
                 return null;
-            if (findKey(key)?.references)
+            if (findKey(key)?.references && findKey(key)?.references.split("/").length > 1)
                 return kulsoAdatok[findKey(key).references].map((opcio, index) => {
                     return <td key={index}>{value.find(x => x==opcio)?"✔️":"❌"}</td>
                 })

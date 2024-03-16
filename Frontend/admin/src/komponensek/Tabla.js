@@ -6,7 +6,7 @@ import { AxiosContext } from "../context/AxiosContext";
 import { MetaadatContext } from "../context/MetaadatContext";
 import Sor from "./Sor";
 
-function Lekerdezes(props) {
+function Tabla(props) {
 
   const { axiosId, errorState, getAll } = useContext(AxiosContext);
   const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
@@ -69,4 +69,4 @@ function Lekerdezes(props) {
 }
 
 
-export default Lekerdezes;
+export default Tabla;

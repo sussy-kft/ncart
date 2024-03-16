@@ -18,6 +18,7 @@ export const MetaadatProvider = ({ children }) => {
     }, [url]);
 
     React.useEffect(() => {
+        //kys 
         async function a(metaadat) {
             setKulsoAdatok(undefined);
             if (metaadat) {
@@ -40,15 +41,15 @@ export const MetaadatProvider = ({ children }) => {
                     }
                 }
                 await Promise.all(valaszok);
-                console.log("adsfs");
-                console.log(metaadat);
-                console.log(kulsoAdatok2);
+                // console.log("adsfs");
+                // console.log(metaadat);
+                // console.log(kulsoAdatok2);
                 setKulsoAdatok(kulsoAdatok2);
             }
         }
         a(metaadat);
     }, [metaadat]);
-    console.log(metaadat, kulsoAdatok);
+    // console.log(metaadat, kulsoAdatok);
     const getPKs = () => {
         if (!metaadat)
             return null
