@@ -52,6 +52,7 @@ namespace Backend
                 .HasMany(vonal => vonal._Inditasok)
                 .WithOne(inditas => inditas._Vonal)
                 .HasForeignKey(inditas => inditas.Vonal)
+                .OnDelete(DeleteBehavior.Cascade)
             ;
             modelBuilder.Entity<Vonal>()
                 .HasMany(vonal => vonal._Megallok)
