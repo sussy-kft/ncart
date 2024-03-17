@@ -12,6 +12,24 @@ function InputSelects(props){
     const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
 
     const [adatok, setAdatok] = React.useState(null);
+    const [opciok, setOpciok] = React.useState(null);
+
+    const handleChange = (event) => {
+       const { name, value } = event.target;
+        console.log(name, value);
+       setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
+    }
+
+    React.useEffect(() => {
+        console.log(adatok);
+        if(adatok){
+            let xd= []
+            props.pool.map(input => {
+                xd.push(adatok[input.key])
+            })
+            getAll(url+"/vonalmegallok/"+xd.join("/"), props.handleChange);
+        }
+    }, [adatok]);
 
     React.useEffect(() => {
         const fetchAll = async () => {
@@ -25,23 +43,23 @@ function InputSelects(props){
     
             let results = await Promise.all(promises);
             let tmp = Object.assign({}, ...results);
-            setAdatok(tmp);
+            setOpciok(tmp);
         };
     
         fetchAll();
     }, [url, axiosId]);
 
-    if (!kulsoAdatok && !adatok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />;
+    if (!kulsoAdatok && !opciok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />;
 
     // console.log(props.pool)
     return (
         props.pool.map((input, index) => {
             // console.error(input);
-            // console.log(adatok[input.url]);
+            console.log(input.value);
             return (
             <Form.Group key={input.value} as={Col} md="6">
                 <Form.Label>{input.label+": "}</Form.Label>
-                {adatok && <InputMezo key={input.key} input={findKey(input.key)} value={input.value} isSelect={true} pool={adatok[input.url]}/>}
+                {opciok && <InputMezo key={input.key} name={input.key} input={findKey(input.key)} value={input.value} handleChange={handleChange} isSelect={true} pool={opciok[input.url]}/>}
             </Form.Group>
         )})
     );

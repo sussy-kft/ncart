@@ -18,7 +18,7 @@ function InputMezo(props) {
     return props.input?.dataType.substring(props.input?.dataType.length - 2) != "[]" || props.isSelect ? (
         <Form.Control
             required={!props.input?.isNullable}
-            name={props.input?.columnName ?? ""}
+            name={(props.name ||  props.input?.columnName) ?? ""}
             defaultValue={props.value ?? ""}
             type={typeConverter(props.input?.dataType) ?? ""}
             maxLength={props.input?.characterMaximumLength ?? ""}
@@ -34,7 +34,8 @@ function InputMezo(props) {
                 })
                 : props.isSelect ?
                 props.pool.map((opcio, index) => {
-                    return <option key={index} value={opcio[props.key]}>{opcio[props.value]}</option>
+                    console.log(props.name);
+                    return <option key={index} value={opcio[props.name]}>{opcio[props.value]}</option>
                 }) : null
             }
         </Form.Control>
@@ -69,6 +70,8 @@ function typeConverter(type) {
             return "email";
         case "password":
             return "password";
+        case "time":
+            return "time";
         default:
             return "text";
     }
