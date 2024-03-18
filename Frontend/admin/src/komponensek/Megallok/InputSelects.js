@@ -15,9 +15,9 @@ function InputSelects(props){
     const [opciok, setOpciok] = React.useState(null);
 
     const handleChange = (event) => {
-       const { name, value } = event.target;
+        const { name, value } = event.target;
         console.log(name, value);
-       setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
+        setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
     }
 
     React.useEffect(() => {
