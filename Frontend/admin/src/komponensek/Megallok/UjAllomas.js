@@ -28,11 +28,12 @@ function UjAllomas(props){
    
     if (!opcio) return null
 
+    console.log(props.name);
     return (
         <Row>
             <InputMezo as={Col} name={"id"} value={"nev"} pool={opcio} isSelect={true} handleChange={handleChange}/>
             <InputMezo as={Col} input={{columnName: "ido", dataType: "time"}} handleChange={handleChange}/>
-            <Button as={Col} variant="success" onClick={(event) => props.handleSave(event, adatok)}>Új állomás</Button>
+            <Button as={Col} variant="success" onClick={(event) => props.handleSave(event, adatok, props.name)}>Új állomás</Button>
         </Row>
     );
 }

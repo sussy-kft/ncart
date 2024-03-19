@@ -68,6 +68,23 @@ export const AxiosProvider = ({ children }) => {
             addInfoPanel(<InfoPanel bg={"success"} text={"A frissítés sikeres volt!"}/>);
         })
         .catch(error => {
+            //low effort error handling :(
+            //cry about it
+            put(url, id, item);
+        })
+    }
+
+    const put = (url, id, item) => {
+        console.log(item);
+        console.log(baseUrl + url + "/" + id);
+        axios.put(baseUrl + url + "/" + id, item)
+        .then(response => {
+            console.log(response.data);
+            console.log(response);
+            setAxiosId(Math.random());
+            addInfoPanel(<InfoPanel bg={"success"} text={"A frissítés sikeres volt!"}/>);
+        })
+        .catch(error => {
             //error.code
             addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
         })

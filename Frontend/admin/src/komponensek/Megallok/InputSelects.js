@@ -17,7 +17,11 @@ function InputSelects(props){
     const handleChange = (event) => {
         const { name, value } = event.target;
         console.log(name, value);
-        setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
+        setAdatok(values => ({ 
+                ...values, 
+                [name[0].toLowerCase() + name.slice(1)]: value 
+            })
+        )
     }
 
     React.useEffect(() => {
@@ -36,6 +40,7 @@ function InputSelects(props){
             let promises = props.pool.map(input => 
                 new Promise((resolve, reject) => {
                     getAll(input.url, (adat) => {
+                        console.log()
                         resolve({ [input.url]: adat });
                     });
                 })
@@ -43,6 +48,13 @@ function InputSelects(props){
     
             let results = await Promise.all(promises);
             let tmp = Object.assign({}, ...results);
+            props.pool.map(input => {
+                tmp[input.url] = tmp[input.url].filter((v, i, a) => a.map(t => t[input.key]).indexOf(v[input.key]) === i);
+            });
+                //tmp[key] = tmp[key].filter((v, i, a) => a.map(t => t[key]).indexOf(v[key]) === i);
+            
+            //array.filter((v, i, a) => a.map(t => t.id).indexOf(v.id) === i);
+            //setOpciok(tmp.filter((v, i, a) => a.map(t => t[input.key]).indexOf(v.id) === i));
             setOpciok(tmp);
         };
     
