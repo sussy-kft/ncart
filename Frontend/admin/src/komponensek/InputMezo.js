@@ -16,10 +16,10 @@ function InputMezo(props) {
     }, [props.input?.references]);
 
     //console.log(props.input?.dataType.substring(props.input?.dataType.length - 2))
-
     return props.input?.dataType.substring(props.input?.dataType.length - 2) != "[]" || props.isSelect ? (
         <As>
             <Form.Control
+                as={props.input?.references || props.isSelect ? "select" : "input"}
                 required={!props.input?.isNullable}
                 name={(props.name || props.input?.columnName) ?? ""}
                 defaultValue={props.value ?? ""}
@@ -29,7 +29,7 @@ function InputMezo(props) {
                 min={minConverter(props.input?.dataType) ?? ""}
                 max={maxConverter(props.input?.dataType) ?? ""}
                 onChange={props.handleChange}
-                {...props.input?.references || props.isSelect ? { as: "select" } : null}>
+                >
                 {
                     props.input?.references ?
                         opciok.map((opcio, index) => {

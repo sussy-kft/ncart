@@ -15,9 +15,20 @@ function MegalloSzerkeszto(props) {
   const { getAll, post } = useContext(AxiosContext)
   const { url } = useContext(MetaadatContext)
 
+  const [opcio, setOpciok] = React.useState(null)
   const [megallok, setMegallok] = React.useState(props.megallok);
   const [checked, setChecked] = useState(false);
   const [szinkronizalhato, setSzinkronizalhato] = useState(false);
+
+  const filterPool = (key) => {
+    console.warn(opcio);
+    console.error(megallok[key].megallok);
+    if (!opcio) return null
+    return opcio.filter((value) => {
+      return !megallok[key].megallok.some(val2 => {
+        console.log("sus",value.id, val2.allomas)
+        return value.id == val2.allomas})} )
+  }
 
   const OppositeKey = (key) => {
     return Object.keys(megallok).filter(k => k !== key)[0];
@@ -51,7 +62,7 @@ function MegalloSzerkeszto(props) {
 
   const kuldes = () => {
     console.log(megallok);
-    for (const [key, value] of Object.entries(megallok)) {  
+    for (const [key, value] of Object.entries(megallok)) {
       post(url + "/batch", { vonal: value.vonal.id, megallok: value.megallok });
     }
     console.warn("Küldés");
@@ -78,9 +89,13 @@ function MegalloSzerkeszto(props) {
       setSzinkronizalhato(false);
   }, [megallok]);
 
+  React.useEffect(() => {
 
+    getAll("allomasok", setOpciok);
 
-  if (!megallok) return null;
+  }, []);
+
+  if (!megallok || !opcio) return null;
 
   return (
     <Form>
@@ -90,40 +105,44 @@ function MegalloSzerkeszto(props) {
       <DragDropContext onDragEnd={(result) => {
         const { source, destination } = result;
         if (!destination) return;
-        if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+        if (source.index === destination.index) return;
 
         const sourceDroppableId = source.droppableId;
-        const destinationDroppableId = destination.droppableId;
-
         const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
-        const destinationAllomasok = destinationDroppableId === sourceDroppableId ? sourceAllomasok : [...megallok[destinationDroppableId].megallok];
-
+        const a = { ...sourceAllomasok[0] }
         const [removed] = sourceAllomasok.splice(source.index, 1);
-        if (sourceDroppableId === destinationDroppableId) {
-          sourceAllomasok.splice(destination.index, 0, removed);
-        } else {
-          destinationAllomasok.splice(destination.index, 0, removed);
+
+        sourceAllomasok.splice(destination.index, 0, removed);
+
+        if (source.index > 0)
+          sourceAllomasok[source.index].elozoMegallo = sourceAllomasok[source.index - 1].allomas;
+        else {
+          sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
         }
 
+        if (source.index < sourceAllomasok.length - 1)
+          sourceAllomasok[source.index + 1].elozoMegallo = sourceAllomasok[source.index].allomas;
 
+
+
+        if (destination.index > 0)
+          sourceAllomasok[destination.index].elozoMegallo = sourceAllomasok[destination.index - 1].allomas;
+        else
+          sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
+        if (destination.index < sourceAllomasok.length - 1)
+          sourceAllomasok[destination.index + 1].elozoMegallo = sourceAllomasok[destination.index].allomas;
 
         setMegallok(prevMegallok => ({
           ...prevMegallok,
           [sourceDroppableId]: {
             ...prevMegallok[sourceDroppableId],
             megallok: sourceAllomasok
-          },
-          ...(sourceDroppableId !== destinationDroppableId && {
-            [destinationDroppableId]: {
-              ...prevMegallok[destinationDroppableId],
-              megallok: destinationAllomasok
-            }
-          })
+          }
         }));
       }}>
         <Row>
           {Object.entries(megallok).map(([key, value], index) => {
-            console.log(key);
+            //console.log(key);
             if (!value) return <Col><UjAllomas /></Col>
             return (
               <Col>
@@ -150,7 +169,7 @@ function MegalloSzerkeszto(props) {
                     </div>
                   )}
                 </Droppable>
-                <UjAllomas handleSave={handleSave} name={key} />
+                <UjAllomas handleSave={handleSave} name={key} pool={filterPool(key)} />
                 <Row>
                   <Button variant="primary" onClick={() => atmasol(key)}>Adatok átmásolása</Button>
                 </Row>

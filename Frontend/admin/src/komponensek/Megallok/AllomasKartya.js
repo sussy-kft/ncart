@@ -13,7 +13,8 @@ function AllomasKartya(props) {
                     <Card.Img className="flex-fill" variant="top" src={"https://http.cat/300"} style={{ height: "100px",width: "50px" }} />
                     <Card.Body className="flex-fill text-left">
                         <Card.Title>{"sussy city"}</Card.Title>
-                        <Card.Text>{`a ${props.allomas.allomas} - e ${props.allomas.elozoMegallo}`} <br />
+                        {/* <Card.Text>{`a ${props.allomas.allomas} - e ${props.allomas.elozoMegallo}`} <br /> */}
+                        <Card.Text>{props.allomas.allomas} <br />
                         {props.allomas.hanyPerc}</Card.Text>
                     </Card.Body>
                 </Card>
