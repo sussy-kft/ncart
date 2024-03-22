@@ -30,6 +30,13 @@ a {
     text-decoration: none;
 }
 
+#hamburger {
+    visibility: hidden;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 #menuLeft {
     display: flex;
     justify-content: center;
@@ -391,6 +398,20 @@ header {
     }
 }
 @media screen and (max-width: 1200px) {
+    nav {
+        overflow: hidden;
+        background-color: #333;
+        position: relative;
+    }
+    #menuRight {
+        display: none;
+    }
+    #hamburger {
+        visibility: visible;
+    }
+    i {
+        font-size: 80px;
+    }
     header {
         display: flex;
         flex-direction: column-reverse;
