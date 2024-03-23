@@ -7,6 +7,7 @@ function InputMezo(props) {
     const { getAll } = useContext(AxiosContext);
 
     const [opciok, setOpciok] = React.useState([]);
+    const [onceFlag, setOnceFlag] = React.useState(false);
 
     const As = props.as ?? 'react.fragment';
 
@@ -15,7 +16,27 @@ function InputMezo(props) {
             getAll(props.input?.references, setOpciok);
     }, [props.input?.references]);
 
-    //console.log(props.input?.dataType.substring(props.input?.dataType.length - 2))
+    useEffect(() => {
+        if (props.input?.references?.split("/").length ==1 || props.isSelect && props.handleChange && !onceFlag && (props.value || opciok[0]?.id || (props.pool && props.pool[0]?.[props.name]))) {
+            console.log("kys");
+            props.handleChange({
+                target: {
+                    name: (props.name || props.input?.columnName) ?? "",
+                    value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
+                    type: typeConverter(props.input?.dataType) ?? ""
+                }
+            });
+            setOnceFlag(true);
+            console.log({
+                name: (props.name || props.input?.columnName) ?? "",
+                value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
+                type: typeConverter(props.input?.dataType) ?? ""
+            });
+        }
+    }, [props.value, props.input, opciok[0]?.id, props.pool]); 
+
+    if(!props.input && !props.value && !opciok[0]) return null;
+
     return props.input?.dataType.substring(props.input?.dataType.length - 2) != "[]" || props.isSelect ? (
         <As>
             <Form.Control

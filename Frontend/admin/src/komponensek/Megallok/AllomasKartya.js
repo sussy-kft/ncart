@@ -14,8 +14,9 @@ function AllomasKartya(props) {
                     <Card.Body className="flex-fill text-left">
                         <Card.Title>{"sussy city"}</Card.Title>
                         {/* <Card.Text>{`a ${props.allomas.allomas} - e ${props.allomas.elozoMegallo}`} <br /> */}
-                        <Card.Text>{props.allomas.allomas} <br />
-                        {props.allomas.hanyPerc}</Card.Text>
+                        <Card.Text>előző {props.allomas.elozoMegallo}<br />
+                        állomás {props.allomas.allomas} </Card.Text>
+                        {/* {props.allomas.hanyPerc}</Card.Text> */}
                     </Card.Body>
                 </Card>
             

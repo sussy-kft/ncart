@@ -38,6 +38,8 @@ function Sor(props) {
         setIsAdatUpdate(false);
     }
 
+    if(!adatok) return null;
+
     return isAdatUpdate
         ? (
             <tr key={props.ix}>
@@ -61,7 +63,16 @@ function Sor(props) {
                 return null;
             if (findKey(key)?.references && findKey(key)?.references.split("/").length > 1)
                 return kulsoAdatok[findKey(key).references].map((opcio, index) => {
-                    return <td key={index}>{value.find(x => x==opcio)?"✔️":"❌"}</td>
+                    console.log("aaaaaaaaaaaaaaaa",opcio, index, value);
+                    console.warn(Array.isArray(value));
+                    return (
+                        <td key={opcio}>
+                          {Array.isArray(value) 
+                            ? (value.includes(opcio) ? "✔️" : "❌") 
+                            : (value === opcio ? "✔️" : "❌")
+                          }
+                        </td>
+                      );
                 })
             if (typeof value !== "object")
                 return <td key={key}>{value}</td>
@@ -74,14 +85,15 @@ function Sor(props) {
             //console.log(findKey(key));
             if (findKey(key)?.isHidden)
                 return null;
-            if (findKey(key)?.references)
+            if (findKey(key)?.references && findKey(key)?.references.split("/").length > 1)
                 return kulsoAdatok[findKey(key).references].map((opcio, index) => {
-                    return <td key={index}><InputMezo key={index} input={findKey(key)} value={opcio} handleChange={handleChange} checked={value.find(x => x==opcio)} pool={[opcio]}/></td>
+                    console.log("aaaaaaaaaaaaaaaa",opcio, index, value);
+                    return <td key={index}><InputMezo key={index} input={findKey(key)} value={opcio} handleChange={handleChange} checked={Array.isArray(value)?value.find(x => x==opcio):value==opcio} pool={[opcio]}/></td>
                 })
             if (getPKs().find(pk => pk === key))
                 return <td><p>{value}</p></td>
             if (typeof value !== "object")
-                return <td><InputMezo key={key} input={findKey(key)} value={value} handleChange={handleChange} /></td>
+                return <td key={key}><InputMezo key={key} input={findKey(key)} value={value} handleChange={handleChange} /></td>
             return inputCella(value)
         })
     }
