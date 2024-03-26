@@ -13,7 +13,7 @@ function Megallok() {
   return (
     <>
       <h1>Megállok</h1>
-      <Form>
+      <Form className="container">
         <Row>
             <InputSelects
 

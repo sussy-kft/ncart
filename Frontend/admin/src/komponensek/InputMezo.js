@@ -27,11 +27,11 @@ function InputMezo(props) {
                 }
             });
             setOnceFlag(true);
-            console.log({
-                name: (props.name || props.input?.columnName) ?? "",
-                value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
-                type: typeConverter(props.input?.dataType) ?? ""
-            });
+            // console.log({
+            //     name: (props.name || props.input?.columnName) ?? "",
+            //     value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
+            //     type: typeConverter(props.input?.dataType) ?? ""
+            // });
         }
     }, [props.value, props.input, opciok[0]?.id, props.pool]); 
 

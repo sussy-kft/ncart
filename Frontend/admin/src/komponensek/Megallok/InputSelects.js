@@ -16,7 +16,7 @@ function InputSelects(props){
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        console.log(name, value);
+        // console.log(name, value);
         setAdatok(values => ({ 
                 ...values, 
                 [name[0].toLowerCase() + name.slice(1)]: value 
@@ -25,7 +25,7 @@ function InputSelects(props){
     }
 
     React.useEffect(() => {
-        console.log(adatok);
+        props.handleChange(null);
         if(adatok){
             let xd= []
             props.pool.map(input => {
@@ -40,7 +40,7 @@ function InputSelects(props){
             let promises = props.pool.map(input => 
                 new Promise((resolve, reject) => {
                     getAll(input.url, (adat) => {
-                        console.log()
+                        // console.log()
                         resolve({ [input.url]: adat });
                     });
                 })
@@ -67,7 +67,7 @@ function InputSelects(props){
     return (
         props.pool.map((input, index) => {
             // console.error(input);
-            console.log(input.value);
+            // console.log(input.value);
             return (
             <Form.Group key={input.value} as={Col} md="6">
                 <Form.Label>{input.label+": "}</Form.Label>
