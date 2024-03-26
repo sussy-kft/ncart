@@ -10,6 +10,7 @@ import { useState } from "react";
 import { ToggleButton } from "react-bootstrap";
 import AllomasKartya from "./AllomasKartya";
 import { Offcanvas } from "react-bootstrap";
+import UjVonal from "./UjVonal";
 
 function MegalloSzerkeszto(props) {
   const { getAll, post, patch } = useContext(AxiosContext);
@@ -28,7 +29,7 @@ function MegalloSzerkeszto(props) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log(megallok);
+  console.log("bbbbbbbbbbbbb", megallok, regiMegallok);
 
   const filterPool = (key) => {
     // console.warn(opcio);
@@ -55,12 +56,11 @@ function MegalloSzerkeszto(props) {
     const tmp = [...megallok[key].megallok];
     const { name, value } = event.target;
 
-    tmp.find((val) => val.allomas == obj.allomas).hanyPerc =
-      value.split(":")[0] * 60 + value.split(":")[1] * 1;
+    tmp.find((val) => val.allomas == obj.allomas).hanyPerc = value * 1;
     // console.log(megallok[key].megallok.hanyPerc);
     // console.log(regiMegallok[key].megallok.hanyPerc);
     // console.warn(regiMegallok);
-
+    console.warn(value);
     console.warn(megallok, regiMegallok);
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
@@ -68,6 +68,18 @@ function MegalloSzerkeszto(props) {
         ...prevMegallok[key],
         megallok: tmp,
       },
+      
+        ...(checked
+          ? {
+              [OppositeKey(key)]: {
+                ...prevMegallok[OppositeKey(key)],
+                megallok: megfordit(
+                  JSON.parse(JSON.stringify(tmp)).reverse()
+                ),
+              },
+            }
+          : {}),
+      
     }));
   };
 
@@ -75,10 +87,7 @@ function MegalloSzerkeszto(props) {
     event.preventDefault();
     let tmp = {};
     tmp["allomas"] = obj["id"] * 1;
-    tmp["hanyPerc"] =
-      obj["ido"].split(":")[0] * 60 +
-      obj["ido"].split(":")[1] * 1 -
-      megallok[key].megallok[megallok[key].megallok.length - 1].hanyPerc;
+    tmp["hanyPerc"] = obj["ido"] * 1;
     tmp["elozoMegallo"] =
       megallok[key].megallok[megallok[key].megallok.length - 1].allomas;
     tmp["vonal"] = megallok[key].megallok[0].vonal;
@@ -210,7 +219,7 @@ function MegalloSzerkeszto(props) {
 
   const szinkronizalhato = () => {
     //console.error(megallok);
-    return (
+    return megallok.oda && megallok.vissza && (
       megallok.oda.megallok.length === megallok.vissza.megallok.length &&
       megallok.oda.megallok.every(
         (value, index) =>
@@ -229,7 +238,7 @@ function MegalloSzerkeszto(props) {
   const visszaallit = () => {
     setChecked(false);
     handleClose();
-    setMegallok(regiMegallok);
+    setMegallok(JSON.parse(JSON.stringify(regiMegallok)));
     console.log(megallok, regiMegallok);
   };
 
@@ -237,17 +246,27 @@ function MegalloSzerkeszto(props) {
     let index = megallok[key].megallok.findIndex(
       (value) => JSON.stringify(value) === JSON.stringify(obj)
     );
-    if(index < megallok[key].megallok.length - 1)
-    megallok[key].megallok[index+1].elozoMegallo = megallok[key].megallok[index -1 ].allomas;
-
+    if(index > 0 && index < megallok[key].megallok.length - 1)
+      megallok[key].megallok[index+1].elozoMegallo = megallok[key].megallok[index -1 ].allomas;
+    const tmp = megallok[key].megallok.filter(
+      (value) => JSON.stringify(value) !== JSON.stringify(obj)
+    )
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [key]: {
         ...prevMegallok[key],
-        megallok: prevMegallok[key].megallok.filter(
-          (value) => JSON.stringify(value) !== JSON.stringify(obj)
-        ),
+        megallok: tmp,
       },
+      ...(checked
+        ? {
+            [OppositeKey(key)]: {
+              ...prevMegallok[OppositeKey(key)],
+              megallok: megfordit(
+                JSON.parse(JSON.stringify(tmp)).reverse()
+              ),
+            },
+          }
+        : {}),
     }));
   };
 
@@ -318,11 +337,13 @@ function MegalloSzerkeszto(props) {
           <Row>
             {Object.entries(megallok).map(([key, value], index) => {
               //console.log(key);
+              
+              console.log(value);
               if (!value)
                 return (
                   <Col>
 
-                    <UjAllomas />
+                    <UjVonal name={key} masikVonal={megallok[OppositeKey(key)].vonal} setMegallok={setMegallok} setRegiMegallok={setRegiMegallok} megallok={megallok}/>
                   </Col>
                 );
               return (

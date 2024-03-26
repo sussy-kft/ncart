@@ -13,6 +13,8 @@ export const AxiosProvider = ({ children }) => {
     const [errorState, setErrorState] = React.useState(false);
 
     const getAll = (url, callback) => {
+        console.log(baseUrl + url);
+        console.log(callback);
         axios.get(baseUrl + url)
         .then(response => {
             setErrorState(false);
@@ -22,6 +24,24 @@ export const AxiosProvider = ({ children }) => {
             if(error.code === "ERR_NETWORK")
                 setErrorState(true);
             addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+        });
+    }
+
+    const getAllPromise = (url) => {
+
+        console.log(baseUrl + url);
+        return new Promise((resolve, reject) => {
+            axios.get(baseUrl + url)
+            .then(response => {
+                setErrorState(false);
+                resolve(response.data);
+            })
+            .catch(error => {
+                if(error.code === "ERR_NETWORK")
+                    setErrorState(true);
+                addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+                reject(error);
+            });
         });
     }
 
@@ -91,7 +111,7 @@ export const AxiosProvider = ({ children }) => {
     }
     
     return (
-        <AxiosContext.Provider value={{axiosId, errorState, getAll, destroy, post, patch}}>
+        <AxiosContext.Provider value={{axiosId, errorState, getAll, getAllPromise, destroy, post, patch}}>
             {children}  
         </AxiosContext.Provider>
     );

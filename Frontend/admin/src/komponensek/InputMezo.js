@@ -44,6 +44,7 @@ function InputMezo(props) {
                 required={!props.input?.isNullable}
                 name={(props.name || props.input?.columnName) ?? ""}
                 defaultValue={props.value ?? ""}
+                {...props.veryCoolValue ? {value: props.veryCoolValue} : {}}
                 type={typeConverter(props.input?.dataType) ?? ""}
                 maxLength={props.input?.characterMaximumLength ?? ""}
                 step={"any"}
