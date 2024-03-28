@@ -1,15 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Backend.Models;
+﻿using Backend.Models;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class VegallomasConstraint : Migration
+    public partial class DropCK_Vegallomas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropCheckConstraint(
+                name: "CK_Vegallomas",
+                table: "Megallok"
+            );
+            migrationBuilder.Sql("DROP FUNCTION dbo.Vegallomas");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
                 CREATE FUNCTION dbo.Vegallomas(@{nameof(Megall.Vonal)} INT, @{nameof(Megall.ElozoMegallo)} INT) RETURNS BIT AS
@@ -29,16 +39,6 @@ namespace Backend.Migrations
                 table: "Megallok",
                 sql: $"dbo.Vegallomas({nameof(Megall.Vonal)}, {nameof(Megall.ElozoMegallo)}) = 1"
             );
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropCheckConstraint(
-                name: "CK_Vegallomas",
-                table: "Megallok"
-            );
-            migrationBuilder.Sql("DROP FUNCTION dbo.Vegallomas");
         }
     }
 }
