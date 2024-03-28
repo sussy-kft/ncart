@@ -1,15 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Backend.Models;
+﻿using Backend.Models;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class KezdoVagyVegallomasUpdateTrigger : Migration
+    public partial class DropVonalUjKezdoVagyVegallomasTrigger : Migration
     {
+		/* =============================================================================================
+		 * 
+		 * Ez az egész migrációs file és az előző együtt negálják egymást és ki is lehetne törölni őket,
+		 * ha nem lenne egyikünk gépén se lefuttatva az előző,
+		 * de nem tudom, hogy kinek van lefuttatva és kinek nincs,
+		 * úgyhogy ennek itt kell maradnia.
+		 * 
+		 * !!! NE TÖRÖLD KI ŐKET !!!
+		 * 
+		 * - Hunor:
+		 * 
+		 * Saját magamnak, mert mikor írom a kódot, csak én és a jó Isten tudjuk mit csinál,
+		 * de már akár napokkal is később már csak a jó Isten tudja.
+		 * 
+		 * =============================================================================================
+		 */
+
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql("DROP TRIGGER Uj_Kezdo_Vagy_Vegallomas");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
                 CREATE TRIGGER Uj_Kezdo_Vagy_Vegallomas ON Vonalak AFTER UPDATE AS
@@ -46,12 +69,6 @@ namespace Backend.Migrations
 					END
 				END
             ");
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-			migrationBuilder.Sql("DROP TRIGGER Uj_Kezdo_Vagy_Vegallomas");
         }
     }
 }

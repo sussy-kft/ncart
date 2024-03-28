@@ -36,7 +36,7 @@ namespace Backend.Controllers
 
     public partial class InditasController
     {
-        public override ActionResult Post([FromBody] InditasBatch data) => Post(context.Inditasok, data);
+        public override ActionResult PostBatch([FromBody] InditasBatch data) => PostBatch(context.Inditasok, data);
 
         public class InditasBatch : IConvertible<IReadOnlyList<Inditas>>
         {
