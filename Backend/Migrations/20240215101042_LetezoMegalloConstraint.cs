@@ -22,7 +22,7 @@ namespace Backend.Migrations
 	                ) AND @{nameof(Megall.ElozoMegallo)} <> (
 		                SELECT {nameof(Vonal.KezdoAll)}
 		                FROM Vonalak
-		                WHERE Id = @{nameof(Megall.Vonal)}
+		                WHERE {nameof(Vonal.Id)} = @{nameof(Megall.Vonal)}
 	                )
 		                SET @ret = 0
 	                RETURN @ret

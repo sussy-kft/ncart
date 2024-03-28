@@ -62,13 +62,13 @@ namespace Backend.Controllers
                     )
                 ;
                 context.Database.ExecuteSqlRaw(@"
-                    DISABLE TRIGGER Vonal_Bovitve
-                    DISABLE TRIGGER Vonal_Roviditve
+                    DISABLE TRIGGER Vonal_Bovitve ON Megallok;
+                    DISABLE TRIGGER Vonal_Roviditve ON Megallok;
                 ");
                 ObjectResult result = TrySaveRange(megallBatch.ConvertType(), context.Megallok.AddRange);
                 context.Database.ExecuteSqlRaw(@"
-                    ENABLE TRIGGER Vonal_Roviditve
-                    ENABLE TRIGGER Vonal_Bovitve
+                    ENABLE TRIGGER Vonal_Roviditve ON Megallok;
+                    ENABLE TRIGGER Vonal_Bovitve ON Megallok;
                 ");
                 return result;
             }
