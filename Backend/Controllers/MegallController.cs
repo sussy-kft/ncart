@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.ModelDTOBases;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
@@ -43,31 +44,73 @@ namespace Backend.Controllers
 
     public partial class MegallController
     {
-        public override ActionResult Post([FromBody] MegallBatch megallBatch) => Post(context.Megallok, megallBatch);
+        public override ActionResult PostBatch([FromBody] MegallBatch megallBatch) => CheckIfBadRequest(() => {
+            Vonal? vonal = context
+                .Vonalak
+                .Where(vonal => vonal.Id == megallBatch.Vonal)
+                .FirstOrDefault()
+            ;
+            if (vonal is not null)
+            {
+                vonal.KezdoAll = megallBatch.KezdoAll;
+                vonal.Vegall = megallBatch.Megallok[^1].Allomas;
+                context
+                    .Megallok
+                    .RemoveRange(context
+                        .Megallok
+                        .Where(megall => megall.Vonal == megallBatch.Vonal)
+                    )
+                ;
+                context.Database.ExecuteSqlRaw(@"
+                    DISABLE TRIGGER Vonal_Bovitve
+                    DISABLE TRIGGER Vonal_Roviditve
+                ");
+                ObjectResult result = TrySaveRange(megallBatch.ConvertType(), context.Megallok.AddRange);
+                context.Database.ExecuteSqlRaw(@"
+                    ENABLE TRIGGER Vonal_Roviditve
+                    ENABLE TRIGGER Vonal_Bovitve
+                ");
+                return result;
+            }
+            else
+            {
+                return NotFound($"A meghatározott vonal (id: {megallBatch.Vonal}) nem létezik!");
+            }
+        });
 
         public class MegallBatch : IConvertible<IReadOnlyList<Megall>>
         {
             [Required] public int Vonal { get; set; }
+            [Required] public int KezdoAll { get; set; }
 
             [Required] public List<MegallBatchElem> Megallok { get; set; }
 
             public IReadOnlyList<Megall> ConvertType()
             {
-                List<Megall> megallok = new List<Megall>();
-                Megallok.ForEach(megall => {
+                List<Megall> megallok = [
+                    new Megall {
+                        Vonal = Vonal,
+                        Allomas = Megallok[0].Allomas,
+                        ElozoMegallo = KezdoAll,
+                        HanyPerc = Megallok[0].HanyPerc
+                    }
+                ];
+                for (int i = 1; i < Megallok.Count; i++)
+                {
                     megallok.Add(new Megall {
                         Vonal = Vonal,
-                        Allomas = megall.Allomas,
-                        ElozoMegallo = megall.ElozoMegallo,
-                        HanyPerc = megall.HanyPerc
+                        Allomas = Megallok[i].Allomas,
+                        ElozoMegallo = Megallok[i - 1].Allomas,
+                        HanyPerc = Megallok[i].HanyPerc
                     });
-                });
+                }
                 return megallok;
             }
 
-            public class MegallBatchElem : MegallBase
+            public class MegallBatchElem
             {
                 [Required] public int Allomas { get; set; }
+                [Required] public byte HanyPerc { get; set; }
             }
         }
     }

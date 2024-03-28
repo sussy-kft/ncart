@@ -10,8 +10,8 @@ namespace Backend.Controllers
         where TBatchFormat : class, IConvertible<IReadOnlyList<TDbFormat>>
     {
         [HttpPost("batch")]
-        public abstract ActionResult Post([FromBody] TBatchFormat data);
+        public abstract ActionResult PostBatch([FromBody] TBatchFormat data);
 
-        protected ActionResult Post(DbSet<TDbFormat> dbSet, TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
+        protected ActionResult PostBatch(DbSet<TDbFormat> dbSet, TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
     }
 }
