@@ -91,14 +91,12 @@ namespace Backend.Controllers
 
             public IReadOnlyList<Megall> ConvertType()
             {
-                List<Megall> megallok = [
-                    new Megall {
-                        Vonal = Vonal,
-                        Allomas = Megallok[0].Allomas,
-                        ElozoMegallo = KezdoAll,
-                        HanyPerc = Megallok[0].HanyPerc
-                    }
-                ];
+                List<Megall> megallok = [new Megall {
+                    Vonal = Vonal,
+                    Allomas = Megallok[0].Allomas,
+                    ElozoMegallo = KezdoAll,
+                    HanyPerc = Megallok[0].HanyPerc
+                }];
                 for (int i = 1; i < Megallok.Count; i++)
                 {
                     megallok.Add(new Megall {
