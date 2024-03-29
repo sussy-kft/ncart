@@ -10,6 +10,8 @@ function Megallok() {
   const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
 
   const [megallok, setMegallok] = React.useState(null);
+  const [meta, setMeta] = React.useState(null);
+
   return (
     <>
       <h1>Megállok</h1>
@@ -32,10 +34,11 @@ function Megallok() {
                 },
                 ]}
                 handleChange={setMegallok}
+                setMeta={setMeta}
             />
         </Row>
       </Form>
-      {megallok && <MegalloSzerkeszto megallok={megallok} />}
+      {megallok && <MegalloSzerkeszto megallok={megallok} meta={meta}/>}
     </>
   );
 }

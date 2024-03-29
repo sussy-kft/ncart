@@ -6,11 +6,12 @@ import InputMezo from "../InputMezo";
 import Button from "react-bootstrap/Button";
 
 function UjVonal(props) {
-  const { axiosId, errorState, getAll, getAllPromise, post } = useContext(AxiosContext);
+  const { axiosId, errorState, getAll, getAllPromise, post } =
+    useContext(AxiosContext);
 
   const [adatok, setAdatok] = React.useState({
-    vonalSzam: props.masikVonal.vonalSzam,
-    jarmuTipus: props.masikVonal.jarmuTipus,
+    vonalSzam: props.masikVonal?.vonalSzam ?? props.meta.vonalSzam,
+    jarmuTipus: props.masikVonal?.jarmuTipus ?? props.meta.id,
   });
   const [opciok, setOpciok] = React.useState(null);
 
@@ -26,23 +27,28 @@ function UjVonal(props) {
   };
 
   /**
-   * 
+   *
    */
   const kuldes = async () => {
+    // console.log("kuldes", adatok);
+    // console.error(props.meta);
     await post("vonalak", adatok);
-    props.setMegallok(null)
-    let response=null
-    while(!response || !response?.vissza){ 
-        response = await getAllPromise("megallok/vonalmegallok/" + adatok.vonalSzam + "/" + adatok.jarmuTipus);  
+    props.setMegallok(null);
+    let response;
+    do{
+      response = await getAllPromise(
+        "megallok/vonalmegallok/" + adatok.vonalSzam + "/" + adatok.jarmuTipus,
+        10
+      );
     }
-    console.log("asd",response.vissza);
+    while (!(props.meta && response?.oda) && !(response && response?.vissza))
     props.setMegallok(response);
     props.setRegiMegallok(response);
-}
+  };
 
-    /**
-     * 
-     */
+  /**
+   *
+   */
 
   if (!opciok) return null;
 

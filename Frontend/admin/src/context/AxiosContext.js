@@ -12,7 +12,7 @@ export const AxiosProvider = ({ children }) => {
     const baseUrl = "https://localhost:7078/";
     const [errorState, setErrorState] = React.useState(false);
 
-    const getAll = (url, callback) => {
+    const getAll = (url, callback, errorCallback) => {
         console.log(baseUrl + url);
         console.log(callback);
         axios.get(baseUrl + url)
@@ -21,14 +21,18 @@ export const AxiosProvider = ({ children }) => {
             callback(response.data);
         })
         .catch(error => {
-            if(error.code === "ERR_NETWORK")
-                setErrorState(true);
-            addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+            console.log(error);
+            if(errorCallback)
+                errorCallback();
+            else{
+                if(error.code === "ERR_NETWORK")
+                    setErrorState(true);
+                addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+            }
         });
     }
 
-    const getAllPromise = (url) => {
-
+    const getAllPromise = (url, retries = 0) => {
         console.log(baseUrl + url);
         return new Promise((resolve, reject) => {
             axios.get(baseUrl + url)
@@ -37,10 +41,16 @@ export const AxiosProvider = ({ children }) => {
                 resolve(response.data);
             })
             .catch(error => {
-                if(error.code === "ERR_NETWORK")
-                    setErrorState(true);
-                addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
-                reject(error);
+                if (retries > 0) {
+                    getAllPromise(url, retries - 1)
+                    .then(data => resolve(data))
+                    .catch(err => reject(err));
+                } else {
+                    if(error.code === "ERR_NETWORK")
+                        setErrorState(true);
+                    addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+                    reject(error);
+                }
             });
         });
     }

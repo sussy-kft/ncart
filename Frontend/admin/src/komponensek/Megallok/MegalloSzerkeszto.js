@@ -116,76 +116,25 @@ function MegalloSzerkeszto(props) {
 
   const kuldes = () => {
     for (const [key, value] of Object.entries(megallok)) {
-      console.warn(
-        value,
-        value.megallok.filter((val, index) => {
-          return (
-            index != 0 &&
-            !regiMegallok[key].megallok.some((val2) => {
-              return val.allomas == val2.allomas;
-            })
-          );
-        })
-      );
-      // patch("vonalak", value.vonal.id, {
-      //   vonalSzam: value.vonal.vonalSzam,
-      //   jarmuTipus: value.vonal.jarmuTipus,
-      //   kezdoAll: value.megallok[0].elozoMegallo,
-      //   vegall: value.megallok[value.megallok.length - 1].allomas,
-      // })
-      // post(url + "/batch", {
-      //   vonal: value.vonal.id,
-      //   megallok: value.megallok.filter((val) => {
-      //     return !regiMegallok[key].megallok.some((val2) => {
-      //       return val.allomas == val2.allomas;
-
-      //       // console.log("gbtwejipgwejöiiowho9uigbhretoüb", val);
-      //       // return !val.some((val2) => {
-      //       // //console.log("sus",value.id, val2.allomas)
-      //       // return val.allomas == val2.allomas;
-      //     });
-      //   }),
-      //});
-
-      // updateData(value, key);
+      if(value){
+        console.log("xddddddd",{
+          vonal: value.vonal.id,
+          kezdoAll: value.megallok[0].elozoMegallo,
+          megallok: value.megallok
+        });
+        console.log("meg", megallok);
+        post(url + "/batch", 
+        {
+          vonal: value.vonal.id,
+          kezdoAll: value.megallok[0].elozoMegallo,
+          megallok: value.megallok
+        }
+        )
+      }
     }
 
     console.warn("Küldés");
   };
-
-  // async function updateData(value, key) {
-  //   const copy = JSON.parse(JSON.stringify(value.megallok));
-  //   function patchPromise() {
-  //     return new Promise((resolve, reject) => {
-  //       try {
-  //         patch("vonalak", value.vonal.id, {
-  //           vonalSzam: value.vonal.vonalSzam,
-  //           jarmuTipus: value.vonal.jarmuTipus,
-  //           kezdoAll: copy[0].elozoMegallo,
-  //           vegall: copy[copy.length - 1].allomas,
-  //         });
-  //         resolve();
-  //       } catch (error) {
-  //         reject(error);
-  //       }
-  //     });
-  //   }
-
-  //   patchPromise()
-  //     .then(() => {
-  //       if (copy[1]) {
-  //         return post(url, {
-  //           elozoMegallo: copy[0].elozoMegallo,
-  //           hanyPerc: copy[1].hanyPerc,
-  //           vonal: value.vonal.id,
-  //           allomas: copy[1].elozoMegallo,
-  //         });
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }
 
   const atmasol = (key) => {
     console.warn(OppositeKey(key));
@@ -338,12 +287,12 @@ function MegalloSzerkeszto(props) {
             {Object.entries(megallok).map(([key, value], index) => {
               //console.log(key);
               
-              console.log(value);
+              console.warn(value);
               if (!value)
                 return (
                   <Col>
 
-                    <UjVonal name={key} masikVonal={megallok[OppositeKey(key)].vonal} setMegallok={setMegallok} setRegiMegallok={setRegiMegallok} megallok={megallok}/>
+                    <UjVonal name={key} masikVonal={megallok[OppositeKey(key)]?.vonal ?? {}} meta={props.meta} setMegallok={setMegallok} setRegiMegallok={setRegiMegallok} megallok={megallok}/>
                   </Col>
                 );
               return (
@@ -397,8 +346,9 @@ function MegalloSzerkeszto(props) {
           </Row>
           <ToggleButton
             id="toggle-check"
+            className={megallok.vissza? "" : "d-none"}
             type="checkbox"
-            variant={checked ? "success" : "outline-warning"}
+            variant={checked ? "success" : "warning"}
             onMouseOver={(e) =>
               (e.target.className = checked
                 ? "btn btn-danger"
@@ -407,7 +357,7 @@ function MegalloSzerkeszto(props) {
             onMouseLeave={(e) =>
               (e.target.className = checked
                 ? "btn btn-warning"
-                : "btn btn-outline-warning")
+                : "btn btn-warning")
             }
             checked={checked}
             onChange={(e) => {
