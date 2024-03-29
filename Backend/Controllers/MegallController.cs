@@ -64,9 +64,13 @@ namespace Backend.Controllers
                 context.Database.ExecuteSqlRaw(@"
                     DISABLE TRIGGER Vonal_Bovitve ON Megallok;
                     DISABLE TRIGGER Vonal_Roviditve ON Megallok;
+                    DISABLE TRIGGER Megallo_Beszur ON Megallok;
+                    DISABLE TRIGGER Megallo_Torol ON Megallok;
                 ");
                 ObjectResult result = TrySaveRange(megallBatch.ConvertType(), context.Megallok.AddRange);
                 context.Database.ExecuteSqlRaw(@"
+                    ENABLE TRIGGER Megallo_Torol ON Megallok;
+                    ENABLE TRIGGER Megallo_Beszur ON Megallok;
                     ENABLE TRIGGER Vonal_Roviditve ON Megallok;
                     ENABLE TRIGGER Vonal_Bovitve ON Megallok;
                 ");
@@ -163,14 +167,22 @@ namespace Backend.Controllers
                                         .Where(megall => megall.Vonal == vonal.Id)
                                         .ToList()
                                     ;
-                                    List<Megall> rendezettMegallok = [megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException()];
-                                    int legutobbiAllomasId = rendezettMegallok[0].Allomas;
-                                    while (legutobbiAllomasId != vonal.Vegall)
+                                    if (megallok.Count > 0)
                                     {
-                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
-                                        legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                        List<Megall> rendezettMegallok = [];
+                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException());
+                                        int legutobbiAllomasId = rendezettMegallok[0].Allomas;
+                                        while (legutobbiAllomasId != vonal.Vegall)
+                                        {
+                                            rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
+                                            legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                        }
+                                        return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
                                     }
-                                    return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
+                                    else
+                                    {
+                                        return [];
+                                    }
                                 }))()
                             });
                         });

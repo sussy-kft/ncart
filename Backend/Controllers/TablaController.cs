@@ -137,6 +137,10 @@ namespace Backend.Controllers
             {
                 return BadRequest(e.InnerException?.Message);
             }
+            catch (InvalidOperationException e)
+            {
+                return StatusCode(500, e.InnerException?.Message);
+            }
         }
 
         static IQueryable<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
