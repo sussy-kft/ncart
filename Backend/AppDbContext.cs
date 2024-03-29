@@ -18,7 +18,8 @@ namespace Backend
         {
             optionsBuilder
                 .UseSqlServer(config.GetConnectionString("DbConnection"))
-                //.LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+                .LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+                .EnableSensitiveDataLogging()
             ;
         }
 
