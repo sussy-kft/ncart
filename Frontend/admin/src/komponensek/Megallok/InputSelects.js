@@ -32,7 +32,7 @@ function InputSelects(props) {
       });
       console.warn({ oda: null, vissza: null, ...adatok });
       // a vissza adat nem fontos, csak a megjelenítéshez kell
-      getAll(url + "/vonalmegallok/" + xd.join("/"), props.handleChange, () => {
+      getAll("vonalak" + "/megallok/" + xd.join("/"), props.handleChange, () => {
         props.handleChange({ oda: null, vissza: null });
         props.setMeta({ ...adatok });
       });

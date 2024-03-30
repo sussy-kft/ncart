@@ -2,27 +2,36 @@ import Admin from "./Admin";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Bejelentkezes from "./komponensek/Bejelentkezes";
+import Bejelentkezes from "./login/Bejelentkezes";
+import { DarkModeProvider } from "./context/DarkModeContext";
+import { AxiosProvider } from "./context/AxiosContext";
+import { MetaadatProvider } from "./context/MetaadatContext";
 
 function App() {
   const location = window.location.pathname;
 
   return (
     <div className="App">
-      {location === "/" ? (
+      {/* {location === "/" ? (
         <iframe
           src="http://localhost:42069/index.html"
           title="External HTML"
           style={{ width: "100%", height: "100vh" }}
         />
-      ) : (
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Bejelentkezes />} />
-            <Route path="/admin/*" element={<Admin />} />
-          </Routes>
-        </Router>
-      )}
+      ) : ( */}
+      <DarkModeProvider>
+        <AxiosProvider>
+          <MetaadatProvider>
+            <Router>
+              <Routes>
+                <Route path="/login" element={<Bejelentkezes />} />
+                <Route path="/admin/*" element={<Admin />} />
+              </Routes>
+            </Router>
+          </MetaadatProvider>
+        </AxiosProvider>
+      </DarkModeProvider>
+      {/* )} */}
     </div>
   );
 }

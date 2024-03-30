@@ -37,7 +37,7 @@ function UjVonal(props) {
     let response;
     do{
       response = await getAllPromise(
-        "megallok/vonalmegallok/" + adatok.vonalSzam + "/" + adatok.jarmuTipus,
+        "vonalak/megallok/" + adatok.vonalSzam + "/" + adatok.jarmuTipus,
         10
       );
     }

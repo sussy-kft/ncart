@@ -117,12 +117,12 @@ function MegalloSzerkeszto(props) {
   const kuldes = () => {
     for (const [key, value] of Object.entries(megallok)) {
       if(value){
-        console.log("xddddddd",{
-          vonal: value.vonal.id,
-          kezdoAll: value.megallok[0].elozoMegallo,
-          megallok: value.megallok
-        });
-        console.log("meg", megallok);
+        // console.log("xddddddd",{
+        //   vonal: value.vonal.id,
+        //   kezdoAll: value.megallok[0].elozoMegallo,
+        //   megallok: value.megallok
+        // });
+        console.warn("meg", megallok);
         post(url + "/batch", 
         {
           vonal: value.vonal.id,
@@ -146,8 +146,9 @@ function MegalloSzerkeszto(props) {
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [OppositeKey(key)]: {
-        ...prevMegallok[key],
+        //...prevMegallok[key],
         megallok: tmp,
+        vonal: _.cloneDeep(prevMegallok[OppositeKey(key)].vonal),
       },
     }));
   };

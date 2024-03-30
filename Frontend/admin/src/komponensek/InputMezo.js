@@ -47,6 +47,7 @@ function InputMezo(props) {
                 {...props.veryCoolValue ? {value: props.veryCoolValue} : {}}
                 type={typeConverter(props.input?.dataType) ?? ""}
                 maxLength={props.input?.characterMaximumLength ?? ""}
+                minLength={props.input?.characterMinimumLength ?? ""}
                 step={"any"}
                 min={minConverter(props.input?.dataType) ?? ""}
                 max={maxConverter(props.input?.dataType) ?? ""}
