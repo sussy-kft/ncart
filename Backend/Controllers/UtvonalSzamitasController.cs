@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Backend.Controllers
 {
-    [ApiController, Route("dQw4w9WgXcQ")]
+    [Route("dQw4w9WgXcQ")]
     public class UtvonalSzamitasController(AppDbContext context) : JsonRecieverController (context)
     {
         Vonal[] vonalak = null;
@@ -20,7 +20,7 @@ namespace Backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok();
+            return StatusCode(451);
         }
 
         [HttpDelete("legkevesebb")]

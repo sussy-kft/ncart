@@ -40,16 +40,16 @@ function Layout() {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} key="kezelok" to="/kezelok">
+              <Nav.Link as={Link} key="kezelok" to="kezelok">
                 Kezelők
               </Nav.Link>
-              <Nav.Link as={Link} key="allomasok" to="/allomasok">
+              <Nav.Link as={Link} key="allomasok" to="allomasok">
                 Állomások
               </Nav.Link>
-              <Nav.Link as={Link} key="jarmuTipusok" to="/jarmuTipusok">
+              <Nav.Link as={Link} key="jarmuTipusok" to="jarmuTipusok">
                 Járműtípusok
               </Nav.Link>
-              <Nav.Link as={Link} key="vonalak" to="/vonalak">
+              <Nav.Link as={Link} key="vonalak" to="vonalak">
                 Vonalak
               </Nav.Link>
               <Nav.Link as={Link} key="inditasok" to="inditasok">

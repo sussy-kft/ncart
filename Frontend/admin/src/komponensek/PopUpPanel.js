@@ -7,6 +7,7 @@ import { InfoPanelContext } from '../context/InfoPanelContext';
 import { useContext } from 'react';
 import { AxiosContext } from '../context/AxiosContext';
 import { MetaadatContext } from '../context/MetaadatContext';
+import text from '../media/delete';
 
 function PopUpPanel(props) {
   const {addInfoPanel} = useContext(InfoPanelContext);
@@ -33,7 +34,7 @@ function PopUpPanel(props) {
         </Modal.Header>
         <Modal.Body className='text-center'>
           <h2>A törlés nem vonható vissza!</h2>
-          <img src={deleteImage} className="rounded me-2" alt="" />
+          <img src={deleteImage} className="rounded me-2" alt={text} title={text}/>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleClose}>
