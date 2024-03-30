@@ -66,13 +66,15 @@ namespace Backend.Controllers
                     DISABLE TRIGGER Vonal_Roviditve ON Megallok;
                     DISABLE TRIGGER Megallo_Beszur ON Megallok;
                     DISABLE TRIGGER Megallo_Torol ON Megallok;
+                    ALTER TABLE Megallok NOCHECK CONSTRAINT CK_Megallok_LetezoMegallo
                 ");
                 ObjectResult result = TrySaveRange(megallBatch.ConvertType(), context.Megallok.AddRange);
                 context.Database.ExecuteSqlRaw(@"
-                    ENABLE TRIGGER Megallo_Torol ON Megallok;
-                    ENABLE TRIGGER Megallo_Beszur ON Megallok;
-                    ENABLE TRIGGER Vonal_Roviditve ON Megallok;
-                    ENABLE TRIGGER Vonal_Bovitve ON Megallok;
+                    ALTER TABLE Megallok CHECK CONSTRAINT CK_Megallok_LetezoMegallo
+                    ;ENABLE TRIGGER Megallo_Torol ON Megallok
+                    ;ENABLE TRIGGER Megallo_Beszur ON Megallok
+                    ;ENABLE TRIGGER Vonal_Roviditve ON Megallok
+                    ;ENABLE TRIGGER Vonal_Bovitve ON Megallok
                 ");
                 return result;
             }
