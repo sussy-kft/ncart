@@ -15,7 +15,7 @@ body {
     background-color: rgb(20, 69, 125);
 }
 
-body main nav {
+nav {
     display: flex;
     padding: 20px;
     background-color: rgb(13, 40, 64);
@@ -451,5 +451,37 @@ header {
     .areas {
         display: flex;
         flex-direction: column;
+    }
+}
+
+.topnav {
+    overflow: hidden;
+}
+
+.topnav .icon {
+    display: none;
+}
+
+#hamburger {
+    display: none;
+}
+
+@media screen and (max-width: 1200px) {
+    
+    #hamburger {
+        display: block;
+    }
+    #menuRight {
+        display: none;
+    }
+    .topnav a.icon {
+        float: right;
+        display: block;
+    }
+    .topnav.responsive{
+        height: 200px;
+    }
+    .topnav.responsive #menuRight{
+        display: block;
     }
 }
