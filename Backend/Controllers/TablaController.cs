@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using Backend.ModelDTOBases;
@@ -8,13 +9,14 @@ using Backend.DTOs;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context) : JsonRecieverController(context)
+    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context, IConfiguration config) : JsonRecieverController(context, config)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public abstract IEnumerable<TJsonFormat> Get();
 
+        [AllowAnonymous]
         public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
         protected IQueryable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
@@ -58,7 +60,7 @@ namespace Backend.Controllers
 
         protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
 
-        [HttpGet("metadata")]
+        [HttpGet("metadata"), AllowAnonymous]
         public abstract IEnumerable<IMetadataDTO<object>> Metadata();
 
         protected IQueryable<IMetadataDTO<string>> Metadata(string tableName)

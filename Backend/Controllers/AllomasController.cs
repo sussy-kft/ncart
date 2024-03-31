@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers
 {
-    [Route("allomasok")]
-    public partial class AllomasController(AppDbContext context) : TablaController<int, Allomas, AllomasDTO>(context)
+    [Route("allomasok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public partial class AllomasController(AppDbContext context, IConfiguration config) : TablaController<int, Allomas, AllomasDTO>(context, config)
     {
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 

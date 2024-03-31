@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("jarmutipusok")]
-    public class JarmuTipusController(AppDbContext context) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context)
+    [Route("jarmutipusok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public class JarmuTipusController(AppDbContext context, IConfiguration config) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context, config)
     {
         public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
 
