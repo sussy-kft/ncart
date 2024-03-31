@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("vonalak")]
-    public partial class VonalController(AppDbContext context) : TablaController<int, Vonal, VonalDTO>(context)
+    [Route("vonalak"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public partial class VonalController(AppDbContext context, IConfiguration config) : TablaController<int, Vonal, VonalDTO>(context, config)
     {
         public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
 
@@ -73,7 +74,7 @@ namespace Backend.Controllers
 
     public partial class VonalController
     {
-        [HttpGet("megallok/{vonalSzam}/{jarmuTipus}")]
+        [HttpGet("megallok/{vonalSzam}/{jarmuTipus}"), AllowAnonymous]
         public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus)
         {
             IReadOnlyList<Vonal> vonalak = context
@@ -152,7 +153,7 @@ namespace Backend.Controllers
 
     public partial class VonalController
     {
-        [HttpGet("jaratok")]
+        [HttpGet("jaratok"), AllowAnonymous]
         public IEnumerable<Jarat> GetVonalSzamok() => context
             .Vonalak
             .Select(vonal => new Jarat {

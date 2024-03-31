@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.ModelDTOBases;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
-    [Route("megallok")]
-    public partial class MegallController(AppDbContext context) : BatchPostableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context)
+    [Route("megallok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public partial class MegallController(AppDbContext context, IConfiguration config) : BatchPostableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context, config)
     {
         public class PK
         {

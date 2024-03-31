@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    [Route("inditasok")]
-    public partial class InditasController(AppDbContext context) : BatchPostableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context)
+    [Route("inditasok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public partial class InditasController(AppDbContext context, IConfiguration config) : BatchPostableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context, config)
     {
         public class PK
         {
