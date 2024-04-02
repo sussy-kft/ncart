@@ -22,7 +22,13 @@ function InputMezo(props) {
             props.handleChange({
                 target: {
                     name: (props.name || props.input?.columnName) ?? "",
-                    value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
+                    //ha több időm lenne, akkor nem így csinálnám, de most ez a leggyorsabb megoldás :D
+                    //ezért megértem, ha nem tetszik, de most ez van
+                    //ez a kód a leggyorsabb megoldás, hogy a selecteket is kezelni tudjuk
+                    //ha nem tetszik, akkor kérlek írj egy jobbat
+                    
+                    //ps. ezért megérte megvenni a copilotot, hogy ilyen commenteket írjon
+                    value: props?.idk ? ((props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "" ) : (props.value ?? (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? "" ),
                     type: typeConverter(props.input?.dataType) ?? ""
                 }
             });
@@ -37,8 +43,9 @@ function InputMezo(props) {
             props.handleChange({
                 target: {
                     name: (props.name || props.input?.columnName) ?? "",
-                    value: props.value ?? [],
-                    type: typeConverter(props.input?.dataType) ?? ""
+                    value:[ props.value] ?? [],
+                    type: typeConverter(props.input?.dataType) ?? "",
+                    checked: false
                 }
             });
             setOnceFlag(true);
@@ -54,7 +61,7 @@ function InputMezo(props) {
                 required={!props.input?.isNullable}
                 name={(props.name || props.input?.columnName) ?? ""}
                 defaultValue={props.value ?? ""}
-                {...props.veryCoolValue ? {value: props.veryCoolValue} : {}}
+                {...props.veryCoolValue ? {value: props.veryCoolValue ?? {}} : {}}
                 type={typeConverter(props.input?.dataType) ?? ""}
                 maxLength={props.input?.characterMaximumLength ?? ""}
                 minLength={props.input?.characterMinimumLength ?? ""}

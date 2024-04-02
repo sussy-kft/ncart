@@ -16,7 +16,7 @@ function AllomasKartya(props) {
         <>
             
                 <Card className="d-flex flex-row text-start">
-                    <Card.Img className="flex-fill" variant="top" src={kep} style={{ maxHeight: "100px",maxWidth: "100px", minHeight: "100px",minWidth: "100px" }} />
+                    <Card.Img className="flex-fill" variant="top" src={kep} alt="" style={{ maxHeight: "100px",maxWidth: "100px", minHeight: "100px",minWidth: "100px" }} />
                     <Card.Body className="flex-fill text-left ps-0">
                         <Card.Title>{"sussy city" }  (állomás {allomas.allomas})</Card.Title>
                         {/* <Card.Text>{`a ${props.allomas.allomas} - e ${props.allomas.elozoMegallo}`} <br /> */}

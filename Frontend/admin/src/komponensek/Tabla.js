@@ -46,9 +46,20 @@ function Tabla(props) {
           </tr>
         </thead>
         <tbody>
-          {adatok.map((row, ix) => (
-            <Sor key={ix} row={row} callback={xd} />
-          ))}
+          {
+          adatok.map((row, ix) => {
+            let object = {}
+            
+            for (const key in row) {
+              console.log("key",key);  
+              if(!findKey(key)?.isHidden)
+                  object[key] = row[key];
+                else 
+                  object[key] = null;
+                console.log("br",object);
+            }
+            return <Sor key={ix} row={object} callback={xd} />
+            })}
         </tbody>
       </Table>
       <PopUpPanel show={show} handleClose={handleClose} handleShow={handleShow} id={id} />

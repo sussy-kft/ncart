@@ -6,6 +6,8 @@ import { AxiosContext } from '../context/AxiosContext';
 import { MetaadatContext } from '../context/MetaadatContext';
 
 function Sor(props) {
+    const _ = require('lodash');
+
     const { patch } = useContext(AxiosContext);
     const { url, findKey, getPKs, kulsoAdatok } = useContext(MetaadatContext);
 
@@ -13,18 +15,38 @@ function Sor(props) {
     const [adatok, setAdatok] = React.useState(structuredClone(props.row));
     const regiAdatok = structuredClone(props.row);
 
+    console.log("fdkődfősdfkskfkskdőfksdf",adatok);
+
+    const loadashSzar = (obj, key, path="") => {
+       for (let k in obj) {
+              if (k === key) return path + k;
+              if (typeof obj[k] === "object") {
+                const res = loadashSzar(obj[k], key, path + k + ".");
+                if (res) return res;
+              }
+       }
+    }
+
     const handleChange = (event) => {
         const { name, type, checked, value } = event.target;
         
+        let obj = _.cloneDeep(adatok);
+
         if (type === "checkbox") {
             console.log();
             const engedelyek = adatok[name[0].toLowerCase() + name.slice(1)] ?? []
             if (checked) engedelyek.push(value)
             else engedelyek.splice(engedelyek.indexOf(value), 1)
-            setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: engedelyek }))
+            obj[name[0].toLowerCase() + name.slice(1)] = engedelyek;
+            //setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: engedelyek }))
         }
-        else setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
+        else 
+            
+        //console.log(loadashSzar(obj, name[0].toLowerCase() + name.slice(1)));    
+        obj= _.set(obj, loadashSzar(obj, name[0].toLowerCase() + name.slice(1)), value);
+        //setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
         console.log(adatok);
+        setAdatok(obj);
     }
 
     const getPKadat = () => {
@@ -93,7 +115,7 @@ function Sor(props) {
             if (getPKs().find(pk => pk === key))
                 return <td><p>{value}</p></td>
             if (typeof value !== "object")
-                return <td key={key}><InputMezo key={key} input={findKey(key)} value={value} handleChange={handleChange} /></td>
+                return <td key={key}><InputMezo key={key} input={findKey(key)} veryCoolValue={value} value={value} handleChange={handleChange} /></td>
             return inputCella(value)
         })
     }

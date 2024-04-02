@@ -13,18 +13,19 @@ import { Offcanvas } from "react-bootstrap";
 import UjVonal from "./UjVonal";
 
 function MegalloSzerkeszto(props) {
+  const _ = require("lodash");
+  
   const { getAll, post } = useContext(AxiosContext);
   const { url } = useContext(MetaadatContext);
 
   const [opcio, setOpciok] = React.useState(null);
   const [megallok, setMegallok] = React.useState(props.megallok);
   const [regiMegallok, setRegiMegallok] = React.useState(
-    JSON.parse(JSON.stringify(props.megallok))
+    _.cloneDeep(props.megallok)
   );
   const [checked, setChecked] = useState(false);
   const [show, setShow] = useState(false);
 
-  const _ = require("lodash");
 
   // const handleClose = () => setShow(false);
   // const handleShow = () => setShow(true);

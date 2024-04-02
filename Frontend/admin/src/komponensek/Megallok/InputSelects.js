@@ -23,6 +23,8 @@ function InputSelects(props) {
     }));
   };
 
+  console.log("ad", adatok);
+
   React.useEffect(() => {
     props.handleChange(null);
     if (adatok) {
@@ -88,6 +90,7 @@ function InputSelects(props) {
             name={input.key}
             input={findKey(input.key)}
             value={input.value}
+            idk={true}
             handleChange={handleChange}
             isSelect={true}
             pool={opciok[input.url]}
