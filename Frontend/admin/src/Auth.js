@@ -1,3 +1,4 @@
+import { set } from 'lodash';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,13 +7,22 @@ function Auth(Component) {
     const [authorized, setAuthorized] = React.useState(false);
     const navigate = useNavigate();
 
+
     useEffect(() => {
-      if (Math.random() > 0.5) {
+      if (localStorage.getItem('token')) {
         setAuthorized(true);
+        console.log("Authorized");
+        setTimeout(() => {
+          setAuthorized(false);
+          localStorage.removeItem('token');
+          navigate('/login');
+        }, 3600000);
       } else {
+        localStorage.removeItem('token');
         navigate('/login');
+        setAuthorized(false);
       }
-    }, []);
+    }, [navigate]);
 
     if (authorized) {
       return <Component {...props} />;

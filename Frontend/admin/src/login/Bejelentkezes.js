@@ -13,7 +13,7 @@ function Bejelentkezes()
     const { post } = React.useContext(AxiosContext);
     
     const navigate = useNavigate();
-    const inputs = [{columnName: "Email", dataType: "email"}, {columnName: "Password", dataType: "password", characterMinimumLength: 8}]
+    const inputs = [{columnName: "email", dataType: "email"}, {columnName: "password", dataType: "password", characterMinimumLength: 8}]
 
     const [validated, setValidated] = React.useState(false);
     const [adatok, setAdatok] = React.useState({});
@@ -33,8 +33,12 @@ function Bejelentkezes()
     const handleSumbit = (event) => {
         event.preventDefault();
         setValidated(true);
-        //axios
-        navigate("/admin");
+        post("kezelok/login", adatok, (valasz) =>{
+                window.sessionStorage.setItem('felhasznalo', adatok.email);
+                console.log(adatok.email);
+                localStorage.setItem("token", valasz);
+                navigate("/admin");
+        });
     }
 
     const handleChange = (event) => {

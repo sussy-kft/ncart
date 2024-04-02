@@ -63,8 +63,8 @@ function Sor(props) {
                 return null;
             if (findKey(key)?.references && findKey(key)?.references.split("/").length > 1)
                 return kulsoAdatok[findKey(key).references].map((opcio, index) => {
-                    console.log("aaaaaaaaaaaaaaaa",opcio, index, value);
-                    console.warn(Array.isArray(value));
+                    // console.log("aaaaaaaaaaaaaaaa",opcio, index, value);
+                    // console.warn(Array.isArray(value));
                     return (
                         <td key={opcio}>
                           {Array.isArray(value) 

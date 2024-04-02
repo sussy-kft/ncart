@@ -8,7 +8,7 @@ using System.Linq;
 namespace Backend.Controllers
 {
     [Route("dQw4w9WgXcQ")]
-    public class UtvonalSzamitasController(AppDbContext context) : JsonRecieverController (context)
+    public class UtvonalSzamitasController(AppDbContext context, IConfiguration config) : JsonRecieverController (context, config)
     {
         Vonal[] vonalak = null;
         Megall[] megallok = null;

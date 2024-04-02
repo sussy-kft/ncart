@@ -1,19 +1,34 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, redirect } from "react-router-dom";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import FormCheck from 'react-bootstrap/FormCheck';
 import { DarkModeContext } from "./context/DarkModeContext";
 import { useContext } from "react";
 import * as Icon from 'react-bootstrap-icons';
+import { MetaadatContext } from "./context/MetaadatContext";
+import { useNavigate } from "react-router-dom";
 
 function Layout() {
   const { getText } = useContext(DarkModeContext);
   const { darkMode, setDarkMode } = useContext(DarkModeContext);
+  const navigate = useNavigate();
 
   return (
     <>
       <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary" >
         <Container>
-          <Navbar.Brand>Brand text</Navbar.Brand>
+          <Navbar.Brand>
+            <Icon.DoorOpenFill
+              color="#ff4040"
+              title="Kijelentkezés"
+              size={20}
+              onClick={() => {
+                window.sessionStorage.removeItem('felhasznalo');
+                window.localStorage.removeItem('token');
+                navigate('/login');
+              }}
+              style={{ marginRight: "10px", cursor: "pointer"}}
+            />{window.sessionStorage.getItem('felhasznalo')}
+          </Navbar.Brand>
           <div className="order-lg-1 d-flex align-items-center">
             <FormCheck
 

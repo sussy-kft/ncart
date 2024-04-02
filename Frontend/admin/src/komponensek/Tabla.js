@@ -25,8 +25,12 @@ function Tabla(props) {
     console.log(row);
   }
 
+  console.log("adatok",adatok);
+
   React.useEffect(() => {
-    setAdatok(getAll(url, setAdatok));
+    setAdatok(null);
+    if(url)
+      (getAll(url, setAdatok));
   }, [url, axiosId]);
 
   if (!adatok || !getPKs() || !kulsoAdatok) return errorState ? <img src="https://http.cat/503" /> : <img src="https://http.cat/102" />; 

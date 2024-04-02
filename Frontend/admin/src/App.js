@@ -6,11 +6,14 @@ import Bejelentkezes from "./login/Bejelentkezes";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { AxiosProvider } from "./context/AxiosContext";
 import { MetaadatProvider } from "./context/MetaadatContext";
+import React from "react";
 
 function App() {
   const location = window.location.pathname;
+  const [felhasznalo, setFelhasznalo] = React.useState();
 
   return (
+    
     <div className="App">
       {/* {location === "/" ? (
         <iframe

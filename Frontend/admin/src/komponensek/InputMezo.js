@@ -33,6 +33,16 @@ function InputMezo(props) {
             //     type: typeConverter(props.input?.dataType) ?? ""
             // });
         }
+        else if(props.handleChange && !onceFlag && props.input?.dataType.substring(props.input?.dataType.length - 2) == "[]" ){
+            props.handleChange({
+                target: {
+                    name: (props.name || props.input?.columnName) ?? "",
+                    value: props.value ?? [],
+                    type: typeConverter(props.input?.dataType) ?? ""
+                }
+            });
+            setOnceFlag(true);
+        }
     }, [props.value, props.input, opciok[0]?.id, props.pool]); 
 
     if(!props.input && !props.value && !opciok[0]) return null;

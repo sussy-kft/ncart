@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import UjAllomas from "./UjAllomas";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useContext } from "react";
@@ -13,7 +13,7 @@ import { Offcanvas } from "react-bootstrap";
 import UjVonal from "./UjVonal";
 
 function MegalloSzerkeszto(props) {
-  const { getAll, post, patch } = useContext(AxiosContext);
+  const { getAll, post } = useContext(AxiosContext);
   const { url } = useContext(MetaadatContext);
 
   const [opcio, setOpciok] = React.useState(null);
@@ -26,10 +26,10 @@ function MegalloSzerkeszto(props) {
 
   const _ = require("lodash");
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
 
-  console.log("bbbbbbbbbbbbb", megallok, regiMegallok);
+  // console.log("bbbbbbbbbbbbb", megallok, regiMegallok);
 
   const filterPool = (key) => {
     // console.warn(opcio);
@@ -38,10 +38,10 @@ function MegalloSzerkeszto(props) {
     return opcio.filter((value) => {
       //console.log(!megallok[key].megallok.some(val2 => {return value.id == val2.allomas}));
       return !(
-        value.id == megallok[key].megallok[0]?.elozoMegallo ||
+        value.id === megallok[key].megallok[0]?.elozoMegallo ||
         megallok[key].megallok.some((val2) => {
           //console.log("sus",value.id, val2.allomas)
-          return value.id == val2.allomas;
+          return value.id === val2.allomas;
         })
       );
     });
@@ -54,32 +54,29 @@ function MegalloSzerkeszto(props) {
   const handleChange = (key, obj, event) => {
     setShow(true);
     const tmp = [...megallok[key].megallok];
-    const { name, value } = event.target;
+    const { value } = event.target;
 
-    tmp.find((val) => val.allomas == obj.allomas).hanyPerc = value * 1;
+    tmp.find((val) => val.allomas === obj.allomas).hanyPerc = value * 1;
     // console.log(megallok[key].megallok.hanyPerc);
     // console.log(regiMegallok[key].megallok.hanyPerc);
     // console.warn(regiMegallok);
-    console.warn(value);
-    console.warn(megallok, regiMegallok);
+    // console.warn(value);
+    // console.warn(megallok, regiMegallok);
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [key]: {
         ...prevMegallok[key],
         megallok: tmp,
       },
-      
-        ...(checked
-          ? {
-              [OppositeKey(key)]: {
-                ...prevMegallok[OppositeKey(key)],
-                megallok: megfordit(
-                  JSON.parse(JSON.stringify(tmp)).reverse()
-                ),
-              },
-            }
-          : {}),
-      
+
+      ...(checked
+        ? {
+            [OppositeKey(key)]: {
+              ...prevMegallok[OppositeKey(key)],
+              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
+            },
+          }
+        : {}),
     }));
   };
 
@@ -116,25 +113,22 @@ function MegalloSzerkeszto(props) {
 
   const kuldes = () => {
     for (const [key, value] of Object.entries(megallok)) {
-      if(value){
-        // console.log("xddddddd",{
-        //   vonal: value.vonal.id,
-        //   kezdoAll: value.megallok[0].elozoMegallo,
-        //   megallok: value.megallok
-        // });
-        console.warn("meg", megallok);
-        post(url + "/batch", 
-        {
+      if (value) {
+        // console.warn("meg", megallok);
+        post(url + "/batch", {
           vonal: value.vonal.id,
           kezdoAll: value.megallok[0].elozoMegallo,
-          megallok: value.megallok
-        }
-        )
+          megallok: value.megallok,
+        });
+        setRegiMegallok(_.cloneDeep(megallok));
+        setShow(false);
       }
     }
 
     console.warn("Küldés");
   };
+
+  console.log(regiMegallok, megallok);
 
   const atmasol = (key) => {
     console.warn(OppositeKey(key));
@@ -169,7 +163,9 @@ function MegalloSzerkeszto(props) {
 
   const szinkronizalhato = () => {
     //console.error(megallok);
-    return megallok.oda && megallok.vissza && (
+    return (
+      megallok.oda &&
+      megallok.vissza &&
       megallok.oda.megallok.length === megallok.vissza.megallok.length &&
       megallok.oda.megallok.every(
         (value, index) =>
@@ -187,7 +183,7 @@ function MegalloSzerkeszto(props) {
 
   const visszaallit = () => {
     setChecked(false);
-    handleClose();
+    setShow(false);
     setMegallok(JSON.parse(JSON.stringify(regiMegallok)));
     console.log(megallok, regiMegallok);
   };
@@ -196,11 +192,12 @@ function MegalloSzerkeszto(props) {
     let index = megallok[key].megallok.findIndex(
       (value) => JSON.stringify(value) === JSON.stringify(obj)
     );
-    if(index > 0 && index < megallok[key].megallok.length - 1)
-      megallok[key].megallok[index+1].elozoMegallo = megallok[key].megallok[index -1 ].allomas;
+    if (index > 0 && index < megallok[key].megallok.length - 1)
+      megallok[key].megallok[index + 1].elozoMegallo =
+        megallok[key].megallok[index - 1].allomas;
     const tmp = megallok[key].megallok.filter(
       (value) => JSON.stringify(value) !== JSON.stringify(obj)
-    )
+    );
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [key]: {
@@ -211,9 +208,7 @@ function MegalloSzerkeszto(props) {
         ? {
             [OppositeKey(key)]: {
               ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(
-                JSON.parse(JSON.stringify(tmp)).reverse()
-              ),
+              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
             },
           }
         : {}),
@@ -232,7 +227,7 @@ function MegalloSzerkeszto(props) {
 
   return (
     <>
-      <Form className="container">
+      <Form className="container" style={{ marginBottom: "80px" }}>
         {/* kys */}
 
         <DragDropContext
@@ -287,17 +282,24 @@ function MegalloSzerkeszto(props) {
           <Row>
             {Object.entries(megallok).map(([key, value], index) => {
               //console.log(key);
-              
+              <h2>ds</h2>;
               console.warn(value);
               if (!value)
                 return (
                   <Col>
-
-                    <UjVonal name={key} masikVonal={megallok[OppositeKey(key)]?.vonal ?? {}} meta={props.meta} setMegallok={setMegallok} setRegiMegallok={setRegiMegallok} megallok={megallok}/>
+                    <UjVonal
+                      name={key}
+                      masikVonal={megallok[OppositeKey(key)]?.vonal ?? {}}
+                      meta={props.meta}
+                      setMegallok={setMegallok}
+                      setRegiMegallok={setRegiMegallok}
+                      megallok={megallok}
+                    />
                   </Col>
                 );
               return (
                 <Col>
+                  <h3>{`${value.vonal.id} vonal:`}</h3>
                   <Droppable droppableId={key} type={key}>
                     {(provided) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -336,18 +338,20 @@ function MegalloSzerkeszto(props) {
                     name={key}
                     pool={filterPool(key)}
                   />
-                  <Row>
-                    <Button variant="primary" onClick={() => atmasol(key)}>
-                      Adatok átmásolása
-                    </Button>
-                  </Row>
+                  {megallok[OppositeKey(key)] && (
+                    <Row>
+                      <Button variant="primary" onClick={() => atmasol(key)}>
+                        Adatok átmásolása
+                      </Button>
+                    </Row>
+                  )}
                 </Col>
               );
             })}
           </Row>
           <ToggleButton
             id="toggle-check"
-            className={megallok.vissza? "" : "d-none"}
+            className={megallok.vissza ? "" : "d-none"}
             type="checkbox"
             variant={checked ? "success" : "warning"}
             onMouseOver={(e) =>
@@ -378,7 +382,7 @@ function MegalloSzerkeszto(props) {
       <Offcanvas
         style={{ height: "70px" }}
         show={show}
-        onHide={handleClose}
+        onHide={() => setShow(false)}
         placement="bottom"
         scroll={true}
         backdrop={false}

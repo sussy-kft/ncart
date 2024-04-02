@@ -9,8 +9,11 @@ export const AxiosContext = createContext();
 export const AxiosProvider = ({ children }) => {
     const [axiosId, setAxiosId] = React.useState(Math.random());
     const {addInfoPanel} = React.useContext(InfoPanelContext);
-    const baseUrl = "https://localhost:7078/";
+    const baseUrl = "https://localhost:44339/";
     const [errorState, setErrorState] = React.useState(false);
+    const header= { headers: { Authorization: "Bearer " + localStorage.getItem("token") } };
+
+    console.warn(header);
 
     const getAll = (url, callback, errorCallback) => {
         console.log(baseUrl + url);
@@ -58,7 +61,7 @@ export const AxiosProvider = ({ children }) => {
     const destroy = (url, ids) => {
         console.log(baseUrl + url + "/" + ids);
         console.log(ids);
-        axios.delete(baseUrl + url + "/" + ids)
+        axios.delete(baseUrl + url + "/" + ids, header)
         .then(response => {
             console.log(response.data);
             console.log(response);
@@ -71,15 +74,17 @@ export const AxiosProvider = ({ children }) => {
         })
     }
 
-    const post = (url, item) => {
+    const post = (url, item, callback) => {
         console.log(item);
         console.log(baseUrl + url);
-        axios.post(baseUrl + url, item)
+        axios.post(baseUrl + url, item, header)
         .then(response => {
             console.log(response.data);
             console.log(response);
             setAxiosId(Math.random());
-            addInfoPanel(<InfoPanel bg={"success"} text={"Az új adat rögzítése sikeres volt!"}/>);
+            callback 
+                ? callback(response.data) 
+                : addInfoPanel(<InfoPanel bg={"success"} text={"Az új adat rögzítése sikeres volt!"}/>);
         })
         .catch(error => {
             //error.code
@@ -90,7 +95,7 @@ export const AxiosProvider = ({ children }) => {
     const patch = (url, id, item) => {
         console.log(item);
         console.log(baseUrl + url + "/" + id);
-        axios.patch(baseUrl + url + "/" + id, item)
+        axios.patch(baseUrl + url + "/" + id, item, header)
         .then(response => {
             console.log(response.data);
             console.log(response);
@@ -107,7 +112,7 @@ export const AxiosProvider = ({ children }) => {
     const put = (url, id, item) => {
         console.log(item);
         console.log(baseUrl + url + "/" + id);
-        axios.put(baseUrl + url + "/" + id, item)
+        axios.put(baseUrl + url + "/" + id, item, header)
         .then(response => {
             console.log(response.data);
             console.log(response);

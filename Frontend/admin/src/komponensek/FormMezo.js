@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { MetaadatContext } from '../context/MetaadatContext';
 import InputMezo from './InputMezo';
+import { Container } from 'react-bootstrap';
 
 function FormMezo(props) {
     const { post } = useContext(AxiosContext);
@@ -13,6 +14,8 @@ function FormMezo(props) {
 
     const [validated, setValidated] = React.useState(false);
     const [adatok, setAdatok] = React.useState({});
+
+    console.log("ad",adatok);
 
     const handleChange = (event) => {
         const { name, type, checked, value } = event.target;
@@ -32,9 +35,8 @@ function FormMezo(props) {
                 return generateInput(input.dataType)
             else return(
                     <Form.Group key={input.columnName} as={Col} md="4">
-                        <Form.Label>{input.columnName + ": "}
-                            <InputMezo input={input} handleChange={handleChange} />
-                        </Form.Label>
+                        <Form.Label>{input.columnName + ": "}</Form.Label>
+                        <InputMezo input={input} handleChange={handleChange} />
                         <Form.Control.Feedback type="invalid" />
                     </Form.Group>
                 );
@@ -64,15 +66,17 @@ function FormMezo(props) {
     if (!metaadat) return <h1>Betöltés...</h1>
 
     return (
-        <Form noValidate validated={validated} onSubmit={(event) => kuldes(event)}>
-            <h2>Új adat hozzáadása:</h2>
-            <Row className='mb-4'>
-                {generateInput(metaadat)}
-            </Row>
-            <Button type="submit">
-                Küldés
-            </Button>
-        </Form>
+        <Container>
+            <Form noValidate validated={validated} onSubmit={(event) => kuldes(event)}>
+                <h2 className='mt-3'>Új adat hozzáadása:</h2>
+                <Row className='mb-2 mt-3'>
+                    {generateInput(metaadat)}
+                </Row>
+                <Button className='mb-4' type="submit">
+                    Küldés
+                </Button>
+            </Form>
+        </Container>
     )
 }
 
