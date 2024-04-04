@@ -80,7 +80,7 @@ export const MetaadatProvider = ({ children }) => {
     }
 
     return (
-        <MetaadatContext.Provider value={{ metaadat, kulsoAdatok, getPKs, findKey, url, setUrl }}>
+        <MetaadatContext.Provider value={{ metaadat, kulsoAdatok, getPKs, findKey, url, setUrl}}>
             {children}
         </MetaadatContext.Provider>
     );

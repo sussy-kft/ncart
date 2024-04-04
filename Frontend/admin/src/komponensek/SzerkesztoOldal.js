@@ -6,6 +6,8 @@ import FormMezo from "./FormMezo";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { MetaadatContext } from "../context/MetaadatContext";
+import Auth from "../Auth";
+import { useRef } from "react";
 
 function Kezelok(props) {
   const { InfoPanels } = useContext(InfoPanelContext);
@@ -14,8 +16,8 @@ function Kezelok(props) {
   const location = useLocation();
 
   useEffect(() => {
-    setUrl(location.pathname.substring(1));
-  }, [location]);
+    setUrl(location.pathname.split("admin/")[1]);
+  }, [location.pathname]);
 
   return (
     <>
@@ -34,3 +36,4 @@ function Kezelok(props) {
 }
 
 export default Kezelok;
+

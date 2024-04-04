@@ -48,10 +48,10 @@ namespace Backend
             }
         });
 
-        public static IQueryable<T> ForEach<T>(this IQueryable<T> dtos, Action<T> action)
+        public static IQueryable<T> ForEach<T>(this IQueryable<T> items, Action<T> action)
         {
-            dtos.ToList().ForEach(action);
-            return dtos;
+            items.ToList().ForEach(action);
+            return items;
         }
     }
 }

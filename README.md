@@ -1,1 +1,2 @@
 A ".example appsettings.json" file-t nevezd át csak simán "appsettings.json"-ra, majd írd át a "SERVER_NAME"-et a "DbConnection" connection string-ben arra amit az SQL Server Management Studio kiad indításkor a "Server name" mezőben (pl.: "DESKTOP-ABCDEFG").
+Előfordulhat, hogy az SQL szerveren a jelenlegi felhasználó nem admin. Hogy működjön a Security>Users>*username*>Properties>Server Roles>sysadmin hozzáadása. Innentól ez a felhasználó is hozzáfér az adatbázishoz.

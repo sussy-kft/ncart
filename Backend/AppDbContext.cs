@@ -18,7 +18,8 @@ namespace Backend
         {
             optionsBuilder
                 .UseSqlServer(config.GetConnectionString("DbConnection"))
-                //.LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+                .LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+                .EnableSensitiveDataLogging()
             ;
         }
 
@@ -80,12 +81,16 @@ namespace Backend
                 .ToTable(tableBuilder => {
                     tableBuilder.HasCheckConstraint($"CK_Vonalak_{nameof(Vonal.KezdoAll)}_Es_{nameof(Vonal.Vegall)}_Nem_Egegyeznek", $"{nameof(Vonal.KezdoAll)} <> {nameof(Vonal.Vegall)}");
                     tableBuilder.HasTrigger("Uj_Vonal_Vegallomas");
+                    tableBuilder.HasTrigger("Vonalak_Cascade");
                 })
             ;
             modelBuilder.Entity<Megall>()
                 .ToTable(tableBuilder => {
+                    tableBuilder.HasTrigger("Kezdo_All_Megvaltozott");
                     tableBuilder.HasTrigger("Megallo_Beszur");
                     tableBuilder.HasTrigger("Megallo_Torol");
+                    tableBuilder.HasTrigger("Vonal_Bovitve");
+                    tableBuilder.HasTrigger("Vonal_Roviditve");
                 })
             ;
         }

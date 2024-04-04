@@ -1,36 +1,40 @@
+import Admin from "./Admin";
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Layout from "./Layout";
-import NoPage from "./komponensek/NoPage";
-import SzerkesztoOldal from "./komponensek/SzerkesztoOldal";
-import Megallok from "./komponensek/Megallok/Megallok";
-import 'bootstrap/dist/css/bootstrap.css';
+import "bootstrap/dist/css/bootstrap.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Bejelentkezes from "./login/Bejelentkezes";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { AxiosProvider } from "./context/AxiosContext";
 import { MetaadatProvider } from "./context/MetaadatContext";
+import React from "react";
 
 function App() {
+  const location = window.location.pathname;
+  const [felhasznalo, setFelhasznalo] = React.useState();
+
   return (
-    <div className="App" >
+    
+    <div className="App">
+      {/* {location === "/" ? (
+        <iframe
+          src="http://localhost:42069/index.html"
+          title="External HTML"
+          style={{ width: "100%", height: "100vh" }}
+        />
+      ) : ( */}
       <DarkModeProvider>
         <AxiosProvider>
           <MetaadatProvider>
-            <BrowserRouter>
+            <Router>
               <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route key="kezelok" path="/kezelok" element={<SzerkesztoOldal cim={"Kezelők"}/>} />
-                  <Route key="jarmutipusok" path="/jarmutipusok" element={<SzerkesztoOldal cim={"Járműtípusok"}/>} />
-                  <Route key="vonalak" path="/vonalak" element={<SzerkesztoOldal cim={"Vonalak"}/>} />
-                  <Route key="allomasok" path="/allomasok" element={<SzerkesztoOldal cim={"Állomások"}/>} />
-                  <Route key="inditasok" path="/inditasok" element={<SzerkesztoOldal cim={"Indítások"}/>} />
-                  <Route key="megallok" path="/megallok" element={<SzerkesztoOldal cim={"Megállok"} child={<Megallok/>}/>} />
-                  <Route path="*" element={<NoPage />} />
-                </Route>
+                <Route path="/login" element={<Bejelentkezes />} />
+                <Route path="/admin/*" element={<Admin />} />
               </Routes>
-            </BrowserRouter>
+            </Router>
           </MetaadatProvider>
         </AxiosProvider>
       </DarkModeProvider>
+      {/* )} */}
     </div>
   );
 }

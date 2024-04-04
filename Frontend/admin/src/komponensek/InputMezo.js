@@ -22,7 +22,13 @@ function InputMezo(props) {
             props.handleChange({
                 target: {
                     name: (props.name || props.input?.columnName) ?? "",
-                    value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
+                    //ha több időm lenne, akkor nem így csinálnám, de most ez a leggyorsabb megoldás :D
+                    //ezért megértem, ha nem tetszik, de most ez van
+                    //ez a kód a leggyorsabb megoldás, hogy a selecteket is kezelni tudjuk
+                    //ha nem tetszik, akkor kérlek írj egy jobbat
+                    
+                    //ps. ezért megérte megvenni a copilotot, hogy ilyen commenteket írjon
+                    value: props?.idk ? ((props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "" ) : (props.value ?? (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? "" ),
                     type: typeConverter(props.input?.dataType) ?? ""
                 }
             });
@@ -32,6 +38,17 @@ function InputMezo(props) {
             //     value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
             //     type: typeConverter(props.input?.dataType) ?? ""
             // });
+        }
+        else if(props.handleChange && !onceFlag && props.input?.dataType.substring(props.input?.dataType.length - 2) == "[]" ){
+            props.handleChange({
+                target: {
+                    name: (props.name || props.input?.columnName) ?? "",
+                    value:[ props.value] ?? [],
+                    type: "checkbox", //typeConverter(props.input?.dataType) ?? "",
+                    checked: props.checked ? true : false
+                }
+            });
+            setOnceFlag(true);
         }
     }, [props.value, props.input, opciok[0]?.id, props.pool]); 
 
@@ -44,9 +61,10 @@ function InputMezo(props) {
                 required={!props.input?.isNullable}
                 name={(props.name || props.input?.columnName) ?? ""}
                 defaultValue={props.value ?? ""}
-                {...props.veryCoolValue ? {value: props.veryCoolValue} : {}}
+                {...props.veryCoolValue ? {value: props.veryCoolValue ?? {}} : {}}
                 type={typeConverter(props.input?.dataType) ?? ""}
                 maxLength={props.input?.characterMaximumLength ?? ""}
+                minLength={props.input?.characterMinimumLength ?? ""}
                 step={"any"}
                 min={minConverter(props.input?.dataType) ?? ""}
                 max={maxConverter(props.input?.dataType) ?? ""}

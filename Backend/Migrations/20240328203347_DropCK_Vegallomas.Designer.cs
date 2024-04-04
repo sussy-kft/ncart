@@ -3,6 +3,7 @@ using Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240328203347_DropCK_Vegallomas")]
+    partial class DropCK_Vegallomas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,15 +133,9 @@ namespace Backend.Migrations
 
                     b.ToTable("Megallok", t =>
                         {
-                            t.HasTrigger("Kezdo_All_Megvaltozott");
-
                             t.HasTrigger("Megallo_Beszur");
 
                             t.HasTrigger("Megallo_Torol");
-
-                            t.HasTrigger("Vonal_Bovitve");
-
-                            t.HasTrigger("Vonal_Roviditve");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -177,8 +174,6 @@ namespace Backend.Migrations
                     b.ToTable("Vonalak", t =>
                         {
                             t.HasTrigger("Uj_Vonal_Vegallomas");
-
-                            t.HasTrigger("Vonalak_Cascade");
 
                             t.HasCheckConstraint("CK_Vonalak_KezdoAll_Es_Vegall_Nem_Egegyeznek", "KezdoAll <> Vegall");
                         });
