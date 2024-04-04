@@ -4,14 +4,14 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    public abstract class BatchPostableController<TPrimaryKey, TDbFormat, TJsonFormat, TBatchFormat>(AppDbContext context) : TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(context)
+    public abstract class BatchPostableController<TPrimaryKey, TDbFormat, TJsonFormat, TBatchFormat>(AppDbContext context, IConfiguration config) : TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(context, config)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
         where TBatchFormat : class, IConvertible<IReadOnlyList<TDbFormat>>
     {
         [HttpPost("batch")]
-        public abstract ActionResult Post([FromBody] TBatchFormat data);
+        public abstract ActionResult PostBatch([FromBody] TBatchFormat data);
 
-        protected ActionResult Post(DbSet<TDbFormat> dbSet, TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
+        protected ActionResult PostBatch(DbSet<TDbFormat> dbSet, TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
     }
 }

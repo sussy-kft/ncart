@@ -1,31 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("allomasok")]
-    public partial class AllomasController(AppDbContext context) : TablaController<int, Allomas, AllomasDTO>(context)
+    [Route("allomasok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    public partial class AllomasController(AppDbContext context, IConfiguration config) : TablaController<int, Allomas, AllomasDTO>(context, config)
     {
         public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
 
-        public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
-
-        public override ActionResult Delete() => DeleteAll(context.Allomasok);
-
-        [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
-    }
-
-    public partial class AllomasController
-    {
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
-    }
 
-    public partial class AllomasController
-    {
+        public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
+
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
             dbSet: context.Allomasok,
@@ -36,6 +26,34 @@ namespace Backend.Controllers
             },
             pk: id
         );
+
+        public override ActionResult Delete() => DeleteAll(context.Allomasok);
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Allomasok")
+            .OverrideDataType<IReadOnlyList<MetadataDTO<string>>>(metadataDTO => metadataDTO.ColumnName == "Koord", _ => [
+                new MetadataDTO<string> {
+                    ColumnName = "X",
+                    DataType = "float",
+                    IsNullable = false,
+                    IsPartOfPK = false,
+                    References = null,
+                    CharacterMaximumLength = null,
+                    IsHidden = false
+                },
+                new MetadataDTO<string> {
+                    ColumnName = "Y",
+                    DataType = "float",
+                    IsNullable = false,
+                    IsPartOfPK = false,
+                    References = null,
+                    CharacterMaximumLength = null,
+                    IsHidden = false
+                }
+            ])
+        ;
     }
 
     public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
