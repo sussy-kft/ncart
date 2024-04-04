@@ -1,43 +1,52 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("kezelok")]
-    public partial class KezeloController(AppDbContext context) : TablaController<int, Kezelo, KezeloDTO>(context)
+    [Route("kezelok"), Authorize(Policy = SzerkesztokFelvetele)]
+    public partial class KezeloController(AppDbContext context, IConfiguration config) : TablaController<int, Kezelo, KezeloDTO>(context, config)
     {
-        public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok);
+        public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok).ForEach(kezeloDTO => {
+            kezeloDTO.Jelszo = "";
+        });
 
-        public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data);
+        [HttpGet("{id}")]
+        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
+
+        public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data); // Jelszót titkosítani
 
         public override ActionResult Delete() => DeleteAll(context.Kezelok);
 
-        [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
-    }
-
-    public partial class KezeloController
-    {
-        [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
-    }
-
-    public partial class KezeloController
-    {
         [HttpPut("{id}")]
         public override ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
             dbSet: context.Kezelok,
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
                 kezelo.Email = ujKezelo.Email;
-                kezelo.Jelszo = ujKezelo.Jelszo;
+                kezelo.Jelszo = ujKezelo.Jelszo; // TODO: titkosítani
                 kezelo.Engedelyek = ujKezelo.Engedelyek;
             },
             pk: id
         );
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
+
+        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Kezelok")
+            .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
+            .OverrideSetIsHiddenTrue(metadataDTO => metadataDTO.ColumnName == "Jelszo")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Email", _ => "email")
+            .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Jelszo", _ => "password")
+        ;
     }
 
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
@@ -76,7 +85,10 @@ namespace Backend.Controllers
             JaratokSzerkesztese = 1 << 1
         }
 
-        static IReadOnlyList<string> OsszesEngedelyNev { get; }
+        public const string SzerkesztokFelvetele = "SzerkesztokFelvetele";
+        public const string JaratokSzerkesztese = "JaratokSzerkesztese";
+
+        public static IReadOnlyList<string> OsszesEngedelyNev { get; }
 
         public static IReadOnlyList<Engedelyek> OsszesEngedely { get; }
 
@@ -86,7 +98,7 @@ namespace Backend.Controllers
             OsszesEngedelyNev = OsszesEngedely.ToList().ConvertAll(engedely => engedely.ToString());
         }
 
-        [HttpGet("engedelyek")]
+        [HttpGet("engedelyek"), AllowAnonymous]
         public IEnumerable<string> GetEngedelyek() => OsszesEngedelyNev;
 
         public static byte ConvertEngedelyekStringListToByte(List<string> engedelyekStringList)
@@ -121,6 +133,48 @@ namespace Backend.Controllers
                 }
             });
             return engedelyek;
+        }
+    }
+
+    public partial class KezeloController
+    {
+        [HttpPost("login"), AllowAnonymous]
+        public ActionResult Login(LoginData loginData) => CheckIfBadRequest(() => {
+            Kezelo? user = context
+                .Kezelok
+                .Where(kezelo => kezelo.Email == loginData.Email)
+                .FirstOrDefault()
+            ;
+            if (user is not null && user.Jelszo == loginData.Password) // TODO: a titkosított jelszót kell lecsekkolni
+            {
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                return Ok(tokenHandler.WriteToken(tokenHandler.CreateToken(new SecurityTokenDescriptor {
+                    Subject = new ClaimsIdentity(((Func<IEnumerable<Claim>>)(() => {
+                        List<Claim> claims = [];
+                        OsszesEngedelyNev.ToList().ForEach(engedelyNev => {
+                            if ((user.Engedelyek & (Enum.TryParse(engedelyNev, out Engedelyek engedely) ? (int)engedely : 0)) != 0)
+                            {
+                                claims.Add(new Claim(engedelyNev, "true"));
+                            }
+                        });
+                        return claims;
+                    }))()),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    Issuer = config["Jwt:Issuer"]!,
+                    Audience = config["Jwt:Audience"]!,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config["Jwt:Key"]!)), SecurityAlgorithms.HmacSha256Signature)
+                })));
+            }
+            else
+            {
+                return BadRequest("A felhasználó email, vagy jelszó helytelen!");
+            }
+        });
+
+        public class LoginData
+        {
+            [Required] public string Email { get; set; }
+            [Required] public string Password { get; set; }
         }
     }
 }

@@ -60,21 +60,21 @@ namespace Backend.Migrations
                         column: x => x.KezdoAll,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.NoAction
                     );
                     table.ForeignKey(
                         name: "FK_Vonalak_Allomasok_Vegall",
                         column: x => x.Vegall,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.NoAction
                     );
                     table.ForeignKey(
                         name: "FK_Vonalak_JarmuTipusok_JarmuTipus",
                         column: x => x.JarmuTipus,
                         principalTable: "JarmuTipusok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.Cascade
                     );
                 }
             );
@@ -94,7 +94,7 @@ namespace Backend.Migrations
                         column: x => x.Vonal,
                         principalTable: "Vonalak",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.Cascade
                     );
                 }
             );
@@ -113,14 +113,14 @@ namespace Backend.Migrations
                         column: x => x.Allomas,
                         principalTable: "Allomasok",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.Cascade
                     );
                     table.ForeignKey(
                         name: "FK_Megallok_Vonalak_Vonal",
                         column: x => x.Vonal,
                         principalTable: "Vonalak",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict
+                        onDelete: ReferentialAction.Cascade
                     );
                 }
             );
@@ -163,22 +163,26 @@ namespace Backend.Migrations
                     RETURN @ret
                 END
             ");
-            migrationBuilder.Sql($@"
-                ALTER TABLE Vonalak
-                ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2
-                CHECK (dbo.Max2Vonal({nameof(Vonal.VonalSzam)}) = 1)
-            ");
+            migrationBuilder.AddCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2",
+                table: "Vonalak",
+                sql: $"dbo.Max2Vonal({nameof(Vonal.VonalSzam)}) = 1"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Inditasok");
-            migrationBuilder.DropTable(name: "Kezelok");
-            migrationBuilder.DropTable(name: "Megallok");
-            migrationBuilder.DropTable(name: "Vonalak");
-            migrationBuilder.DropTable(name: "Allomasok");
-            migrationBuilder.DropTable(name: "JarmuTipusok");
+            migrationBuilder.DropTable("Inditasok");
+            migrationBuilder.DropTable("Kezelok");
+            migrationBuilder.DropTable("Megallok");
+            migrationBuilder.DropTable("Vonalak");
+            migrationBuilder.DropTable("Allomasok");
+            migrationBuilder.DropTable("JarmuTipusok");
+            migrationBuilder.DropCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2",
+                table: "Vonalak"
+            );
             migrationBuilder.Sql("DROP FUNCTION dbo.Max2Vonal");
         }
     }

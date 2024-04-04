@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(IConfiguration config) : DbContext
     {
-        IConfiguration config;
+        IConfiguration config { get; } = config;
 
         public DbSet<Kezelo> Kezelok { get; set; }
         public DbSet<JarmuTipus> JarmuTipusok { get; set; }
@@ -14,14 +14,13 @@ namespace Backend
         public DbSet<Inditas> Inditasok { get; set; }
         public DbSet<Megall> Megallok { get; set; }
 
-        public AppDbContext(IConfiguration config)
-        {
-            this.config = config;
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DbConnection"));
+            optionsBuilder
+                .UseSqlServer(config.GetConnectionString("DbConnection"))
+                .LogTo(message => System.Diagnostics.Debug.WriteLine(message))
+                .EnableSensitiveDataLogging()
+            ;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,36 +29,43 @@ namespace Backend
                 .HasMany(jarmuTipus => jarmuTipus._Vonalak)
                 .WithOne(vonal => vonal._JarmuTipus)
                 .HasForeignKey(vonal => vonal.JarmuTipus)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._VonalakKezdoAll)
                 .WithOne(vonal => vonal._KezdoAll)
                 .HasForeignKey(vonal => vonal.KezdoAll)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._VonalakVegall)
                 .WithOne(vonal => vonal._Vegall)
                 .HasForeignKey(vonal => vonal.Vegall)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._Megallok)
                 .WithOne(megall => megall._Allomas)
                 .HasForeignKey(megall => megall.Allomas)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Vonal>()
                 .HasMany(vonal => vonal._Inditasok)
                 .WithOne(inditas => inditas._Vonal)
                 .HasForeignKey(inditas => inditas.Vonal)
+                .OnDelete(DeleteBehavior.Cascade)
             ;
             modelBuilder.Entity<Vonal>()
                 .HasMany(vonal => vonal._Megallok)
                 .WithOne(megall => megall._Vonal)
                 .HasForeignKey(megall => megall.Vonal)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Allomas>()
                 .HasMany(allomas => allomas._ElozoMegallok)
                 .WithOne(megall => megall._ElozoMegallo)
                 .HasForeignKey(megall => megall.ElozoMegallo)
+                .OnDelete(DeleteBehavior.Restrict)
             ;
             modelBuilder.Entity<Inditas>()
                 .ToTable(tableBuilder => {
@@ -69,6 +75,22 @@ namespace Backend
             modelBuilder.Entity<Inditas>()
                 .ToTable(tableBuilder => {
                     tableBuilder.HasCheckConstraint($"CK_Inditasok_{nameof(Inditas.InditasIdeje)}_Between", $"{nameof(Inditas.InditasIdeje)} >= 0 AND {nameof(Inditas.InditasIdeje)} < 1440");
+                })
+            ;
+            modelBuilder.Entity<Vonal>()
+                .ToTable(tableBuilder => {
+                    tableBuilder.HasCheckConstraint($"CK_Vonalak_{nameof(Vonal.KezdoAll)}_Es_{nameof(Vonal.Vegall)}_Nem_Egegyeznek", $"{nameof(Vonal.KezdoAll)} <> {nameof(Vonal.Vegall)}");
+                    tableBuilder.HasTrigger("Uj_Vonal_Vegallomas");
+                    tableBuilder.HasTrigger("Vonalak_Cascade");
+                })
+            ;
+            modelBuilder.Entity<Megall>()
+                .ToTable(tableBuilder => {
+                    tableBuilder.HasTrigger("Kezdo_All_Megvaltozott");
+                    tableBuilder.HasTrigger("Megallo_Beszur");
+                    tableBuilder.HasTrigger("Megallo_Torol");
+                    tableBuilder.HasTrigger("Vonal_Bovitve");
+                    tableBuilder.HasTrigger("Vonal_Roviditve");
                 })
             ;
         }

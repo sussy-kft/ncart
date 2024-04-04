@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="map.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+        />
+        <link rel="icon" type="image/x-icon" href="images/fav.png" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="scripts/main.js"></script>
+        <title>NCTC | Night City Transit Corporation</title>
+    </head>
+    <body>
+        <main>
+            <nav class="topnav" id="myTopnav">
+                <div id="menuLeft">
+                    <div>
+                        <img src="images/navlogo.png" alt="" />
+                    </div>
+                </div>
+                <div id="menuRight">
+                    <div id="start"><a href="index.html">KEZDŐLAP</a></div>
+                    <div id="plan">UTAZÁS TERVEZÉS</div>
+                </div>
+                <div id="hamburger">
+                    <a
+                        href="javascript:void(0);"
+                        class="icon"
+                        onclick="myFunction()"
+                        ><i class="bi bi-list"></i>
+                    </a>
+                </div>
+            </nav>
+            <article>
+                <div id="panel">
+                    <label for="fname"
+                        ><i class="bi bi-compass-fill"></i
+                    ></label>
+                    <input
+                        type="text"
+                        id="fname"
+                        name="fname"
+                        placeholder="Honnan"
+                    /><br />
+                    <label for="fname"
+                        ><i class="bi bi-geo-alt-fill"></i
+                    ></label>
+                    <input
+                        type="text"
+                        id="lname"
+                        name="lname"
+                        placeholder="Hova"
+                    /><br />
+                    <label for="date"
+                        ><i class="bi bi-calendar-event-fill"></i
+                    ></label>
+                    <input type="date" id="date" name="birthday" /><br />
+                    <label for="appt"><i class="bi bi-clock-fill"></i></label>
+                    <input type="time" id="appt" name="appt" /><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                    />
+                    <label for="vehicle1">NCET</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle2"
+                        name="vehicle2"
+                        value="Car"
+                    />
+                    <label for="vehicle2">NCBT</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle3"
+                        name="vehicle3"
+                        value="Boat"
+                    />
+                    <label for="vehicle3">NCART</label><br />
+                    <input type="submit" value="Tervezés" />
+                </div>
+                <div id="map">
+                    <img src="images/map1.png" alt="" />
+                </div>
+            </article>
+        </main>
+    </body>
+</html>
