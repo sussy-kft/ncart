@@ -1,60 +1,23 @@
-export const KEPEK_MAPPA_ELERES = "kepek/";
-
-export const KEP_LISTA = [
+export const KEPLISTA = [
     {
-        gyarto: "Ford",
-        nev: "Mustang GT Fastback",
-        evjarat: 1967,
-        loero: 320,
-        kep: "1967_Ford_Mustang_GT_Fastback.jpg",
+        eleres: "images/virag_1.jpeg",
+        cim: "Virag1",
+        leiras: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci eaque hic asperiores fugiat libero modi voluptatem? Tempore sit numquam impedit quod, dolores tenetur velit facilis eos, harum distinctio ducimus saepe?
+    Reiciendis aliquid explicabo placeat delectus quidem nisi ad nam iste, sed beatae porro facere architecto. Enim rerum, iure itaque culpa voluptatum illum dolore. Fuga corrupti, cumque illum aspernatur ea eaque.`,
     },
     {
-        gyarto: "Jaguar",
-        nev: "E-type",
-        evjarat: 1967,
-        loero: 265,
-        kep: "Jaguar_E-type.jpg",
+        eleres: "images/virag_2.jpeg",
+        cim: "Virag2",
+        leiras: "There are many variations of passages of Lorem Ipsum available, but the majority",
     },
     {
-        gyarto: "Lamborghini",
-        nev: "Murcielago",
-        evjarat: 2001,
-        loero: 571,
-        kep: "Lamborghini_Murcielago.webp",
+        eleres: "images/virag_3.jpeg",
+        cim: "Virag3",
+        leiras: " If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.",
     },
     {
-        gyarto: "Lancia",
-        nev: "Stratos",
-        evjarat: 1972,
-        loero: 190,
-        kep: "Lancia_Stratos.jpg",
-    },
-    {
-        gyarto: "Lexus",
-        nev: "LFA",
-        evjarat: 2010,
-        loero: 553,
-        kep: "Lexus_LFA.jpg",
-    },
-    {
-        gyarto: "Mazda",
-        nev: "NA Miata",
-        evjarat: 1996,
-        loero: 128,
-        kep: "Mazda_MX-5_NA_Miata.jpg",
-    },
-    {
-        gyarto: "McLaren",
-        nev: "F1",
-        evjarat: 1992,
-        loero: 627,
-        kep: "McLaren_F1.webp",
-    },
-    {
-        gyarto: "Toyota",
-        nev: "Supra",
-        evjarat: 1994,
-        loero: 320,
-        kep: "Toyota_Supra.jpg",
+        eleres: "images/virag_4.jpeg",
+        cim: "Virag4",
+        leiras: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
     },
 ];

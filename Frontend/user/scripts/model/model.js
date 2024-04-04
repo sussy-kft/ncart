@@ -1,37 +1,29 @@
-import {KEP_LISTA} from "../model/adat.js";
-
+import {KEPLISTA} from "./data.js";
 class Model {
-    #kepLista;
+    #lista = [];
     #id;
-
-    constructor(id) {
-        this.#kepLista = KEP_LISTA;
-        this.#id = id;
+    constructor() {
+        this.#lista = KEPLISTA;
+        this.#id = 0;
     }
-
-    get kepLista() {
-        return this.#kepLista;
+    getList() {
+        return this.#lista;
     }
-
-    set id(id) {
-        this.#id = id % this.#kepLista.length;
+    getAktkep() {
+        return this.#lista[this.#id];
     }
-
-    aktualisKep() {
-        return this.#kepLista[this.#id];
+    getKisKepek(index) {
+        return this.#lista[index].eleres;
     }
-
-    jobbra() {
-        if (++this.#id >= this.#kepLista.length) {
+    jobb() {
+        if (++this.#id >= this.#lista.length) {
             this.#id = 0;
         }
     }
-
-    balra() {
+    bal() {
         if (--this.#id < 0) {
-            this.#id = this.#kepLista.length - 1;
+            this.#id = this.#lista.length - 1;
         }
     }
 }
-
 export default Model;
