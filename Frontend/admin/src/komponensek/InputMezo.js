@@ -44,8 +44,8 @@ function InputMezo(props) {
                 target: {
                     name: (props.name || props.input?.columnName) ?? "",
                     value:[ props.value] ?? [],
-                    type: typeConverter(props.input?.dataType) ?? "",
-                    checked: false
+                    type: "checkbox", //typeConverter(props.input?.dataType) ?? "",
+                    checked: props.checked ? true : false
                 }
             });
             setOnceFlag(true);

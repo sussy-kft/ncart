@@ -35,7 +35,7 @@ function UjAllomas(props){
         ?<></>
         :
         <Row>
-            <InputMezo as={Col} name="id" value="nev" pool={pool} isSelect={true} handleChange={handleChange}/>
+            <InputMezo as={Col} name="id" value="nev" pool={pool} isSelect={true} idk={true} handleChange={handleChange}/>
             <InputMezo as={Col} input={{columnName: "ido", dataType: "tinyint"}} handleChange={handleChange}/>
             <Button as={Col} variant="success" onClick={(event) => handleSave(event, adatok, name, handleChange, nextElement)}>Új állomás</Button>
         </Row>

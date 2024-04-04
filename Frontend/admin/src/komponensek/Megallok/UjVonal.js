@@ -63,6 +63,7 @@ function UjVonal(props) {
         value="nev"
         pool={opciok}
         isSelect={true}
+        idk={true}
         handleChange={handleChange.bind(this, "kezdoAll")}
       />
       <InputMezo
@@ -71,6 +72,7 @@ function UjVonal(props) {
         value="nev"
         pool={opciok}
         isSelect={true}
+        idk={true}
         handleChange={handleChange.bind(this, "vegall")}
       />
       <Button
