@@ -26,17 +26,32 @@ namespace Backend
             where TDataType : class, T
         {
             List<IMetadataDTO<T>> overriddenMetadataDTOs = [];
-            metadataDTOs.ToList().ForEach(metadataDTO => {
+            metadataDTOs.ForEach(metadataDTO => {
                 overriddenMetadataDTOs.Add(!predicate(metadataDTO) ? metadataDTO : new MetadataDTO<TDataType> {
+                    ColumnIndex = metadataDTO.ColumnIndex,
                     ColumnName = metadataDTO.ColumnName,
                     DataType = dataType(metadataDTO),
                     IsNullable = metadataDTO.IsNullable,
                     IsPartOfPK = metadataDTO.IsPartOfPK,
                     References = references(metadataDTO),
                     CharacterMaximumLength = metadataDTO.CharacterMaximumLength,
+                    IsHidden = metadataDTO.IsHidden
                 });
             });
             return overriddenMetadataDTOs.AsQueryable();
+        }
+
+        public static IQueryable<IMetadataDTO<object>> OverrideSetIsHiddenTrue(this IQueryable<IMetadataDTO<object>> metadataDTOs, Func<IMetadataDTO<object>, bool> predicate) => metadataDTOs.ForEach(metadataDTO => {
+            if (predicate(metadataDTO))
+            {
+                metadataDTO.SetIsHiddenTrue();
+            }
+        });
+
+        public static IQueryable<T> ForEach<T>(this IQueryable<T> dtos, Action<T> action)
+        {
+            dtos.ToList().ForEach(action);
+            return dtos;
         }
     }
 }

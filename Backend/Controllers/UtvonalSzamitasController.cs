@@ -2,12 +2,18 @@
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Backend.Controllers
 {
     [ApiController, Route("dQw4w9WgXcQ")]
     public class UtvonalSzamitasController(AppDbContext context) : JsonRecieverController (context)
     {
+        Vonal[] vonalak = null;
+        Megall[] megallok = null;
+        Inditas[][] indulasok = null;
+
         [HttpPost("legrovidebb")]
         public IActionResult legrovidebb([FromBody] TervezesiFeltetelekDTO tervezesiFeltetelek)
         {
@@ -22,35 +28,26 @@ namespace Backend.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
+                return UnprocessableEntity();
 
-            (Vonal[] vonalak, Megall[] megallok, Inditas[][] indulasok) = adatokLekerdezese(tervezesiFeltetelek);
+            (vonalak, megallok, indulasok) = adatokLekerdezese(tervezesiFeltetelek);
 
             List<Megall> lehetsegesMegallok = megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan).ToList();
             List<Megall> uticelVonalak = megallok.Where(x => x.Allomas == tervezesiFeltetelek.hova).ToList();
             List<Csomopont> csomopontok = [];
 
             List<int> bV = uticelVonalak.Select(x => x.Vonal).ToList();
-            
-            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
-                return Ok(lehetsegesMegallok);
-            
-
-            foreach (int item in bV)
+            foreach ((int kovAll, Megall kezdoAll) in bV.SelectMany(item => lehetsegesMegallok.Where(x => x.Vonal == item).Select(xd => (item, xd))))
             {
-                if (lehetsegesMegallok.Select(x => x.Vonal).Contains(item))
-                {
-                    List<ValaszVonal>? valasz = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, new Csomopont(new(null, megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item).First()), megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal) && x.Allomas == tervezesiFeltetelek.hova).First()));
-                    if (valasz is not null)
-                        return Ok(valasz);
-                }
+                Csomopont tmp = uticelVonalak.Contains(kezdoAll) ? new(null, kezdoAll) : new(new(null, kezdoAll), uticelVonalak.First(x => x.Vonal == kovAll));
+                List<ValaszVonal>? valasz = utvonalMegallapitas(tervezesiFeltetelek, tmp);
+                if (valasz is not null)
+                    return Ok(valasz);
             }
-            
-            lehetsegesMegallok = megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal)).ToList();
 
-            lehetsegesMegallok.ForEach(item =>
-            {
-                csomopontok.Add(new Csomopont(new(null, megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item.Vonal).First()), item));
-            });
+            foreach (Megall? item in megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal)))
+                csomopontok.Add(new(lehetsegesMegallok.First(x => x.Vonal == item.Vonal) != item ? new(null, lehetsegesMegallok.First(x => x.Vonal == item.Vonal)) : null, item));
 
             for (int ix = 0; ix < csomopontok.Count; ix++)
             {
@@ -66,7 +63,7 @@ namespace Backend.Controllers
 
                     if (bV.Contains(csomopont.megallo.Vonal)) 
                     {
-                        List<ValaszVonal>? utvonal = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, csomopont);
+                        List<ValaszVonal>? utvonal = utvonalMegallapitas(tervezesiFeltetelek, csomopont);
                         if(utvonal is null)
                             continue;
                         return Ok(utvonal);
@@ -82,11 +79,9 @@ namespace Backend.Controllers
 
         }
 
-        private List<ValaszVonal>? utvonalMegallapitas(TervezesiFeltetelekDTO tervezesiFeltetelek, Megall[] megallok, Inditas[][] indulasok, Csomopont csomopont)
+        private List<ValaszVonal>? utvonalMegallapitas(TervezesiFeltetelekDTO tervezesiFeltetelek, Csomopont csomopont)
         {
             List<Megall> utvonal = csomopont.utvonal();
-            if (utvonal.Count > 1 && utvonal[0] == utvonal[1])
-                utvonal.RemoveAt(0);
             if(!tervezesiFeltetelek.indulas_e)
                 utvonal.Reverse();
             List<ValaszVonal> valasz = [];
@@ -106,16 +101,18 @@ namespace Backend.Controllers
                 short ido = jelenMegallo.HanyPerc;
                 if (valasz.Count > 1 && valasz[^1].vonal == jelenMegallo.Vonal)
                 {
+                    valaszVonal.megallok = valasz.Last().megallok;
                     jelenMegallo = utvonal.Last();
                     valasz.Remove(valasz.Last());
                 }
+                valaszVonal.megallok.Add(tervezesiFeltetelek.indulas_e ? tmp.ElozoMegallo : tmp.Allomas);
                 while (tmp != jelenMegallo)
                 {
-                    valaszVonal.megallok.Add(tmp.ConvertType());
+                    valaszVonal.megallok.Add(tervezesiFeltetelek.indulas_e ? tmp.Allomas : tmp.ElozoMegallo);
                     ido += tmp.HanyPerc;
-                    tmp = megallok.Where(x => (tervezesiFeltetelek.indulas_e ? x.ElozoMegallo == tmp.Allomas : x.Allomas == tmp.ElozoMegallo)).First();
+                    tmp = megallok.First(x => tervezesiFeltetelek.indulas_e ? x.ElozoMegallo == tmp.Allomas : x.Allomas == tmp.ElozoMegallo);
                 }
-                valaszVonal.megallok.Add(tmp.ConvertType());
+                valaszVonal.megallok.Add(tervezesiFeltetelek.indulas_e ? tmp.Allomas : tmp.ElozoMegallo);
                 valaszVonal.ido = ido;
 
                 int jx = 0;
@@ -126,7 +123,7 @@ namespace Backend.Controllers
                     IEnumerable<Inditas> lehetsegesIndulasok = getLehetsegesIndulasok(tervezesiFeltetelek, valasz, valaszVonal, jx, idopontok);
                     if (lehetsegesIndulasok.ToList().Count > 0)
                     {
-                        jelenNap = jelenNapSzamitas(valasz, valaszVonal, jelenNap, jx, tervezesiFeltetelek.indulas_e);
+                        jelenNap = (jelenNap + jx + (valasz.Count > 0 ? ((valasz.Last().indulasiIdo + (tervezesiFeltetelek.indulas_e ? valasz.Last().ido : -valaszVonal.ido)) / 1440) : 7)) % 7;
                         valaszVonal.nap = (valasz.Count > 0 ? valasz.Last().getDateOnlyNap().AddDays(jx) : DateOnly.Parse(tervezesiFeltetelek.datum)).ToString();
                         valaszVonal.indulasiIdo = indulasiIdo(lehetsegesIndulasok, tervezesiFeltetelek.indulas_e);
                         valasz.Add(valaszVonal);
@@ -143,22 +140,15 @@ namespace Backend.Controllers
         private static short indulasiIdo(IEnumerable<Inditas> lehetsegesIndulasok, bool indulas_e)
         {
             return indulas_e
-                ? lehetsegesIndulasok.Aggregate((min, x) => x.InditasIdeje < min.InditasIdeje ? x : min).InditasIdeje
-                : lehetsegesIndulasok.Aggregate((min, x) => x.InditasIdeje >= min.InditasIdeje ? x : min).InditasIdeje;
-        }
-
-        private static int jelenNapSzamitas(List<ValaszVonal> valasz, ValaszVonal valaszVonal, int jelenNap, int jx, bool indulas_e)
-        {
-            return indulas_e
-                ? (valasz.Count > 0 ? jx + (int)valasz.Last().getDateOnlyNap().DayOfWeek + ((valasz.Last().ido + valasz.Last().indulasiIdo) / 1440) : (7 + jelenNap + jx) % 7)
-                : (valasz.Count > 0 ? jx + jelenNap + ((valasz.Last().indulasiIdo - valaszVonal.ido) / 1440) : (7 + jelenNap + jx) % 7);
+                ? lehetsegesIndulasok.Aggregate((min, x) => x.InditasIdeje <  min.InditasIdeje ? x : min).InditasIdeje
+                : lehetsegesIndulasok.Aggregate((max, x) => x.InditasIdeje >= max.InditasIdeje ? x : max).InditasIdeje;
         }
 
         private static IEnumerable<Inditas> getLehetsegesIndulasok(TervezesiFeltetelekDTO tervezesiFeltetelek, List<ValaszVonal> valasz, ValaszVonal valaszVonal, int jx, Inditas[] idopontok)
         {
             return tervezesiFeltetelek.indulas_e 
-                ? idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje > (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().ido + valasz.Last().indulasiIdo - 1440 * jx))
-                : idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje < (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().indulasiIdo - valaszVonal.ido - 1440 * jx));
+                ? idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje > (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().indulasiIdo + valasz.Last().ido - 1440 * jx))
+                : idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje < (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().indulasiIdo -   valaszVonal.ido - 1440 * jx));
         }
 
         private (Vonal[] vonalok, Megall[] megallok, Inditas[][] indulasok) adatokLekerdezese(TervezesiFeltetelekDTO tervezesiFeltetelek)
@@ -182,9 +172,9 @@ namespace Backend.Controllers
             return inditasok;
         }
     }
-    
-     
-     
+
+
+
     class Csomopont(Csomopont? csomopont, Megall megallo)
     {
         public Csomopont? elozoCsomopont { get; set; } = csomopont;
@@ -204,7 +194,7 @@ namespace Backend.Controllers
     class ValaszVonal(int vonal)
     {
         public int vonal { get; set; } = vonal;
-        public List<MegallDTO> megallok { get; set; } = [];
+        public List<int> megallok { get; set; } = [];
         public short ido { get; set; } = 0;
         public string nap { get; set; } = DateTime.MinValue.ToString();
         public short indulasiIdo { get; set; } = 0;

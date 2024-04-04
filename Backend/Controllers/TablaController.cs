@@ -17,7 +17,7 @@ namespace Backend.Controllers
 
         public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
-        protected IEnumerable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
+        protected IQueryable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
 
         protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
 
@@ -67,7 +67,7 @@ namespace Backend.Controllers
                 .Database
                 .SqlQueryRaw<Metadata>(
                     $@"
-                        SELECT *
+                        SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS [ColumnIndex], *
                         FROM dbo.Metadata(@{nameof(tableName)})
                     ",
                     new SqlParameter(nameof(tableName), tableName)
@@ -76,7 +76,7 @@ namespace Backend.Controllers
             ;
             List<IMetadataDTO<string>> metadataDTOs = new List<IMetadataDTO<string>>();
             metadatas
-                .Select(metadata => metadata.ColumnName)
+                .Select(group => group.ColumnName)
                 .Distinct()
                 .ToList()
                 .ForEach(columnName => {
@@ -99,17 +99,20 @@ namespace Backend.Controllers
                         )
                         : (false, null)
                     ;
-                    metadataDTOs.Add(new MetadataDTO<string> {
+                    metadataDTOs.Add(new MetadataDTO<string>
+                    {
+                        ColumnIndex = metadata.ColumnIndex,
                         ColumnName = metadata.ColumnName,
                         DataType = metadata.DataType,
                         IsNullable = metadata.IsNullable,
                         IsPartOfPK = constraints.isPartOfPk,
                         References = constraints.references,
                         CharacterMaximumLength = metadata.CharacterMaximumLength,
+                        IsHidden = false
                     });
                 })
             ;
-            return metadataDTOs.AsQueryable();
+            return metadataDTOs.AsQueryable().OrderBy(metadataDTO => metadataDTO.ColumnIndex);
         }
 
         ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
@@ -136,7 +139,7 @@ namespace Backend.Controllers
             }
         }
 
-        static IReadOnlyList<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType());
+        static IQueryable<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
 
         ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
 
@@ -158,7 +161,7 @@ namespace Backend.Controllers
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {
-            if (value != null)
+            if (value is not null)
             {
                 action(value);
             }
@@ -166,7 +169,7 @@ namespace Backend.Controllers
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : struct
         {
-            if (value != null)
+            if (value is not null)
             {
                 action((T)value);
             }

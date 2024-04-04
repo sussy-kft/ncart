@@ -40,7 +40,8 @@ namespace Backend.Controllers
                     IsNullable = false,
                     IsPartOfPK = false,
                     References = null,
-                    CharacterMaximumLength = null
+                    CharacterMaximumLength = null,
+                    IsHidden = false
                 },
                 new MetadataDTO<string> {
                     ColumnName = "Y",
@@ -48,7 +49,8 @@ namespace Backend.Controllers
                     IsNullable = false,
                     IsPartOfPK = false,
                     References = null,
-                    CharacterMaximumLength = null
+                    CharacterMaximumLength = null,
+                    IsHidden = false
                 }
             ])
         ;

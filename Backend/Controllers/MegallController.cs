@@ -7,17 +7,23 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("megallok")]
-    public partial class MegallController(AppDbContext context) : BatchPostableController<(int vonal, int allomas), Megall, MegallDTO, MegallController.MegallBatch>(context)
+    public partial class MegallController(AppDbContext context) : BatchPostableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context)
     {
+        public class PK
+        {
+            public int vonal { get; set; }
+            public int allomas { get; set; }
+        }
+
         public override IEnumerable<MegallDTO> Get() => GetAll(context.Megallok);
 
         [HttpGet("{vonal}/{allomas}")]
-        public override ActionResult Get((int vonal, int allomas) pk) => Get(context.Megallok, pk.vonal, pk.allomas);
+        public override ActionResult Get([FromRoute] PK pk) => Get(context.Megallok, pk.vonal, pk.allomas);
 
         public override ActionResult Post([FromBody] MegallDTO data) => Post(context.Megallok, data);
 
         [HttpPut("{vonal}/{allomas}")]
-        public override ActionResult Put([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallDTO ujMegall) => Put(
+        public override ActionResult Put([FromRoute] PK pk, [FromBody] MegallDTO ujMegall) => Put(
             dbSet: context.Megallok,
             data: ujMegall,
             updateRecord: (megall, ujMegall) => {
@@ -30,7 +36,7 @@ namespace Backend.Controllers
         public override ActionResult Delete() => DeleteAll(context.Megallok);
 
         [HttpDelete("{vonal}/{allomas}")]
-        public override ActionResult Delete([FromRoute] (int vonal, int allomas) pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
+        public override ActionResult Delete([FromRoute] PK pk) => Delete(context.Megallok, pk.vonal, pk.allomas);
 
         public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Megallok");
     }
@@ -97,7 +103,7 @@ namespace Backend.Controllers
             IReadOnlyList<Vonal> vonalak = context
                 .Vonalak
                 .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
-                .ToList();
+                .ToList()
             ;
             int vonalakCount = vonalak.Count();
             return vonalakCount > 0
@@ -107,8 +113,8 @@ namespace Backend.Controllers
                     {
                         vonalak.ToList().ForEach(vonal => {
                             vonalMegallok.Add(new VonalMegallok() {
-                                Vonal = vonal,
-                                Megallok = ((Func<List<Megall>>)(() => {
+                                Vonal = vonal.ConvertType(),
+                                Megallok = ((Func<List<MegallDTO>>)(() => {
                                     IReadOnlyList<Megall> megallok = context
                                         .Megallok
                                         .Where(megall => megall.Vonal == vonal.Id)
@@ -121,7 +127,7 @@ namespace Backend.Controllers
                                         rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
                                         legutobbiAllomasId = rendezettMegallok[^1].Allomas;
                                     }
-                                    return rendezettMegallok;
+                                    return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
                                 }))()
                             });
                         });
@@ -152,8 +158,8 @@ namespace Backend.Controllers
 
         class VonalMegallok
         {
-            public Vonal Vonal { get; set; }
-            public List<Megall> Megallok { get; set; }
+            public VonalDTO Vonal { get; set; }
+            public List<MegallDTO> Megallok { get; set; }
         }
     }
 }
