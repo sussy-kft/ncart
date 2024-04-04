@@ -283,7 +283,6 @@ function MegalloSzerkeszto(props) {
           <Row>
             {Object.entries(megallok).map(([key, value], index) => {
               //console.log(key);
-              <h2>ds</h2>;
               console.warn(value);
               if (!value)
                 return (
@@ -301,6 +300,8 @@ function MegalloSzerkeszto(props) {
               return (
                 <Col>
                   <h3>{`${value.vonal.id} vonal:`}</h3>
+                  {/* most csak a kezdőállomást írja ki statikusan*/}
+                  <h4>Kezdőállomás: {value.megallok[0].elozoMegallo}</h4>
                   <Droppable droppableId={key} type={key}>
                     {(provided) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
