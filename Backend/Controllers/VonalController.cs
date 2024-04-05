@@ -89,26 +89,32 @@ namespace Backend.Controllers
                     try
                     {
                         vonalak.ToList().ForEach(vonal => {
-                            vonalMegallok.Add(new VonalMegallok()
-                            {
+                            vonalMegallok.Add(new VonalMegallok {
                                 Vonal = vonal.ConvertType(),
-                                Megallok = ((Func<List<MegallDTO>>)(() => {
-                                    IReadOnlyList<Megall> megallok = context
-                                        .Megallok
-                                        .Where(megall => megall.Vonal == vonal.Id)
+                                Megallok = ((Func<List<AllomasEsIdo>>)(() => {
+                                    IReadOnlyList<AllomasJoinMegall> allomasokJoinMegallok = context
+                                        .Allomasok
+                                        .Join(context.Megallok, allomas => allomas.Id, megall => megall.Allomas, (allomas, megall) => new AllomasJoinMegall {
+                                            Allomas = allomas,
+                                            Megall = megall
+                                        })
+                                        .Where(allomasJoinMegall => allomasJoinMegall.Megall.Vonal == vonal.Id)
                                         .ToList()
                                     ;
-                                    if (megallok.Count > 0)
+                                    if (allomasokJoinMegallok.Count > 0)
                                     {
-                                        List<Megall> rendezettMegallok = [];
-                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException());
-                                        int legutobbiAllomasId = rendezettMegallok[0].Allomas;
+                                        List<AllomasJoinMegall> rendezettMegallok = [];
+                                        rendezettMegallok.Add(allomasokJoinMegallok.SelectFirst(out AllomasJoinMegall? elsoAllomasJoinMegall, allomasJoinMegall => allomasJoinMegall.Megall.ElozoMegallo == vonal.KezdoAll) ? elsoAllomasJoinMegall! : throw new InvalidOperationException());
+                                        int legutobbiAllomasId = rendezettMegallok[0].Allomas.Id;
                                         while (legutobbiAllomasId != vonal.Vegall)
                                         {
-                                            rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
-                                            legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                            rendezettMegallok.Add(allomasokJoinMegallok.SelectFirst(out AllomasJoinMegall? ujAllomasJoinMegall, allomasJoinMegall => allomasJoinMegall.Megall.ElozoMegallo == legutobbiAllomasId) ? ujAllomasJoinMegall! : throw new InvalidOperationException());
+                                            legutobbiAllomasId = rendezettMegallok[^1].Allomas.Id;
                                         }
-                                        return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
+                                        return rendezettMegallok.ConvertAll(allomasJoinMegall => new AllomasEsIdo {
+                                            Allomas = allomasJoinMegall.Allomas.ConvertType(),
+                                            HanyPerc = allomasJoinMegall.Megall.HanyPerc
+                                        });
                                     }
                                     else
                                     {
@@ -123,12 +129,10 @@ namespace Backend.Controllers
                         return Status500;
                     }
                     return Ok(vonalakCount == 1
-                        ? new OdaVissza()
-                        {
+                        ? new OdaVissza {
                             Oda = vonalMegallok[0]
                         }
-                        : new OdaVissza()
-                        {
+                        : new OdaVissza {
                             Oda = vonalMegallok[0],
                             Vissza = vonalMegallok[1]
                         }
@@ -147,7 +151,19 @@ namespace Backend.Controllers
         class VonalMegallok
         {
             public VonalDTO Vonal { get; set; }
-            public List<MegallDTO> Megallok { get; set; }
+            public List<AllomasEsIdo> Megallok { get; set; }
+        }
+
+        class AllomasJoinMegall
+        {
+            public Allomas Allomas { get; set; }
+            public Megall Megall { get; set; }
+        }
+
+        class AllomasEsIdo
+        {
+            public AllomasDTO Allomas { get; set; }
+            public int HanyPerc { get; set; }
         }
     }
 
