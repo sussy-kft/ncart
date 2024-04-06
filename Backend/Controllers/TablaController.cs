@@ -29,7 +29,7 @@ namespace Backend.Controllers
         protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
             TDbFormat dbFormat = data.ConvertType();
             return TrySaveRecord(dbFormat, record => {
-                dbSet.Add(dbFormat);
+                dbSet.Add(record);
             });
         });
 
@@ -117,7 +117,7 @@ namespace Backend.Controllers
             return metadataDTOs.AsQueryable().OrderBy(metadataDTO => metadataDTO.ColumnIndex);
         }
 
-        ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
+        protected ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 
         protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,20 @@ namespace Backend.Controllers
     [Route("kezelok"), Authorize(Policy = SzerkesztokFelvetele)]
     public partial class KezeloController(AppDbContext context, IConfiguration config) : TablaController<int, Kezelo, KezeloDTO>(context, config)
     {
+        static HashAlgorithmName hashAlgorithmName { get; }
+
+        const char delimiter = ';';
+
+        const int keySize = 1 << 5;
+        const int iterations = 1 << 13;
+
+        static KezeloController()
+        {
+            hashAlgorithmName = HashAlgorithmName.SHA256;
+            OsszesEngedely = Enum.GetValues<Engedelyek>();
+            OsszesEngedelyNev = OsszesEngedely.ToList().ConvertAll(engedely => engedely.ToString());
+        }
+
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok).ForEach(kezeloDTO => {
             kezeloDTO.Jelszo = "";
         });
@@ -21,7 +36,37 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
 
-        public override ActionResult Post([FromBody] KezeloDTO data) => Post(context.Kezelok, data); // Jelszót titkosítani
+        /* ======================================================================================
+         * 
+         * !!! FONTOS !!!
+         * 
+         * Ahoz, hogy új szerkesztőket lehessen felvenni, az admin oldalra bejelentkezett
+         * felhasználónak engedélyezve kell legyen az új szerkesztők felvétele
+         * (SzerkesztokFelvetele engedély). Ha az adatbázisban nics felvéve még egy felhasználó
+         * se akinek ez engedélyezve van, akkor fel kell venni egyet. Ezt nem lehet direktben az
+         * adatbázisban felvenni, mert ott nem lenne letitkosítva a jelszó (ez nem csak a
+         * biztonság miatt, hanem a bejelentkezéskor a jelszó validálás sem fog működni), úgyhogy
+         * ezt úgy lehet megtenni, hogy az alábbi metódus feletti "[AllowAnonymous]" attribútumot
+         * uncomment-ezed, majd IIS Express módban indítod a programot és a megnyíló Swagger
+         * oldalon a "Kezelok" post metódusában vihetsz fel egy új felhasználót aminek megadod a
+         * "SzerkesztokFelvetele" engedélyt (fontos megjegyezni a jelszót, mert az adatbázisban
+         * titkosítva lesz eltárolva, úgyhogy nem fogod tudni kinézni onnan ha elfelejted). Ezt
+         * megtéve leállíthatod a programot, újra kikommentezheted (kis is kell) az alábbi
+         * metóduson az "[AllowAnonymous]" attribútumot, majd hagyományos módon elindíthatod a
+         * programot és az újonnan felvitt felhasználóval beléphetsz az admin oldalra, ahonnan
+         * már engedélyezve van az új szerkesztők felvétele.
+         * 
+         * ======================================================================================
+         */
+
+        //[AllowAnonymous]
+        public override ActionResult Post([FromBody] KezeloDTO data) => CheckIfBadRequest(() => {
+            Kezelo kezelo = data.ConvertType();
+            kezelo.Jelszo = EncryptPassword(kezelo.Jelszo);
+            return TrySaveRecord(kezelo, record => {
+                context.Kezelok.Add(record);
+            });
+        });
 
         public override ActionResult Delete() => DeleteAll(context.Kezelok);
 
@@ -31,7 +76,7 @@ namespace Backend.Controllers
             data: ujKezelo,
             updateRecord: (kezelo, ujKezelo) => {
                 kezelo.Email = ujKezelo.Email;
-                kezelo.Jelszo = ujKezelo.Jelszo; // TODO: titkosítani
+                kezelo.Jelszo = EncryptPassword(ujKezelo.Jelszo);
                 kezelo.Engedelyek = ujKezelo.Engedelyek;
             },
             pk: id
@@ -47,6 +92,13 @@ namespace Backend.Controllers
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Email", _ => "email")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Jelszo", _ => "password")
         ;
+
+        static string EncryptPassword(string password)
+        {
+            const int saltSize = 1 << 4;
+            byte[] salt = RandomNumberGenerator.GetBytes(saltSize);
+            return string.Join(delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(Rfc2898DeriveBytes.Pbkdf2(password, salt, iterations, hashAlgorithmName, keySize)));
+        }
     }
 
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
@@ -59,7 +111,7 @@ namespace Backend.Controllers
                     record.Email = email;
                 });
                 CheckIfNotNull(ujKezelo.Jelszo, jelszo => {
-                    record.Jelszo = jelszo;
+                    record.Jelszo = EncryptPassword(jelszo);
                 });
                 CheckIfNotNull(ujKezelo.Engedelyek, engedelyek => {
                     record.Engedelyek = ConvertEngedelyekStringListToByte(engedelyek);
@@ -91,12 +143,6 @@ namespace Backend.Controllers
         public static IReadOnlyList<string> OsszesEngedelyNev { get; }
 
         public static IReadOnlyList<Engedelyek> OsszesEngedely { get; }
-
-        static KezeloController()
-        {
-            OsszesEngedely = Enum.GetValues<Engedelyek>();
-            OsszesEngedelyNev = OsszesEngedely.ToList().ConvertAll(engedely => engedely.ToString());
-        }
 
         [HttpGet("engedelyek"), AllowAnonymous]
         public IEnumerable<string> GetEngedelyek() => OsszesEngedelyNev;
@@ -145,7 +191,10 @@ namespace Backend.Controllers
                 .Where(kezelo => kezelo.Email == loginData.Email)
                 .FirstOrDefault()
             ;
-            if (user is not null && user.Jelszo == loginData.Password) // TODO: a titkosított jelszót kell lecsekkolni
+            if (user is not null && ((Func<bool>)(() => {
+                string[] elements = user.Jelszo.Split(delimiter);
+                return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(elements[1]), Rfc2898DeriveBytes.Pbkdf2(loginData.Password, Convert.FromBase64String(elements[0]), iterations, hashAlgorithmName, keySize));
+            }))())
             {
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
                 return Ok(tokenHandler.WriteToken(tokenHandler.CreateToken(new SecurityTokenDescriptor {
