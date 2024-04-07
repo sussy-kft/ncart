@@ -10,7 +10,9 @@
         />
         <link rel="icon" type="image/x-icon" href="images/fav.png" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="scripts/main.js"></script>
+        <script src="scripts/data/allomasManager.js" type="module"></script>
         <title>NCTC | Night City Transit Corporation</title>
     </head>
     <body>
@@ -39,27 +41,30 @@
                     <label for="fname"
                         ><i class="bi bi-compass-fill"></i
                     ></label>
-                    <input
-                        type="text"
-                        id="fname"
-                        name="fname"
-                        placeholder="Honnan"
-                    /><br />
+                    <input type="text" name="megallok" list="megalloNevek" />
+                    <datalist id="megalloNevek">
+                    </datalist>
+                    <br />
+                    <label for="fname"
+                        ><i class="bi bi-three-dots-vertical"></i></label
+                    ><br />
+
                     <label for="fname"
                         ><i class="bi bi-geo-alt-fill"></i
                     ></label>
-                    <input
-                        type="text"
-                        id="lname"
-                        name="lname"
-                        placeholder="Hova"
-                    /><br />
+                    <input type="text" name="megallok" list="megalloNevek" />
+                    <datalist id="megalloNevek">
+                        <option value="megallo1"></option>
+                        <option value="megallo2"></option>
+                    </datalist>
+                    <br />
                     <label for="date"
                         ><i class="bi bi-calendar-event-fill"></i
                     ></label>
                     <input type="date" id="date" name="birthday" /><br />
                     <label for="appt"><i class="bi bi-clock-fill"></i></label>
                     <input type="time" id="appt" name="appt" /><br />
+                    <label for="kivetelek">Járműtípusok:</label><br />
                     <input
                         type="checkbox"
                         id="vehicle1"
@@ -82,6 +87,21 @@
                     />
                     <label for="vehicle3">NCART</label><br />
                     <input type="submit" value="Tervezés" />
+
+                    <div id="jarat">
+                        <table>
+                            <tr>
+                                <th>honnan</th>
+                                <th>hova</th>
+                                <th>mikor</th>
+                            </tr>
+                            <tr>
+                                <td>kezdo megallo</td>
+                                <td>uticel</td>
+                                <td>indulasi idopont</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div id="map">
                     <img src="images/map1.png" alt="" />
