@@ -1,24 +1,49 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
-import NoPage from "./komponensek/NoPage";
+import NoPage from "./NoPage/NoPage";
 import SzerkesztoOldal from "./komponensek/SzerkesztoOldal";
 import Megallok from "./komponensek/Megallok/Megallok";
-import Auth from "./Auth";
+import Auth from "./idk/Auth";
 
+/**
+ * @typedef {Object} Utvonal
+ * @property {string} key - Egy egyedi kulcs a komponensekhez. Egyben ez mutatja az útvonalat is.
+ * @property {string} cim - Az oldalon megjelenő cím.
+ * @property {React.Component} [child] - Ez a komponens jelenik meg az oldalon. Ha nincs megadva, akkor a SzerkesztoOldal alapértelmezett komponense jelenik meg.
+ */
+
+/**
+ * @type {Utvonal[]} 
+ * Az Admin oldal útvonalait tartalmazó tömb.
+ */
+const utvonalak = [
+  { key: "kezelok", cim: "Kezelők" },
+  { key: "jarmutipusok", cim: "Járműtípusok" },
+  { key: "vonalak", cim: "Vonalak" },
+  { key: "allomasok", cim: "Állomások" },
+  { key: "inditasok", cim: "Indítások" },
+  { key: "megallok", cim: "Megállok", child: <Megallok /> },
+];
+
+/**
+ * Az Admin komponens feladata, hogy a további útvonalakak megjelenítését kezelje.
+ * @returns {React.Component} Az Admin komponenst.
+ */
 function Admin() {
-    return (
-        <Routes>
-            <Route path="/" element={<Layout />}>
-                <Route key="kezelok" path="kezelok" element={<SzerkesztoOldal cim={"Kezelők"} />} />
-                <Route key="jarmutipusok" path="jarmutipusok" element={<SzerkesztoOldal cim={"Járműtípusok"} />} />
-                <Route key="vonalak" path="vonalak" element={<SzerkesztoOldal cim={"Vonalak"} />} />
-                <Route key="allomasok" path="allomasok" element={<SzerkesztoOldal cim={"Állomások"} />} />
-                <Route key="inditasok" path="inditasok" element={<SzerkesztoOldal cim={"Indítások"} />} />
-                <Route key="megallok" path="megallok" element={<SzerkesztoOldal cim={"Megállok"} child={<Megallok />} />} />
-                <Route path="*" element={<NoPage />} />
-            </Route>
-        </Routes>
-    )
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {utvonalak.map((route) => (
+          <Route
+            key={route.key}
+            path={route.key}
+            element={<SzerkesztoOldal cim={route.cim} child={route.child} />}
+          />
+        ))}
+        <Route path="*" element={<NoPage />} />
+      </Route>
+    </Routes>
+  );
 }
 
-export default Auth(Admin)
+export default Auth(Admin);

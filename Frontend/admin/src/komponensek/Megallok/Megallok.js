@@ -5,7 +5,7 @@ import { MetaadatContext } from "../../context/MetaadatContext";
 import { Form, Row } from "react-bootstrap";
 import MegalloSzerkeszto from "./MegalloSzerkeszto";
 
-function Megallok() {
+function Megallok(props) {
   const { axiosId, errorState, getAll } = useContext(AxiosContext);
   const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
 
@@ -14,7 +14,7 @@ function Megallok() {
 
   return (
     <>
-      <h1>Megállok</h1>
+      <h1>{props.cim}</h1>
       <Form className="container">
         <Row>
             <InputSelects
