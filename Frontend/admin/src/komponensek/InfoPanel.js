@@ -10,7 +10,7 @@ import Toast from 'react-bootstrap/Toast';
  * @param {string} bg - A háttérszín a Toastnak. (A Bootstrap színeit használja)
  * @param {string} text - A szöveg, amit a Toastban megjelenít.
  *
- * @returns {JSX.Element} The InfoPanel component.
+ * @returns {JSX.Element} Egy Toast komponenst.
  */
 function InfoPanel({ bg, text }) {
     const [show, setShow] = useState(true);
