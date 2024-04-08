@@ -13,8 +13,8 @@ import Auth from "./idk/Auth";
  */
 
 /**
- * @type {Utvonal[]} 
  * Az Admin oldal útvonalait tartalmazó tömb.
+ * @type {Utvonal[]} 
  */
 const utvonalak = [
   { key: "kezelok", cim: "Kezelők" },
