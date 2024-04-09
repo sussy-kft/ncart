@@ -23,7 +23,7 @@ namespace Backend.Controllers
             return StatusCode(451);
         }
 
-        [HttpDelete("legkevesebb")]
+        [HttpPost("legkevesebb")]
         public IActionResult legkevesebb([FromBody] TervezesiFeltetelekDTO tervezesiFeltetelek)
         {
             if (!ModelState.IsValid)

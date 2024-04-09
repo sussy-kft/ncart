@@ -12,7 +12,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="scripts/main.js"></script>
-        <script src="scripts/data/allomasManager.js" type="module"></script>
+        <script src="scripts/map.js"></script>
         <title>NCTC | Night City Transit Corporation</title>
     </head>
     <body>
@@ -41,9 +41,13 @@
                     <label for="fname"
                         ><i class="bi bi-compass-fill"></i
                     ></label>
-                    <input type="text" name="megallok" list="megalloNevek" />
-                    <datalist id="megalloNevek">
-                    </datalist>
+                    <input
+                        type="text"
+                        id="honnanMegallo"
+                        name="megallok"
+                        list="megalloNevek"
+                    />
+                    <datalist id="megalloNevek"> </datalist>
                     <br />
                     <label for="fname"
                         ><i class="bi bi-three-dots-vertical"></i></label
@@ -52,7 +56,12 @@
                     <label for="fname"
                         ><i class="bi bi-geo-alt-fill"></i
                     ></label>
-                    <input type="text" name="megallok" list="megalloNevek" />
+                    <input
+                        type="text"
+                        id="hovaMegallo"
+                        name="megallok"
+                        list="megalloNevek"
+                    />
                     <datalist id="megalloNevek">
                         <option value="megallo1"></option>
                         <option value="megallo2"></option>
@@ -67,11 +76,11 @@
                     <label for="kivetelek">Járműtípusok:</label><br />
                     <input
                         type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
+                        id="vehicle3"
+                        name="vehicle3"
+                        value="Boat"
                     />
-                    <label for="vehicle1">NCET</label><br />
+                    <label for="vehicle3">NCART</label><br />
                     <input
                         type="checkbox"
                         id="vehicle2"
@@ -81,24 +90,67 @@
                     <label for="vehicle2">NCBT</label><br />
                     <input
                         type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                    />
+                    <label for="vehicle1">NCET</label><br />
+                    <label for="kivetelek">Vonalak:</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                    />
+                    <label for="vehicle1">M1</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle2"
+                        name="vehicle2"
+                        value="Car"
+                    />
+                    <label for="vehicle2">M2</label><br />
+                    <input
+                        type="checkbox"
                         id="vehicle3"
                         name="vehicle3"
                         value="Boat"
                     />
-                    <label for="vehicle3">NCART</label><br />
-                    <input type="submit" value="Tervezés" />
+                    <label for="vehicle3">B1</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                    />
+                    <label for="vehicle1">B2</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle2"
+                        name="vehicle2"
+                        value="Car"
+                    />
+                    <label for="vehicle2">E1</label><br />
+                    <input
+                        type="checkbox"
+                        id="vehicle3"
+                        name="vehicle3"
+                        value="Boat"
+                    />
+                    <label for="vehicle3">E2</label><br />
+                    <input
+                        type="submit"
+                        value="Tervezés"
+                        onclick="tervezes()"
+                    />
 
                     <div id="jarat">
                         <table>
                             <tr>
+                                <th>jármű</th>
                                 <th>honnan</th>
                                 <th>hova</th>
                                 <th>mikor</th>
-                            </tr>
-                            <tr>
-                                <td>kezdo megallo</td>
-                                <td>uticel</td>
-                                <td>indulasi idopont</td>
                             </tr>
                         </table>
                     </div>
