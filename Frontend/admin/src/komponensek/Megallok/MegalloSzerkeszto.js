@@ -320,10 +320,9 @@ function MegalloSzerkeszto(props) {
                                 {...provided.dragHandleProps}
                               >
                                 <AllomasKartya
-                                  name={key}
                                   allomas={allomas}
                                   torol={
-                                    value.megallok.length > 1 ? torol : null
+                                    value.megallok.length > 1 ? torol.bind(this, key) : null
                                   }
                                   handleChange={handleChange.bind(this, key)}
                                 />

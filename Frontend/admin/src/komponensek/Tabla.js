@@ -14,7 +14,7 @@ import Sor from "./Sor";
 /**
  * Egy React komponens, ami egy táblázatot jelenít meg adatokkal, amiket az URL-ből állapítja meg, hogy honnan kell lekérni.
  *
- * @returns {React.Fragment} Egy táblázatot ad vissza adatokkal, vagy egy képet, ami a hibás vagy betöltés állapotot jelzi.
+ * @returns {JSX.Element} Egy táblázatot ad vissza adatokkal, vagy egy képet, ami a hibás vagy betöltés állapotot jelzi.
  */
 function Tabla() {
   const { axiosId, errorState, getAll } = useContext(AxiosContext);
@@ -82,7 +82,9 @@ function Tabla() {
     );
 
   return (
-    <>
+    adatok.length === 0 
+    ? <h5>Még nincs rekord az adatbázisban.</h5>
+    :<>
       <Table striped bordered hover>
         <thead>
           <tr>
