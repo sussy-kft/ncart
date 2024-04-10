@@ -6,7 +6,6 @@ using Backend.ModelDTOBases;
 using Backend.Models;
 using Backend.DTOs;
 
-
 namespace Backend.Controllers
 {
     public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context, IConfiguration config) : JsonRecieverController(context, config)
@@ -139,7 +138,7 @@ namespace Backend.Controllers
             {
                 return BadRequest(e.InnerException?.Message);
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message);
             }

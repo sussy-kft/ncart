@@ -120,10 +120,10 @@ namespace Backend.Controllers
         }
     }
 
-    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
+    public partial class MegallController : IPatchableTablaController<MegallController.PK, MegallController.MegallPatch>
     {
         [HttpPatch("{vonal}/{allomas}")]
-        public ActionResult Patch([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallPatch ujMegall) => Patch(
+        public ActionResult Patch([FromRoute] PK pk, [FromBody] MegallPatch ujMegall) => Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
                 CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
