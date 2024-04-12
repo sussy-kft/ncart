@@ -6,6 +6,7 @@ import { AxiosContext } from "../context/AxiosContext";
 import "./Bejelentkezes.css";
 import { useNavigate } from "react-router-dom";
 import { DarkModeContext } from "../context/DarkModeContext";
+import { InfoPanelContext } from "../context/InfoPanelContext";
 
 /**
  * A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
@@ -14,6 +15,7 @@ import { DarkModeContext } from "../context/DarkModeContext";
 function Bejelentkezes() {
   const { getText } = React.useContext(DarkModeContext);
   const { post } = React.useContext(AxiosContext);
+  const { resetInfoPanel } = React.useContext(InfoPanelContext);
 
   const navigate = useNavigate();
   const inputs = [
@@ -44,13 +46,14 @@ function Bejelentkezes() {
 
   /**
    * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a token-t, amit a localStorage-ba menti.
-   * Továbbá a felhasználó email címét a sessionStorage-be menti és átirányítja az admin oldalra.
+   * Továbbá a felhasználó email címét a sessionStorage-be menti, átirányítja az admin oldalra és törli az összes info panelt.
    * @param {Event} event - A form küldési eseménye.
    */
   const handleSumbit = (event) => {
     event.preventDefault();
     setValidated(true);
     post("kezelok/login", adatok, (valasz) => {
+      resetInfoPanel()
       window.sessionStorage.setItem("felhasznalo", adatok.email);
       localStorage.setItem("token", valasz);
       navigate("/admin");

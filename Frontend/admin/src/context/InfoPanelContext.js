@@ -25,8 +25,15 @@ export const InfoPanelProvider = ({ children }) => {
         setInfoPanels([...InfoPanels, panel]);
     }
 
+    /**
+     * Függvény, ami kitörli az összes info panelt az InfoPanels listából.
+     */
+    const resetInfoPanel = () => {
+        setInfoPanels([]);
+    }
+
     return (
-        <InfoPanelContext.Provider value={{addInfoPanel, InfoPanels}}>
+        <InfoPanelContext.Provider value={{addInfoPanel, resetInfoPanel, InfoPanels}}>
             {children}  
         </InfoPanelContext.Provider>
     );

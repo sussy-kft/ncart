@@ -13,7 +13,7 @@ function UjAllomas(props){
     const [nextElement, setNextElement] = React.useState({... props.pool[0], ido: 1})
 
     //const [opcio, setOpciok] = React.useState(null)
-    const [adatok, setAdatok] = React.useState(props.pool[0])
+    const [adatok, setAdatok] = React.useState({... props.pool[0], ido: 1})
 
     const { pool, handleSave, name } = props;
 
@@ -25,14 +25,17 @@ function UjAllomas(props){
     }
 
     useEffect(() => {   
-        setAdatok( (prev) => {
-            return {
-                ... props.pool[0]??null,
-                ...prev,
-            }}
-            )
-        setNextElement(props.pool[0]??null)
-    }, [props.pool[0]]);
+        // setAdatok( (prev) => {
+        //     console.log("ujallomas2", props.pool[0]??null, prev);
+        //     console.log("ujallomas2", props.pool[0]?.id === prev.id ??null, prev ? props.pool[0] : props.pool[1]);
+        //     return {
+        //         ... (props.pool[0]?.id === prev.id ??null, prev ? props.pool[0] : props.pool[1]),
+        //         ...prev,
+        //     }}
+        //     )
+        console.log("ujallomas2", props.pool[0]??null, adatok);
+        setNextElement( adatok.id === props.pool[0]?.id??null ? props.pool[1] : props.pool[0])
+    }, [props.pool]);
    
     if (!props.pool) return null
 

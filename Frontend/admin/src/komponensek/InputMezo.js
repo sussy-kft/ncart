@@ -6,6 +6,8 @@ import { AxiosContext } from '../context/AxiosContext';
 function InputMezo(props) {
     const { getAll } = useContext(AxiosContext);
 
+    
+    const flag = props.flag ?? true;
     const [opciok, setOpciok] = React.useState([]);
     const [onceFlag, setOnceFlag] = React.useState(false);
 
@@ -33,17 +35,12 @@ function InputMezo(props) {
                 }
             });
             setOnceFlag(true);
-            // console.log({
-            //     name: (props.name || props.input?.columnName) ?? "",
-            //     value: (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "",
-            //     type: typeConverter(props.input?.dataType) ?? ""
-            // });
         }
-        else if(props.handleChange && !onceFlag && props.input?.dataType.substring(props.input?.dataType.length - 2) == "[]" ){
+        else if(flag && props.handleChange && !onceFlag && props.input?.dataType.substring(props.input?.dataType.length - 2) == "[]" ){
             props.handleChange({
                 target: {
                     name: (props.name || props.input?.columnName) ?? "",
-                    value:[ props.value] ?? [],
+                    value: 2 ?? [],
                     type: "checkbox", //typeConverter(props.input?.dataType) ?? "",
                     checked: props.checked ? true : false
                 }

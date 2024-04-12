@@ -110,7 +110,7 @@ function Sor(props) {
             if (findKey(key)?.references && findKey(key)?.references.split("/").length > 1)
                 return kulsoAdatok[findKey(key).references].map((opcio, index) => {
                     console.log("aaaaaaaaaaaaaaaa",opcio, index, value);
-                    return <td key={index}><InputMezo key={index} input={findKey(key)} value={opcio} handleChange={handleChange} checked={Array.isArray(value)?value.find(x => x==opcio):value==opcio} pool={[opcio]}/></td>
+                    return <td key={index}><InputMezo key={index} input={findKey(key)} value={opcio} handleChange={handleChange} checked={value.find(x => x==opcio)} pool={[opcio]} flag={false}/></td>
                 })
             if (getPKs().find(pk => pk === key))
                 return <td><p>{value}</p></td>
