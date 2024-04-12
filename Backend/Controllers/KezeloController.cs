@@ -22,11 +22,14 @@ namespace Backend.Controllers
         const int keySize = 1 << 5;
         const int iterations = 1 << 13;
 
+        static JwtSecurityTokenHandler tokenHandler { get; }
+
         static KezeloController()
         {
             hashAlgorithmName = HashAlgorithmName.SHA256;
             OsszesEngedely = Enum.GetValues<Engedelyek>();
             OsszesEngedelyNev = OsszesEngedely.ToList().ConvertAll(engedely => engedely.ToString());
+            tokenHandler = new JwtSecurityTokenHandler();
         }
 
         public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok).ForEach(kezeloDTO => {
@@ -196,23 +199,26 @@ namespace Backend.Controllers
                 return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(elements[1]), Rfc2898DeriveBytes.Pbkdf2(loginData.Password, Convert.FromBase64String(elements[0]), iterations, hashAlgorithmName, keySize));
             }))())
             {
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                return Ok(tokenHandler.WriteToken(tokenHandler.CreateToken(new SecurityTokenDescriptor {
-                    Subject = new ClaimsIdentity(((Func<IEnumerable<Claim>>)(() => {
-                        List<Claim> claims = [];
-                        OsszesEngedelyNev.ToList().ForEach(engedelyNev => {
-                            if ((user.Engedelyek & (Enum.TryParse(engedelyNev, out Engedelyek engedely) ? (int)engedely : 0)) != 0)
-                            {
-                                claims.Add(new Claim(engedelyNev, "true"));
-                            }
-                        });
-                        return claims;
-                    }))()),
-                    Expires = DateTime.UtcNow.AddHours(1),
-                    Issuer = config["Jwt:Issuer"]!,
-                    Audience = config["Jwt:Audience"]!,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config["Jwt:Key"]!)), SecurityAlgorithms.HmacSha256Signature)
-                })));
+                DateTime lejaratiIdopont = DateTime.UtcNow.AddHours(1);
+                return Ok(new TokenData {
+                    Token = tokenHandler.WriteToken(tokenHandler.CreateToken(new SecurityTokenDescriptor {
+                        Subject = new ClaimsIdentity(((Func<IEnumerable<Claim>>)(() => {
+                            List<Claim> claims = [];
+                            OsszesEngedelyNev.ToList().ForEach(engedelyNev => {
+                                if ((user.Engedelyek & (Enum.TryParse(engedelyNev, out Engedelyek engedely) ? (int)engedely : 0)) != 0)
+                                {
+                                    claims.Add(new Claim(engedelyNev, "true"));
+                                }
+                            });
+                            return claims;
+                        }))()),
+                        Expires = lejaratiIdopont,
+                        Issuer = config["Jwt:Issuer"]!,
+                        Audience = config["Jwt:Audience"]!,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config["Jwt:Key"]!)), SecurityAlgorithms.HmacSha256Signature)
+                    })),
+                    LejaratiIdopont = lejaratiIdopont
+                });
             }
             else
             {
@@ -224,6 +230,12 @@ namespace Backend.Controllers
         {
             [Required] public string Email { get; set; }
             [Required] public string Password { get; set; }
+        }
+
+        public class TokenData
+        {
+            public string Token { get; set; }
+            public DateTime LejaratiIdopont { get; set; }
         }
     }
 }
