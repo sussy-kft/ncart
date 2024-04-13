@@ -32,18 +32,11 @@ function UjVonal(props) {
   const kuldes = async () => {
     // console.log("kuldes", adatok);
     // console.error(props.meta);
-    await post("vonalak", adatok);
-    props.setMegallok(null);
-    let response;
-    do{
-      response = await getAllPromise(
-        "vonalak/megallok/" + adatok.vonalSzam + "/" + adatok.jarmuTipus,
-        10
-      );
-    }
-    while (!(props.meta && response?.oda) && !(response && response?.vissza))
-    props.setMegallok(response);
-    props.setRegiMegallok(response);
+    const asd = await post("vonalak", adatok);
+    console.log("asd", asd);
+    // rip sussy code
+    props.setMegallok(asd);
+    props.setRegiMegallok(asd);
   };
 
   /**

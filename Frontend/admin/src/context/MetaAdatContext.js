@@ -1,78 +1,97 @@
-import { createContext, useContext, useEffect } from 'react';
-import React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { AxiosContext } from './AxiosContext';
 
+/**
+ * @type {React.Context}
+ */
 export const MetaadatContext = createContext();
 
+/**
+ * @param {React.ReactNode} props.children Egy gyerek komponens, amit be akarunk ágyazni.
+ * @returns {React.ReactNode} Egy Provider komponenst.
+ */
 export const MetaadatProvider = ({ children }) => {
     const { getAll } = useContext(AxiosContext)
 
-    const [url, setUrl] = React.useState("");
-    const [metaadat, setMetaadat] = React.useState();
-    const [kulsoAdatok, setKulsoAdatok] = React.useState();
+    const [url, setUrl] = useState("");
+    const [metaadat, setMetaadat] = useState();
+    const [kulsoAdatok, setKulsoAdatok] = useState();
 
-    React.useEffect(() => {
+    /**
+     * Effect to fetch metadata when URL changes.
+     */
+    useEffect(() => {
         setMetaadat(undefined);
         if (url)
             getAll(url + "/metadata", setMetaadat);
     }, [url]);
 
-    React.useEffect(() => {
+    /**
+     * 
+     * Effect to fetch references when metadata changes.
+     */
+    useEffect(() => {
         //kys 
-        async function a(metaadat) {
+        const getReferenciak = async (metaadat) => {
             setKulsoAdatok(undefined);
-            if (metaadat) {
-                let kulsoAdatok2 = {};
-                let valaszok = [];
-
-                for (const input of metaadat) {
-                    if (Array.isArray(input.dataType)) {
-                        a(input.dataType);
-                    }
-                    else if (input.references) {
-                        if (!kulsoAdatok2[input.references]) {
-                            valaszok.push( new Promise((resolve) => {
-                                getAll(input.references, (adat) => {
-                                    kulsoAdatok2[input.references] = adat;
-                                    resolve();
-                                });
-                            }))
-                        }
-                    }
-                }
-                await Promise.all(valaszok);
-                // console.log("adsfs");
-                // console.log(metaadat);
-                // console.log(kulsoAdatok2);
-                setKulsoAdatok(kulsoAdatok2);
-            }
+            if (!metaadat) return null
+            
+            let kulsoAdatok2 = {};
+            const valaszok = metaadat.flatMap(input => 
+                Array.isArray(input.dataType)
+                    ? getReferenciak(input.dataType)
+                    : input.references && !kulsoAdatok2[input.references]
+                        ? new Promise((resolve) => {
+                            getAll(input.references, (adat) => {
+                                kulsoAdatok2[input.references] = adat;
+                                resolve();
+                            });
+                        }) 
+                        : []
+                
+                );
+            await Promise.all(valaszok);
+            setKulsoAdatok(kulsoAdatok2);   
         }
-        a(metaadat);
+        getReferenciak(metaadat);
     }, [metaadat]);
-    // console.log(metaadat, kulsoAdatok);
+    
+    /**
+     * Visszaadja a elsődleges kulcsokat.
+     * @returns {Array} Az elsődleges kulcsok tömbje.
+     */
     const getPKs = () => {
         if (!metaadat)
             return null
-        const PKKereses = lista => {
-            return lista.flatMap( input => {
-                if (Array.isArray(input.dataType))
-                    return PKKereses(input.dataType);
-                else if (input.isPartOfPK )
-                    return [input.columnName];
-                return [];
-            });
-        }
+        const PKKereses = lista => 
+            lista.flatMap( ({ dataType, isPartOfPK, columnName }) => 
+                (Array.isArray(dataType))
+                    ? PKKereses(dataType)
+                    : isPartOfPK
+                        ? [columnName]
+                        : []
+            );
+        
 
         let tmp = PKKereses(metaadat);
         return tmp.length > 0 ? tmp : ["id"];
     }
 
+    /**
+     * Megkeresi a kulcsot a metaadatban.
+     * @param {string} key - A megkeresendő kulcs. 
+     * @param {Array} lista - A lista, amiben keresni kell. Alapértelmezetten a metaadat, de a rekurzió miatt más elemet is meghív a függvény.
+     * @returns {Object} A megtalált objektum, ha létezik, egyébként null.
+     */
     const findKey = (key, lista = metaadat) => {
         if (!lista)
             return null
             for (const input of lista) {
-                if (Array.isArray(input.dataType))
-                    return  findKey(key, input.dataType)
+                if (Array.isArray(input.dataType)){
+                    const valasz = findKey(key, input.dataType);
+                    if (valasz)
+                        return valasz;
+                }
                 else if (input.columnName.toLowerCase() === key.toLowerCase())
                     return input;
             }

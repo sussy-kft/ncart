@@ -1,133 +1,79 @@
-import { createContext } from 'react';
-import React from 'react';
+import { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 import InfoPanel from '../komponensek/InfoPanel';
 import { InfoPanelContext } from './InfoPanelContext';
 
+/**
+ * @type {React.Context}
+ */
 export const AxiosContext = createContext();
 
+/**
+ * @param {React.Component} children - Gyerek komponenst
+ * @returns {React.Element} A gyerek komponesnt `AxiosProvider`-rel beágyazva.
+ */
 export const AxiosProvider = ({ children }) => {
-    const [axiosId, setAxiosId] = React.useState(Math.random());
-    const {addInfoPanel} = React.useContext(InfoPanelContext);
+    const [axiosId, setAxiosId] = useState(Math.random());
+    const { addInfoPanel } = useContext(InfoPanelContext);
     const baseUrl = "https://localhost:44339/";
-    const [errorState, setErrorState] = React.useState(false);
-    const header= { headers: { Authorization: "Bearer " + localStorage.getItem("token") } };
+    const [errorState, setErrorState] = useState(false);
+    const header = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } };
 
-    console.warn(header);
-
-    const getAll = (url, callback, errorCallback) => {
-        console.log(baseUrl + url);
-        console.log(callback);
-        axios.get(baseUrl + url)
-        .then(response => {
+    /**
+     * A HTTP kérés kezeléseket kezeli.
+     * @async
+     * @param {string} params.method - HTTP metódus
+     * @param {string} params.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
+     * @param {Object} [params.data=null] - Adatok, amiket a kérés során elküldünk, hogy feldolgozásra kerüljenek
+     * @param {string} [params.successMessage=null] - Info panel üzenete, ha sikeres a kérés
+     * @param {Function} [params.callback=null] - Callback függvény
+     * @param {Function} [params.errorCallback=null] - Error callback függvény
+     * @returns {Promise<Object>} A kérés válasza
+     */
+    const handleRequest = async ({ method, url, data = null, successMessage = null, callback = null, errorCallback = null }) => {
+        try {
+            const response = await axios[method](baseUrl + url, method === 'delete' ? { data: data, ...header } : data, header);
             setErrorState(false);
-            callback(response.data);
-        })
-        .catch(error => {
-            console.log(error);
-            if(errorCallback)
-                errorCallback();
-            else{
-                if(error.code === "ERR_NETWORK")
-                    setErrorState(true);
-                addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
+            if (method !== 'get') {
+                setAxiosId(Math.random());
+                successMessage && addInfoPanel(<InfoPanel bg={"success"} text={successMessage} />);
             }
-        });
-    }
-
-    const getAllPromise = (url, retries = 0) => {
-        console.log(baseUrl + url);
-        return new Promise((resolve, reject) => {
-            axios.get(baseUrl + url)
-            .then(response => {
-                setErrorState(false);
-                resolve(response.data);
-            })
-            .catch(error => {
-                if (retries > 0) {
-                    getAllPromise(url, retries - 1)
-                    .then(data => resolve(data))
-                    .catch(err => reject(err));
-                } else {
-                    if(error.code === "ERR_NETWORK")
-                        setErrorState(true);
-                    addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
-                    reject(error);
-                }
-            });
-        });
-    }
-
-    const destroy = (url, ids) => {
-        console.log(baseUrl + url + "/" + ids);
-        console.log(ids);
-        axios.delete(baseUrl + url + "/" + ids, header)
-        .then(response => {
             console.log(response.data);
-            console.log(response);
-            setAxiosId(Math.random());
-            addInfoPanel(<InfoPanel bg={"success"} text={"A törlés sikeres volt!"}/>);
-        })
-        .catch(error => {
-            //error.code
-            addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
-        })
-    }
+            callback && callback(response.data);
+            return response.data;
+        } catch (error) {
+            if (method === 'patch') 
+                metodusok.put(url, data);
+            else if (error.code === "ERR_NETWORK") 
+                setErrorState(true);
+            errorCallback && errorCallback(error);
+            addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
+        }
+    };
 
-    const post = (url, item, callback) => {
-        console.log(item);
-        console.log(baseUrl + url);
-        axios.post(baseUrl + url, item, header)
-        .then(response => {
-            console.log(response.data);
-            console.log(response);
-            setAxiosId(Math.random());
-            callback 
-                ? callback(response.data) 
-                : addInfoPanel(<InfoPanel bg={"success"} text={"Az új adat rögzítése sikeres volt!"}/>);
-        })
-        .catch(error => {
-            //error.code
-            addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
-        })
-    }
+    /**
+     * Egy Objektum, ami tartalmazza a HTTP kérésekhez szükséges metódusokat.
+     * @type {Object}
+     */
+    const metodusok = {
+        /**
+         * @param {Object} request - A kérés paraméterei
+         * @param {string} params.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
+         * @param {Function} request.callback - Callback függvény
+         * @param {Function} request.errorCallback - Error callback függvény
+         * @param {Object} request.item - Az adat, amit feldolgozni akarunk
+         * @param {string} request.id - ID to update
+         */
+        getAll: (url, callback, errorCallback) => handleRequest({ method: 'get', url, callback, errorCallback }),
+        destroy: (url, id) => handleRequest({ method: 'delete', url: url + "/" + id, successMessage: "A törlés sikeres volt!" }),
+        post: (url, item, callback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback }),
+        patch: (url, id, item) => handleRequest({ method: 'patch', url: url + "/" + id, data: item, successMessage: "A frissítés sikeres volt!" }),
+        put: (url, item) => handleRequest({ method: 'put', url, data: item, successMessage: "A frissítés sikeres volt!" })
+    };
 
-    const patch = (url, id, item) => {
-        console.log(item);
-        console.log(baseUrl + url + "/" + id);
-        axios.patch(baseUrl + url + "/" + id, item, header)
-        .then(response => {
-            console.log(response.data);
-            console.log(response);
-            setAxiosId(Math.random());
-            addInfoPanel(<InfoPanel bg={"success"} text={"A frissítés sikeres volt!"}/>);
-        })
-        .catch(error => {
-            //low effort error handling :(
-            //cry about it
-            put(url, id, item);
-        })
-    }
-
-    const put = (url, id, item) => {
-        console.log(item);
-        console.log(baseUrl + url + "/" + id);
-        axios.put(baseUrl + url + "/" + id, item, header)
-        .then(response => {
-            console.log(response.data);
-            console.log(response);
-            setAxiosId(Math.random());
-            addInfoPanel(<InfoPanel bg={"success"} text={"A frissítés sikeres volt!"}/>);
-        })
-        .catch(error => {
-            //error.code
-            addInfoPanel(<InfoPanel bg={"danger"} text={error.message}/>);
-        })
-    }
-    
     return (
-        <AxiosContext.Provider value={{axiosId, errorState, getAll, getAllPromise, destroy, post, patch}}>
-            {children}  
+        <AxiosContext.Provider value={{ axiosId, errorState, ...metodusok }}>
+            {children}
         </AxiosContext.Provider>
     );
 }

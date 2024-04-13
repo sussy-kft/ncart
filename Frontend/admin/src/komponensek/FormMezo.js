@@ -1,83 +1,107 @@
-import React, { useContext, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import { AxiosContext } from '../context/AxiosContext';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { MetaadatContext } from '../context/MetaadatContext';
-import InputMezo from './InputMezo';
-import { Container } from 'react-bootstrap';
+import React, { useContext, useState } from "react";
+import Button from "react-bootstrap/Button";
+import { AxiosContext } from "../context/AxiosContext";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { MetaadatContext } from "../context/MetaadatContext";
+import InputMezo from "./InputMezo";
+import { Container } from "react-bootstrap";
 
-function FormMezo(props) {
-    const { post } = useContext(AxiosContext);
-    const { metaadat, url } = useContext(MetaadatContext);
+/**
+ * `FormMezo` egy komponens, ami egy űrlapot generál a `metaadat` és `url` alapján.
+ * A form mezők dinamikusan generálódnak a `metaadat` kontextus alapján, emiatt ha egy másik form mezőt akarunk, elég ha csak a `metaadat`-ot cseréljük le.
+ * A form adatok a `MetaadatContext` `url`-jére kerülnek POST kérésben elküldésre.
+ *
+ * @returns {JSX.Element} Egy {@link Form} ({@link Container}-be beágyazva) komponenst ad vissza. 
+ */
+function FormMezo() {
+  const { post } = useContext(AxiosContext);
+  const { metaadat, url } = useContext(MetaadatContext);
 
-    const [validated, setValidated] = React.useState(false);
-    const [adatok, setAdatok] = React.useState({});
+  /**
+   * A form mezők változásait kezelő függvény.
+   *
+   * @param {object} event - Esemény objektum.
+   */
+  const [validated, setValidated] = useState(false);
+  const [adatok, setAdatok] = useState({});
 
-    console.log("ad",adatok);
+  const handleChange = ({ target: { name, type, checked, value } }) =>
+    setAdatok((values) => ({
+      ...values,
+      [name]:
+        type === "checkbox"
+          ? checked
+            ? [...(values[name] ?? []), value]
+            : (values[name] ?? []).filter((elem) => elem !== value)
+          : value,
+    }));
 
-    const handleChange = (event) => {
-        const { name, type, checked, value } = event.target;
+  /**
+   * A form mezők generálása a `metaadat` kontextus alapján.
+   *
+   * @param {Array} lista - Egy lista, ami a generálandó mezőket tartalmazza.
+   * @returns {Array} A legenerált form mezők, amiket már meg lehet jeleníteni.
+   */
+  const generateInput = (lista) =>
+    lista?.flatMap((input) =>
+      Array.isArray(input.dataType) ? 
+        generateInput(input.dataType)
+        : (
+        <Form.Group key={input.columnName} as={Col} md="4">
+          <Form.Label>{`${input.columnName}: `}</Form.Label>
+          <InputMezo input={input} handleChange={handleChange} />
+          <Form.Control.Feedback type="invalid" />
+        </Form.Group>
+      )
+    ) || [];
 
-        if (type === "checkbox") {
-            const engedelyek = adatok[name] ?? []
-            if (checked) engedelyek.push(value)
-            else engedelyek.splice(engedelyek.indexOf(value), 1)
-            setAdatok(values => ({ ...values, [name]: engedelyek }))
-        }
-        else setAdatok(values => ({ ...values, [name]: value }))
+  /**
+   * A form elküldésekor lefutó függvény.
+   *
+   * @param {object} event - Esemény objektum.
+   */
+  const kuldes = (event) => {
+    const form = event.currentTarget;
+    event.preventDefault();
+    if (form.checkValidity()) {
+      event.stopPropagation();
+      post(url, adatokGenerator(metaadat));
     }
+    setValidated(true);
+  };
 
-    const generateInput = (lista) => {
-        return lista?.flatMap((input) => {
-            if (Array.isArray(input.dataType))
-                return generateInput(input.dataType)
-            else return(
-                    <Form.Group key={input.columnName} as={Col} md="4">
-                        <Form.Label>{input.columnName + ": "}</Form.Label>
-                        <InputMezo input={input} handleChange={handleChange} />
-                        <Form.Control.Feedback type="invalid" />
-                    </Form.Group>
-                );
-        }) || []
-    }
+  /**
+   * A form mezőkből egy objektumot generál, amit a POST kérésben lehet használni.
+   *
+   * @param {Array} mintaAdat - Egy minta objektum lista, amiből tudja, hogy hogyan kell kiolvasni az adatokat.
+   * @returns {object} A generált válasz objektum.
+   */
+  const adatokGenerator = (mintaAdat) =>
+    mintaAdat.reduce(
+      (tmp, kulcs) => ({
+        ...tmp,
+        [kulcs.columnName]: Array.isArray(kulcs.dataType)
+          ? adatokGenerator(kulcs.dataType)
+          : adatok[kulcs.columnName],
+      }),
+      {}
+    );
 
-    const kuldes = (event) => {
-        const form = event.currentTarget;
-        event.preventDefault();
-        if (form.checkValidity()) {
-            event.stopPropagation();
-            post(url, adatokGenerator(metaadat));
-        };
-        setValidated(true);
-    }
+  if (!metaadat) return <h1>Betöltés...</h1>;
 
-    function adatokGenerator(mintaAdat) {
-        return mintaAdat.reduce((tmp, kulcs) => {
-            if (Array.isArray(kulcs.dataType))
-                tmp[kulcs.columnName] = adatokGenerator(kulcs.dataType);
-            else
-                tmp[kulcs.columnName] = adatok[kulcs.columnName];
-            return tmp;
-        }, {});
-    }
-
-    if (!metaadat) return <h1>Betöltés...</h1>
-
-    return (
-        <Container>
-            <Form noValidate validated={validated} onSubmit={(event) => kuldes(event)}>
-                <h2 className='mt-3'>Új adat hozzáadása:</h2>
-                <Row className='mb-2 mt-3'>
-                    {generateInput(metaadat)}
-                </Row>
-                <Button className='mb-4' type="submit">
-                    Küldés
-                </Button>
-            </Form>
-        </Container>
-    )
+  return (
+    <Container>
+      <Form noValidate validated={validated} onSubmit={kuldes}>
+        <h2 className="mt-3">Új adat hozzáadása:</h2>
+        <Row className="mb-2 mt-3">{generateInput(metaadat)}</Row>
+        <Button className="mb-4" type="submit">
+          Küldés
+        </Button>
+      </Form>
+    </Container>
+  );
 }
 
 export default FormMezo;
