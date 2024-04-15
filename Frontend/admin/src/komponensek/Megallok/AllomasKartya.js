@@ -10,15 +10,17 @@ import kep from "../../media/xd.png";
  * @param {Object} allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
  * @param {string} allomas.allomas - Az állomás ID-ja.
  * @param {number} allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
+ * @param {string} nev - Az állomás neve.
  * @param {Function} torol - Egy függvény, ami meghívódik, amikor a törlés gombra kattintanak.
  * @param {Function} handleChange - The function to be called when the input field value changes.
  *
  * @returns {React.Element} A megjelenítendő állomás kártyát vagy `null`-t, ha az állomás objektum nem létezik.
  */
-function AllomasKartya({ allomas, torol, handleChange }) {
+function AllomasKartya({allomas, nev, torol, handleChange }) {
 
   if (!allomas) return null;
 
+  console.log("sussy", allomas);
   return (
     <Card className="d-flex flex-row text-start">
       <Card.Img
@@ -35,11 +37,9 @@ function AllomasKartya({ allomas, torol, handleChange }) {
       />
       <Card.Body className="flex-fill text-left ps-0">
         <Card.Title>
-          {"sussy city"} (állomás {allomas.allomas})
+          {nev} (állomásID: {allomas.allomas})
         </Card.Title>
         <Card.Text>
-        {/* {`a ${allomas.allomas} - e ${allomas.elozoMegallo}`} <br /> */}
-          {/* előző {allomas.elozoMegallo}<br /> */}
           <div
             className="d-flex justify-content-between align-items-center"
             style={{ width: "100%" }}
@@ -50,7 +50,7 @@ function AllomasKartya({ allomas, torol, handleChange }) {
                 veryCoolValue={allomas.hanyPerc}
                 input={{ columnName: "hanyPerc", dataType: "tinyint" }}
                 handleChange={(event) => handleChange(allomas, event)}
-              />{" "}
+              />
               <br />
             </div>
             {torol && (

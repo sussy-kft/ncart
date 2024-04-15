@@ -55,7 +55,7 @@ function Bejelentkezes() {
     post("kezelok/login", adatok, (valasz) => {
       resetInfoPanel()
       window.sessionStorage.setItem("felhasznalo", adatok.email);
-      localStorage.setItem("token", valasz);
+      localStorage.setItem("token", valasz.token);
       navigate("/admin");
     });
   };

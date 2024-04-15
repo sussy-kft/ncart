@@ -205,13 +205,21 @@ namespace Backend.Controllers
                         Oda = vonalMegallok[0],
                         Vissza = vonalMegallok[1]
                     }
-                );
-            }
-            else
-            {
-                return NotFound();
-            }
-        });
+                    return Ok(vonalakCount == 1
+                        ? new OdaVissza()
+                        {
+                            Oda = vonalMegallok[0]
+                        }
+                        : new OdaVissza()
+                        {
+                            Oda = vonalMegallok[0],
+                            Vissza = vonalMegallok[1]
+                        }
+                    );
+                }))()
+                : NotFound()
+            ;
+        }
 
         class OdaVisszaFixed
         {
@@ -222,19 +230,7 @@ namespace Backend.Controllers
         class VonalMegallokFixed
         {
             public VonalDTO Vonal { get; set; }
-            public List<AllomasEsIdo> Megallok { get; set; }
-        }
-
-        class AllomasJoinMegall
-        {
-            public Allomas Allomas { get; set; }
-            public Megall Megall { get; set; }
-        }
-
-        class AllomasEsIdo
-        {
-            public AllomasDTO Allomas { get; set; }
-            public int HanyPerc { get; set; }
+            public List<MegallDTO> Megallok { get; set; }
         }
     }
 
@@ -243,7 +239,8 @@ namespace Backend.Controllers
         [HttpGet("jaratok"), AllowAnonymous]
         public IEnumerable<Jarat> GetVonalSzamok() => context
             .Vonalak
-            .Select(vonal => new Jarat {
+            .Select(vonal => new Jarat
+            {
                 VonalSzam = vonal.VonalSzam,
                 JarmuTipus = vonal.JarmuTipus
             })

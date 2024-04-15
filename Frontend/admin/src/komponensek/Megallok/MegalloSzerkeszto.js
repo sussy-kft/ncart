@@ -1,26 +1,24 @@
-import React from "react";
+import React, {useContext, useState, useEffect } from "react";
 import UjAllomas from "./UjAllomas";
 import { Row, Col, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useContext } from "react";
 import { AxiosContext } from "../../context/AxiosContext";
 import { MetaadatContext } from "../../context/MetaadatContext";
-import { useState } from "react";
-import { ToggleButton } from "react-bootstrap";
 import AllomasKartya from "./AllomasKartya";
-import { Offcanvas } from "react-bootstrap";
 import UjVonal from "./UjVonal";
+import SzinkronizaloGomb from "./SzinkronizaloGomb";
+import MentesOffcanvas from "./MentesOffcanvas";
+import _ from "lodash";
 
 function MegalloSzerkeszto(props) {
-  const _ = require("lodash");
   
   const { getAll, post } = useContext(AxiosContext);
   const { url } = useContext(MetaadatContext);
 
-  const [opcio, setOpciok] = React.useState(null);
-  const [megallok, setMegallok] = React.useState(props.megallok);
-  const [regiMegallok, setRegiMegallok] = React.useState(
+  const [opcio, setOpciok] = useState(null);
+  const [megallok, setMegallok] = useState(props.megallok);
+  const [regiMegallok, setRegiMegallok] = useState(
     _.cloneDeep(props.megallok)
   );
   const [checked, setChecked] = useState(false);
@@ -58,7 +56,7 @@ function MegalloSzerkeszto(props) {
         ? {
             [OppositeKey(key)]: {
               ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
+              megallok: megfordit(_.cloneDeep(tmp)).reverse(),
             },
           }
         : {}),
@@ -86,8 +84,8 @@ function MegalloSzerkeszto(props) {
             [OppositeKey(key)]: {
               ...prevMegallok[OppositeKey(key)],
               megallok: megfordit([
-                JSON.parse(JSON.stringify(tmp)),
-                ...JSON.parse(JSON.stringify(megallok[key].megallok)).reverse(),
+                _.cloneDeep(tmp),
+                ..._.cloneDeep(megallok[key].megallok).reverse(),
               ]),
             },
           }
@@ -96,11 +94,10 @@ function MegalloSzerkeszto(props) {
     if (a) callback({ target: { name: "id", value: a.id } });
   };
 
-  const kuldes = () => {
+  const kuldes = async () => {
     for (const [key, value] of Object.entries(megallok)) {
       if (value) {
-        // console.warn("meg", megallok);
-        post(url + "/batch", {
+        await post(url + "/batch", {
           vonal: value.vonal.id,
           kezdoAll: value.megallok[0].elozoMegallo,
           megallok: value.megallok,
@@ -109,15 +106,13 @@ function MegalloSzerkeszto(props) {
         setShow(false);
       }
     }
-
-    console.warn("Küldés");
   };
 
   const atmasol = (key) => {
 
-    let tmp = JSON.parse(JSON.stringify(megallok[key].megallok));
-    tmp.reverse();
-    megfordit(tmp);
+    let tmp = _.cloneDeep(megallok[key].megallok);
+  
+    megfordit(tmp.reverse());
 
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
@@ -138,7 +133,6 @@ function MegalloSzerkeszto(props) {
       ];
     }
 
-    console.error("megfordit", copy);
     return copy;
   };
 
@@ -166,7 +160,7 @@ function MegalloSzerkeszto(props) {
   const visszaallit = () => {
     setChecked(false);
     setShow(false);
-    setMegallok(JSON.parse(JSON.stringify(regiMegallok)));
+    setMegallok(_.cloneDeep(regiMegallok));
   };
 
   const torol = (key, obj) => {
@@ -189,18 +183,18 @@ function MegalloSzerkeszto(props) {
         ? {
             [OppositeKey(key)]: {
               ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
+              megallok: megfordit(_.cloneDeep(tmp)).reverse(),
             },
           }
         : {}),
     }));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAll("allomasok", setOpciok);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShow(!_.isEqual(megallok, regiMegallok));
   }, [megallok]);
 
@@ -253,7 +247,7 @@ function MegalloSzerkeszto(props) {
                 ? {
                     ...prevMegallok[OppositeKey(sourceDroppableId)],
                     megallok: megfordit(
-                      JSON.parse(JSON.stringify(sourceAllomasok)).reverse()
+                      _.cloneDeep(sourceAllomasok).reverse()
                     ),
                   }
                 : prevMegallok[OppositeKey(sourceDroppableId)],
@@ -300,6 +294,7 @@ function MegalloSzerkeszto(props) {
                               >
                                 <AllomasKartya
                                   allomas={allomas}
+                                  nev={opcio.find(val => val.id === allomas.allomas)?.nev}
                                   torol={
                                     value.megallok.length > 1 ? torol.bind(this, key) : null
                                   }
@@ -328,60 +323,11 @@ function MegalloSzerkeszto(props) {
               );
             })}
           </Row>
-          <ToggleButton
-            id="toggle-check"
-            className={megallok.vissza ? "" : "d-none"}
-            type="checkbox"
-            variant={checked ? "success" : "warning"}
-            onMouseOver={(e) =>
-              (e.target.className = checked
-                ? "btn btn-danger"
-                : "btn btn-success")
-            }
-            onMouseLeave={(e) =>
-              (e.target.className = checked
-                ? "btn btn-warning"
-                : "btn btn-warning")
-            }
-            checked={checked}
-            onChange={(e) => {
-              setChecked(e.currentTarget.checked);
-            }}
-            {...{ disabled: !szinkronizalhato() }}
-          >
-            Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
-          </ToggleButton>
+          <SzinkronizaloGomb megjelenes={megallok.vissza ? "" : "d-none"} checked={checked} setChecked={setChecked} szinkronizalhato={szinkronizalhato} />
         </DragDropContext>
       </Form>
 
-      <Offcanvas
-        style={{ height: "70px" }}
-        show={show}
-        onHide={() => setShow(false)}
-        placement="bottom"
-        scroll={true}
-        backdrop={false}
-        keyboard={false}
-      >
-        <Offcanvas.Header>
-          <Offcanvas.Title className="w-100">
-            <div className="d-flex justify-content-between">
-              <span>Nem mentet változtatások vannak</span>
-              <div
-                style={{ width: "170px", marginRight: "3vw" }}
-                className="d-flex justify-content-between"
-              >
-                <Button variant="secondary" onClick={visszaallit}>
-                  Mégse
-                </Button>
-                <Button variant="success" onClick={kuldes}>
-                  Mentés
-                </Button>
-              </div>
-            </div>
-          </Offcanvas.Title>
-        </Offcanvas.Header>
-      </Offcanvas>
+      <MentesOffcanvas show={show} setShow={setShow} visszaallit={visszaallit} kuldes={kuldes} />
     </>
   );
 }
