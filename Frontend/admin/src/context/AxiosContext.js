@@ -43,11 +43,14 @@ export const AxiosProvider = ({ children }) => {
             return response.data;
         } catch (error) {
             if (method === 'patch') 
-                metodusok.put(url, data);
-            else if (error.code === "ERR_NETWORK") 
-                setErrorState(true);
-            errorCallback && errorCallback(error);
-            addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
+                httpMetodusok.put(url, data);
+            else 
+            {
+                if (error.code === "ERR_NETWORK") 
+                    setErrorState(true);
+                errorCallback && errorCallback(error);
+                addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
+            }
         }
     };
 
@@ -55,7 +58,7 @@ export const AxiosProvider = ({ children }) => {
      * Egy Objektum, ami tartalmazza a HTTP kérésekhez szükséges metódusokat.
      * @type {Object}
      */
-    const metodusok = {
+    const httpMetodusok = {
         /**
          * @param {Object} request - A kérés paraméterei
          * @param {string} params.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
@@ -72,7 +75,7 @@ export const AxiosProvider = ({ children }) => {
     };
 
     return (
-        <AxiosContext.Provider value={{ axiosId, errorState, ...metodusok }}>
+        <AxiosContext.Provider value={{ axiosId, errorState, ...httpMetodusok }}>
             {children}
         </AxiosContext.Provider>
     );

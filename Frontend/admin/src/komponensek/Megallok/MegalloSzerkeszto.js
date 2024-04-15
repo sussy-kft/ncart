@@ -26,31 +26,20 @@ function MegalloSzerkeszto(props) {
   const [checked, setChecked] = useState(false);
   const [show, setShow] = useState(false);
 
-
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
-
-  // console.log("bbbbbbbbbbbbb", megallok, regiMegallok);
-
   const filterPool = (key) => {
-    // console.warn(opcio);
-    // console.error(megallok[key].megallok);
     if (!opcio) return null;
+
     return opcio.filter((value) => {
-      //console.log(!megallok[key].megallok.some(val2 => {return value.id == val2.allomas}));
       return !(
         value.id === megallok[key].megallok[0]?.elozoMegallo ||
         megallok[key].megallok.some((val2) => {
-          //console.log("sus",value.id, val2.allomas)
           return value.id === val2.allomas;
         })
       );
     });
   };
 
-  const OppositeKey = (key) => {
-    return Object.keys(megallok).filter((k) => k !== key)[0];
-  };
+  const OppositeKey = key => Object.keys(megallok).filter((k) => k !== key)
 
   const handleChange = (key, obj, event) => {
     setShow(true);
@@ -58,11 +47,6 @@ function MegalloSzerkeszto(props) {
     const { value } = event.target;
 
     tmp.find((val) => val.allomas === obj.allomas).hanyPerc = value * 1;
-    // console.log(megallok[key].megallok.hanyPerc);
-    // console.log(regiMegallok[key].megallok.hanyPerc);
-    // console.warn(regiMegallok);
-    // console.warn(value);
-    // console.warn(megallok, regiMegallok);
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [key]: {
@@ -81,7 +65,7 @@ function MegalloSzerkeszto(props) {
     }));
   };
 
-  const handleSave = (event, obj, key, callback, a) => {
+  const handleSave = (key, event, obj, callback, a) => {
     event.preventDefault();
     let tmp = {};
     tmp["allomas"] = obj["id"] * 1;
@@ -129,19 +113,15 @@ function MegalloSzerkeszto(props) {
     console.warn("Küldés");
   };
 
-  console.log(regiMegallok, megallok);
-
   const atmasol = (key) => {
-    console.warn(OppositeKey(key));
+
     let tmp = JSON.parse(JSON.stringify(megallok[key].megallok));
     tmp.reverse();
     megfordit(tmp);
 
-    // console.log("tmp", tmp);
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [OppositeKey(key)]: {
-        //...prevMegallok[key],
         megallok: tmp,
         vonal: _.cloneDeep(prevMegallok[OppositeKey(key)].vonal),
       },
@@ -163,20 +143,21 @@ function MegalloSzerkeszto(props) {
   };
 
   const szinkronizalhato = () => {
-    //console.error(megallok);
+    const { oda, vissza } = megallok;
+
     return (
-      megallok.oda &&
-      megallok.vissza &&
-      megallok.oda.megallok.length === megallok.vissza.megallok.length &&
-      megallok.oda.megallok.every(
+      oda &&
+      vissza &&
+      oda.megallok.length === vissza.megallok.length &&
+      oda.megallok.every(
         (value, index) =>
           value.allomas ===
-            megallok.vissza.megallok[
-              megallok.vissza.megallok.length - index - 1
+            vissza.megallok[
+              vissza.megallok.length - index - 1
             ].elozoMegallo &&
           value.elozoMegallo ===
-            megallok.vissza.megallok[
-              megallok.vissza.megallok.length - index - 1
+            vissza.megallok[
+              vissza.megallok.length - index - 1
             ].allomas
       )
     );
@@ -186,7 +167,6 @@ function MegalloSzerkeszto(props) {
     setChecked(false);
     setShow(false);
     setMegallok(JSON.parse(JSON.stringify(regiMegallok)));
-    console.log(megallok, regiMegallok);
   };
 
   const torol = (key, obj) => {
@@ -282,7 +262,6 @@ function MegalloSzerkeszto(props) {
         >
           <Row>
             {Object.entries(megallok).map(([key, value], index) => {
-              //console.log(key);
               console.warn(value);
               if (!value)
                 return (
@@ -335,8 +314,7 @@ function MegalloSzerkeszto(props) {
                     )}
                   </Droppable>
                   <UjAllomas
-                    handleSave={handleSave}
-                    name={key}
+                    handleSave={handleSave.bind(null, key)}
                     pool={filterPool(key)}
                   />
                   {megallok[OppositeKey(key)] && (
@@ -368,15 +346,11 @@ function MegalloSzerkeszto(props) {
             checked={checked}
             onChange={(e) => {
               setChecked(e.currentTarget.checked);
-              // console.log(e.currentTarget.checked);
             }}
             {...{ disabled: !szinkronizalhato() }}
           >
             Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
           </ToggleButton>
-          {/* <Button variant="primary" onClick={}>
-          Mentés
-        </Button> */}
         </DragDropContext>
       </Form>
 

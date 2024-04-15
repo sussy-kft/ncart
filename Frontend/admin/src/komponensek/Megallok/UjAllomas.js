@@ -1,56 +1,45 @@
-import { Button } from "react-bootstrap";
+import { Button, Row, Col } from "react-bootstrap";
+import { useEffect, useState } from "react";
 import InputMezo from "../InputMezo";
-import { Row } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
-import { useContext, useEffect } from "react";
-import { AxiosContext } from "../../context/AxiosContext";
-import React from "react";
 
-function UjAllomas(props){
+/**
+ * @param {Array} pool - Azok a megállók, amik még nem szerepelnek az adott vonalon.
+ * @param {Function} handleSave - Egy callback függvény, akkor hívódik meg, ha a mentés gombra kattint a felhasználó.
+ * @returns {React.Component} `UjAllomas` komponenst
+ */
+function UjAllomas({ pool, handleSave }){
 
-    const {getAll} = useContext(AxiosContext)
-    const [nextElement, setNextElement] = React.useState({... props.pool[0], ido: 1})
+    /**
+     * Az új állomás adatai
+     * @type {[Object, Function]}
+     */
+    const [adatok, setAdatok] = useState({... pool[0], ido: 1})
 
-    //const [opcio, setOpciok] = React.useState(null)
-    const [adatok, setAdatok] = React.useState({... props.pool[0], ido: 1})
-
-    const { pool, handleSave, name } = props;
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        // console.log("asd", name, value);
+    /**
+     * A változásokért felelős függvény
+     * @param {Object} event - Egy esemény objektum.
+     * @param {Object} event.target.name - A változtatni kívánt objektum kulcsa az `adatok` objektumban.
+     * @param {Object} event.target.value - Az új érték, amit be kell állítani. 
+     */
+    const handleChange = ({target: { name, value }}) => {
         setAdatok(values => ({ ...values, [name[0].toLowerCase() + name.slice(1)]: value }))
-        // console.log(adatok, "ad");
     }
 
-    useEffect(() => {   
-        // setAdatok( (prev) => {
-        //     console.log("ujallomas2", props.pool[0]??null, prev);
-        //     console.log("ujallomas2", props.pool[0]?.id === prev.id ??null, prev ? props.pool[0] : props.pool[1]);
-        //     return {
-        //         ... (props.pool[0]?.id === prev.id ??null, prev ? props.pool[0] : props.pool[1]),
-        //         ...prev,
-        //     }}
-        //     )
-        console.log("ujallomas2", props.pool[0]??null, adatok);
-        setNextElement( adatok.id === props.pool[0]?.id??null ? props.pool[1] : props.pool[0])
-    }, [props.pool]);
+    /**
+     * A következő elem.
+     * Ha az első elemet választotta ki, a fejhasználó, akkor annak a következő elemét adja vissza.
+     * @returns {Object} A következő elem, ami automatikusan kiválasztódik
+     */
+    const getKovSor = () => adatok.id === pool[0]?.id??null ? pool[1] : pool[0]
    
-    if (!props.pool) return null
-
-    console.log("ujallomas", props.pool, nextElement);
+    if (!pool || pool.length === 0) return null
 
     return (
-        props.pool.length==0
-        ?<></>
-        :
-        <Row>
+        <Row className="mb-3 mt-3">
             <InputMezo as={Col} name="id" value="nev" pool={pool} isSelect={true} idk={true} handleChange={handleChange}/>
             <InputMezo as={Col} input={{columnName: "ido", dataType: "tinyint"}} value="1" handleChange={handleChange}/>
-            <Button as={Col} variant="success" onClick={(event) => handleSave(event, adatok, name, handleChange, nextElement)} style={{marginRight: "12px"}}>Új állomás</Button>
-        </Row>
-        
+            <Button as={Col} variant="success" onClick={(event) => handleSave(event, adatok, handleChange, getKovSor())} style={{marginRight: "12px"}}>Új állomás</Button>
+        </Row>    
     );
 }
 

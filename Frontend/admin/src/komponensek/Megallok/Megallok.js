@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import InputSelects from "./InputSelects";
+import VonalSzuro from "./VonalSzuro";
 import { AxiosContext } from "../../context/AxiosContext";
 import { MetaadatContext } from "../../context/MetaadatContext";
 import { Form, Row } from "react-bootstrap";
@@ -17,7 +17,7 @@ function Megallok(props) {
       <h1>{props.cim}</h1>
       <Form className="container">
         <Row>
-            <InputSelects
+            <VonalSzuro
 
                 pool={[
                 {
