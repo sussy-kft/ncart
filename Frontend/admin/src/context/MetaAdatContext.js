@@ -98,8 +98,20 @@ export const MetaadatProvider = ({ children }) => {
         return null
     }
 
+    /**
+     * Returns the key from the `obj` object that is not equal to the provided key.
+     *
+     * @param {string} key - The key to exclude.
+     * @returns {string} The key from the `obj` object that is not equal to the provided key.
+     */
+    //const OppositeKey = (obj, key) => Object.keys(obj).filter((k) => k !== key);
+
+    const createOppositeKey = (obj) => {
+        return (key) => Object.keys(obj).filter((k) => k !== key);
+      };
+
     return (
-        <MetaadatContext.Provider value={{ metaadat, kulsoAdatok, getPKs, findKey, url, setUrl}}>
+        <MetaadatContext.Provider value={{ metaadat, kulsoAdatok, getPKs, findKey, url, setUrl, createOppositeKey}}>
             {children}
         </MetaadatContext.Provider>
     );

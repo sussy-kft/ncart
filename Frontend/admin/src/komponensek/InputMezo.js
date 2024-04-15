@@ -1,15 +1,15 @@
-import React, { Children, useEffect } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 import { useContext } from 'react';
 import { AxiosContext } from '../context/AxiosContext';
 
-function InputMezo(props) {
+function InputMezo( props ) {
     const { getAll } = useContext(AxiosContext);
 
     
     const flag = props.flag ?? true;
-    const [opciok, setOpciok] = React.useState([]);
-    const [onceFlag, setOnceFlag] = React.useState(false);
+    const [opciok, setOpciok] = useState([]);
+    const [onceFlag, setOnceFlag] = useState(false);
 
     const As = props.as ?? 'react.fragment';
 

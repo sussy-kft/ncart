@@ -3,7 +3,7 @@ import VonalSzuro from "./VonalSzuro";
 import { AxiosContext } from "../../context/AxiosContext";
 import { MetaadatContext } from "../../context/MetaadatContext";
 import { Form, Row } from "react-bootstrap";
-import MegalloSzerkeszto from "./MegalloSzerkeszto";
+import MegalloOldal from "./MegalloOldal";
 
 function Megallok(props) {
   const { axiosId, errorState, getAll } = useContext(AxiosContext);
@@ -38,7 +38,7 @@ function Megallok(props) {
             />
         </Row>
       </Form>
-      {megallok && <MegalloSzerkeszto megallok={megallok} meta={meta}/>}
+      {megallok && <MegalloOldal megallok={megallok} meta={meta}/>}
     </>
   );
 }
