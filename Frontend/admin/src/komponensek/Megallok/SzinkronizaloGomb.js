@@ -1,42 +1,69 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ToggleButton } from "react-bootstrap";
+import { MegallokContext } from "./MegallokContext";
 
 /**
- * 
+ * `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.
+ * A felhasználó beállíthatja, hogy be vagy ki legyen kapcsolva a szinkronizálás.
+ * Ha a szinkronizálás be van kapcsolva, akkor az oda és vissza irányú megállók tükörképei lesznek egymásnak.
+ * (Az első megálló az egyik irányban az utolsó megálló a másik irányban stb.)
+ *
  * @component
- * @param {string} megjelenes - Egyszerű string, ami a gomb megjelenését befolyásolja. Ezt a stringet az osztály nevéhez fűzzük, ami a Bootstrap segítségével befolyásoljuk a megjelenést.
- * @param {boolean} checked - A gomb állapotát jelzi. Ha igaz, akkor a gomb zöld, különben sárga.
- * @param {Function} setChecked - Egy callback függvény, ami beállítja a szinkronizálás állapotát.
- * @param {Function} szinkronizalhato - Egy függvény, ami meghatározza, hogy a gomb lenyomható-e. Ha nem, akkor a gomb inaktív lesz.
- *  
- * @returns {React.Element} SzinkronizaloGomb komponenst.
+ *
+ * @returns {React.Element} A toggle button that changes its appearance and functionality based on the state of the stops (`megallok`).
  */
-function SzinkronizaloGomb({megjelenes, checked, setChecked, szinkronizalhato}){
-    return(
-        <ToggleButton
-            id="toggle-check"
-            className={`mt-2 ${megjelenes}`}
-            type="checkbox"
-            variant={checked ? "success" : "warning"}
-            onMouseOver={(e) =>
-              (e.target.className = checked
-                ? "mt-2 btn btn-danger"
-                : "mt-2 btn btn-success")
-            }
-            onMouseLeave={(e) =>
-              (e.target.className = checked
-                ? "mt-2 btn btn-warning"
-                : "mt-2 btn btn-warning")
-            }
-            checked={checked}
-            onChange={(e) => {
-              setChecked(e.currentTarget.checked);
-            }}
-            {...{ disabled: !szinkronizalhato() }}
-          >
-            Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
-          </ToggleButton>
-    )
+function SzinkronizaloGomb() {
+  const { megallok, checked, setChecked } = useContext(MegallokContext);
+
+  /**
+   * Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
+   * Mivel a szinkronizálás akkor lehetséges, ha azonos számú megálló van mindkét irányban, és minden megálló ugyanaz a megálló a másik irányban, csak fordított sorrendben.
+   * Ha a fetéltel teljesül, akkor a gomb kattintható, egyébként nem.
+   * 
+   * @returns {boolean} Ha a gomb képes a szinkronizálásra, akkor igaz, egyébként hamis.
+   */
+  const szinkronizalhato = () => {
+    const { oda, vissza } = megallok;
+
+    return (
+      oda &&
+      vissza &&
+      oda.megallok.length === vissza.megallok.length &&
+      oda.megallok.every(
+        (value, index) =>
+          value.allomas ===
+            vissza.megallok[vissza.megallok.length - index - 1].elozoMegallo &&
+          value.elozoMegallo ===
+            vissza.megallok[vissza.megallok.length - index - 1].allomas
+      )
+    );
+  };
+
+  return (
+    <ToggleButton
+      id="toggle-check"
+      className={`mt-3 ${megallok.vissza ? "" : "d-none"}`}
+      type="checkbox"
+      variant={checked ? "success" : "warning"}
+      onMouseOver={(e) =>
+        (e.target.className = checked
+          ? "mt-3 btn btn-danger"
+          : "mt-3 btn btn-success")
+      }
+      onMouseLeave={(e) =>
+        (e.target.className = checked
+          ? "mt-3 btn btn-success"
+          : "mt-3 btn btn-warning")
+      }
+      checked={checked}
+      onChange={(e) => {
+        setChecked(e.currentTarget.checked);
+      }}
+      {...{ disabled: !szinkronizalhato() }}
+    >
+      Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
+    </ToggleButton>
+  );
 }
 
 export default SzinkronizaloGomb;

@@ -1,287 +1,121 @@
-import React, { useContext, useState, useEffect } from "react";
-import UjAllomas from "./UjAllomas";
-import { Row, Col, Button } from "react-bootstrap";
+import React, { useContext } from "react";
+import { Row, Col } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { AxiosContext } from "../../context/AxiosContext";
+import { DragDropContext } from "react-beautiful-dnd";
 import { MetaadatContext } from "../../context/MetaadatContext";
+import { MegallokContext } from "./MegallokContext";
 import MegalloSzerkeszto from "./MegalloSzerkeszto";
 import UjVonal from "./UjVonal";
 import SzinkronizaloGomb from "./SzinkronizaloGomb";
 import MentesOffcanvas from "./MentesOffcanvas";
 import _ from "lodash";
 
-function MegalloOldal(props) {
-  const { post } = useContext(AxiosContext);
-  const { kulsoAdatok, url, createOppositeKey } = useContext(MetaadatContext);
+/**
+ * MegalloOldal egy React komponens, amely egy űrlapot renderel a "megallok" kezelésére.
+ * A komponens megvalósítja a drag-and-drop funkcionalitást a megállók átrendezéséhez, valamint a megállók megfordításához.
+ * Továbbá rendelkezik egy szinkronizáló gombbal is, amely a megállók szinkronizálását teszi lehetővé.
+ * Így ha a felhasználó megváltoztatja az egyik irányú megállókat, akkor a másik irányú megállók is megváltoznak.
+ * Az adatokat egy felugró ablakban lehet menteni, vagy esetleg visszaállítani, az előző állapotra.
+ *
+ * @component
+ * @param {Object} meta - Azokat az infókat tartalmazza, amihez szükséges egy új vonal létrehozásához.
+ * Ez azért kell, ha esetleg a felhasználó új vonalat akar létrehozni, de még nincs se oda, se vissza vonala, akkor a meta objektum segítségével ezeket a vonalakat létre tudja hozni.
+ *
+ * @returns {React.Element} Egy űrlapot, amely a megállók kezelésére szolgál.
+ */
+function MegalloOldal({ meta }) {
+  const { kulsoAdatok } = useContext(MetaadatContext);
+  const { megallok, setMegallok, oppositeKey, megfordit, checked } =
+    useContext(MegallokContext);
 
-  const [megallok, setMegallok] = useState(props.megallok);
-  const [regiMegallok, setRegiMegallok] = useState(_.cloneDeep(props.megallok));
-  const [checked, setChecked] = useState(false);
-  const [show, setShow] = useState(false);
+  /**
+   * A `handleDragEnd` egy függvény, amely a drag-and-drop műveletet kezeli.
+   * Frissíti a megállók sorrendjét és ha kell akkor az elöző megállókat is.
+   * Továbbá a `checked` (a szinkronizálás be van-e kapcsolva) állapotától függően tökrözi a megállókat fordított sorrendben.
+   * Tehát ha a szinkronizálás be van kapcsolva, akkor a megállók sorrendje is megfordul..
+   *
+   * @param {Object} result Az eredmény objektum a react-beautiful-dnd onDragEnd eseményéből.
+   * @param {Object} result.source Egy objektum, amely leírja a drag művelet forrását.
+   * @param {string} result.source.droppableId A forrás droppable ID-je.
+   * @param {number} result.source.index A forrás draggable indexe a droppable-on belül.
+   * @param {Object} result.destination Egy objektum, amely leírja a drag művelet célját.
+   * @param {string} result.destination.droppableId A cél droppable ID-je.
+   * @param {number} result.destination.index Az index, ahol a draggable-t a droppable-on belül eldobták.
+   */
+  const handleDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination || source.index === destination.index) return;
 
-  const OppositeKey = createOppositeKey(megallok);
+    const sourceDroppableId = source.droppableId;
+    const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
+    const a = { ...sourceAllomasok[0] };
+    const [removed] = sourceAllomasok.splice(source.index, 1);
 
-  const filterPool = (key) => {
-    if (!kulsoAdatok.Allomasok) return null;
+    sourceAllomasok.splice(destination.index, 0, removed);
 
-    return kulsoAdatok.Allomasok.filter((value) => {
-      return !(
-        value.id === megallok[key].megallok[0]?.elozoMegallo ||
-        megallok[key].megallok.some((val2) => {
-          return value.id === val2.allomas;
-        })
-      );
-    });
-  };
-
-  const handleChange = (key, obj, event) => {
-    setShow(true);
-    const tmp = [...megallok[key].megallok];
-    const { value } = event.target;
-
-    tmp.find((val) => val.allomas === obj.allomas).hanyPerc = value * 1;
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: tmp,
-      },
-
-      ...(checked && {
-        [OppositeKey(key)]: {
-          ...prevMegallok[OppositeKey(key)],
-          megallok: megfordit(_.cloneDeep(tmp)).reverse(),
-        },
-      }),
-    }));
-  };
-
-  const handleSave = (key, event, obj, callback, a) => {
-    event.preventDefault();
-    let tmp = {};
-    tmp["allomas"] = obj["id"] * 1;
-    tmp["hanyPerc"] = obj["ido"] * 1;
-    tmp["elozoMegallo"] =
-      megallok[key].megallok[megallok[key].megallok.length - 1].allomas;
-    tmp["vonal"] = megallok[key].megallok[0].vonal;
-
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: [...prevMegallok[key].megallok, tmp],
-      },
-
-      ...(checked
-        ? {
-            [OppositeKey(key)]: {
-              ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit([
-                _.cloneDeep(tmp),
-                ..._.cloneDeep(megallok[key].megallok).reverse(),
-              ]),
-            },
-          }
-        : {}),
-    }));
-    if (a) callback({ target: { name: "id", value: a.id } });
-  };
-
-  const kuldes = async () => {
-    for (const [key, value] of Object.entries(megallok)) {
-      if (value) {
-        await post(url + "/batch", {
-          vonal: value.vonal.id,
-          kezdoAll: value.megallok[0].elozoMegallo,
-          megallok: value.megallok,
-        });
-        setRegiMegallok(_.cloneDeep(megallok));
-        setShow(false);
-      }
-    }
-  };
-
-  const atmasol = (key) => {
-    let tmp = _.cloneDeep(megallok[key].megallok);
-
-    megfordit(tmp.reverse());
-
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [OppositeKey(key)]: {
-        megallok: tmp,
-        vonal: _.cloneDeep(prevMegallok[OppositeKey(key)].vonal),
-      },
-    }));
-  };
-
-  const megfordit = (lista) => {
-    let copy = [...lista];
-
-    for (let ix = 0; ix < copy.length; ix++) {
-      [copy[ix].allomas, copy[ix].elozoMegallo] = [
-        copy[ix].elozoMegallo,
-        copy[ix].allomas,
-      ];
+    if (source.index > 0)
+      sourceAllomasok[source.index].elozoMegallo =
+        sourceAllomasok[source.index - 1].allomas;
+    else {
+      sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
     }
 
-    return copy;
-  };
+    if (source.index < sourceAllomasok.length - 1)
+      sourceAllomasok[source.index + 1].elozoMegallo =
+        sourceAllomasok[source.index].allomas;
 
-  const szinkronizalhato = () => {
-    const { oda, vissza } = megallok;
+    if (destination.index > 0)
+      sourceAllomasok[destination.index].elozoMegallo =
+        sourceAllomasok[destination.index - 1].allomas;
+    else sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
+    if (destination.index < sourceAllomasok.length - 1)
+      sourceAllomasok[destination.index + 1].elozoMegallo =
+        sourceAllomasok[destination.index].allomas;
 
-    return (
-      oda &&
-      vissza &&
-      oda.megallok.length === vissza.megallok.length &&
-      oda.megallok.every(
-        (value, index) =>
-          value.allomas ===
-            vissza.megallok[vissza.megallok.length - index - 1].elozoMegallo &&
-          value.elozoMegallo ===
-            vissza.megallok[vissza.megallok.length - index - 1].allomas
-      )
-    );
-  };
-
-  const visszaallit = () => {
-    setChecked(false);
-    setShow(false);
-    setMegallok(_.cloneDeep(regiMegallok));
-  };
-
-  const torol = (key, obj) => {
-    let index = megallok[key].megallok.findIndex(
-      (value) => JSON.stringify(value) === JSON.stringify(obj)
-    );
-    if (index > 0 && index < megallok[key].megallok.length - 1)
-      megallok[key].megallok[index + 1].elozoMegallo =
-        megallok[key].megallok[index - 1].allomas;
-    const tmp = megallok[key].megallok.filter(
-      (value) => JSON.stringify(value) !== JSON.stringify(obj)
-    );
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: tmp,
+      [sourceDroppableId]: {
+        ...prevMegallok[sourceDroppableId],
+        megallok: sourceAllomasok,
       },
-      ...(checked
+      [oppositeKey(sourceDroppableId)]: checked
         ? {
-            [OppositeKey(key)]: {
-              ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(_.cloneDeep(tmp)).reverse(),
-            },
+            ...prevMegallok[oppositeKey(sourceDroppableId)],
+            megallok: megfordit(_.cloneDeep(sourceAllomasok).reverse()),
           }
-        : {}),
+        : prevMegallok[oppositeKey(sourceDroppableId)],
     }));
   };
 
-  useEffect(() => {
-    setShow(!_.isEqual(megallok, regiMegallok));
-  }, [megallok]);
+  const renderMegallok = () =>
+    Object.entries(megallok).map(([key, value]) => (
+      <Col>
+        {value ? (
+          <MegalloSzerkeszto name={key} value={value} />
+        ) : (
+          <UjVonal
+            name={key}
+            masikVonal={megallok[oppositeKey(key)]?.vonal ?? {}}
+            meta={meta}
+          />
+        )}
+      </Col>
+    ));
 
   if (!megallok || !kulsoAdatok?.Allomasok) return null;
 
   return (
-    <>
-      <Form className="container" style={{ marginBottom: "80px" }}>
-        {/* kys */}
-
-        <DragDropContext
-          onDragEnd={(result) => {
-            const { source, destination } = result;
-            if (!destination || source.index === destination.index) return;
-
-            const sourceDroppableId = source.droppableId;
-            const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
-            const a = { ...sourceAllomasok[0] };
-            const [removed] = sourceAllomasok.splice(source.index, 1);
-
-            sourceAllomasok.splice(destination.index, 0, removed);
-
-            if (source.index > 0)
-              sourceAllomasok[source.index].elozoMegallo =
-                sourceAllomasok[source.index - 1].allomas;
-            else {
-              sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
-            }
-
-            if (source.index < sourceAllomasok.length - 1)
-              sourceAllomasok[source.index + 1].elozoMegallo =
-                sourceAllomasok[source.index].allomas;
-
-            if (destination.index > 0)
-              sourceAllomasok[destination.index].elozoMegallo =
-                sourceAllomasok[destination.index - 1].allomas;
-            else
-              sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
-            if (destination.index < sourceAllomasok.length - 1)
-              sourceAllomasok[destination.index + 1].elozoMegallo =
-                sourceAllomasok[destination.index].allomas;
-
-            setMegallok((prevMegallok) => ({
-              ...prevMegallok,
-              [sourceDroppableId]: {
-                ...prevMegallok[sourceDroppableId],
-                megallok: sourceAllomasok,
-              },
-              [OppositeKey(sourceDroppableId)]: checked
-                ? {
-                    ...prevMegallok[OppositeKey(sourceDroppableId)],
-                    megallok: megfordit(_.cloneDeep(sourceAllomasok).reverse()),
-                  }
-                : prevMegallok[OppositeKey(sourceDroppableId)],
-            }));
-          }}
-        >
-          <Row>
-            {Object.entries(megallok).map(([key, value], index) => (
-              <Col>
-                {value ? (
-                  <MegalloSzerkeszto
-                    name={key}
-                    value={value}
-                    handleChange={handleChange}
-                    handleSave={handleSave}
-                    torol={torol}
-                    opcio={kulsoAdatok.Allomasok}
-                    megallok={megallok}
-                    atmasol={atmasol}
-                    filterPool={filterPool}
-                    OppositeKey={OppositeKey}
-                  />
-                ) : (
-                  <UjVonal
-                    name={key}
-                    masikVonal={megallok[OppositeKey(key)]?.vonal ?? {}}
-                    meta={props.meta}
-                    setMegallok={setMegallok}
-                    setRegiMegallok={setRegiMegallok}
-                    megallok={megallok}
-                  />
-                )}
-              </Col>
-            ))}
-          </Row>
-          <SzinkronizaloGomb
-            megjelenes={megallok.vissza ? "" : "d-none"}
-            checked={checked}
-            setChecked={setChecked}
-            szinkronizalhato={szinkronizalhato}
-          />
-        </DragDropContext>
-      </Form>
-
-      <MentesOffcanvas
-        show={show}
-        setShow={setShow}
-        visszaallit={visszaallit}
-        kuldes={kuldes}
-      />
-    </>
+    <Form
+      className="container megallo-oldal-form"
+      style={{ marginBottom: "80px" }}
+    >
+      {/*kys */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Row>{renderMegallok()}</Row>
+        <SzinkronizaloGomb/>
+      </DragDropContext>
+      <MentesOffcanvas />
+    </Form>
   );
 }
 

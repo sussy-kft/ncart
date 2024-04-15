@@ -1,45 +1,60 @@
-import React, { useContext } from "react";
+import React from "react";
 import VonalSzuro from "./VonalSzuro";
-import { AxiosContext } from "../../context/AxiosContext";
-import { MetaadatContext } from "../../context/MetaadatContext";
 import { Form, Row } from "react-bootstrap";
 import MegalloOldal from "./MegalloOldal";
+import { MegallokProvider } from "./MegallokContext";
 
-function Megallok(props) {
-  const { axiosId, errorState, getAll } = useContext(AxiosContext);
-  const { url, getPKs, findKey, metaadat, kulsoAdatok } = useContext(MetaadatContext);
+/**
+ * A fő Megállók komponens, ami a VonalSzűrőt és a MegállóOldalt tartalmazza.
+ *
+ * @component
+ * @param {string} cim - Az oldal címe.
+ * @returns {JSX.Element} A megjeélítendő komponens.
+ */
+function Megallok({ cim }) {
 
-  const [megallok, setMegallok] = React.useState(null);
+  /**
+   * A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
+   * Olyan információkat tartalmaz, mint a vonalSzám és a járműtípus. 
+   */
   const [meta, setMeta] = React.useState(null);
 
+  /**
+   * Metainfo, hogy a Vonalszűrőnek hogyan kell kezelnie az adatokat.
+   * 
+   * @property {string} url - Az URL, ahonnan az adatokat le kell kérni.
+   * @property {string} key - Megmondja, hogy melyik kulcsnak kell az {@link InputMezo} name értékének lennie.
+   * @property {string} value - Megmondja, hogy melyik kulcsnakk kell az {@link InputMezo} value értékének lennie.
+   * @property {string} label - A megjelenítendő szöveg az oldalon.
+   */
+  const pool = [
+    {
+      url: "vonalak",
+      key: "vonalSzam",
+      value: "vonalSzam",
+      label: "Vonalszám",
+    },
+    {
+      url: "jarmutipusok",
+      key: "id",
+      value: "megnevezes",
+      label: "Járműtípus",
+    },
+  ];
+
   return (
-    <>
-      <h1>{props.cim}</h1>
+    <MegallokProvider>
+      <h1>{cim}</h1>
       <Form className="container">
         <Row>
-            <VonalSzuro
-
-                pool={[
-                {
-                    url: "vonalak",
-                    key: "vonalSzam",
-                    value: "vonalSzam",
-                    label: "Vonalszám"
-                },
-                {
-                    url: "jarmutipusok",
-                    key: "id",
-                    value: "megnevezes",
-                    label: "Járműtípus"
-                },
-                ]}
-                handleChange={setMegallok}
-                setMeta={setMeta}
-            />
+          <VonalSzuro
+            pool={pool}
+            setMeta={setMeta}
+          />
         </Row>
       </Form>
-      {megallok && <MegalloOldal megallok={megallok} meta={meta}/>}
-    </>
+      <MegalloOldal meta={meta} />
+    </MegallokProvider>
   );
 }
 

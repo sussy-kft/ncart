@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import InputMezo from "../InputMezo";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { MegallokContext } from "./MegallokContext";
 
 /**
  * `UjVonal` egy React komponens, amely egy új vonal létrehozására szolgál, ha még nincs oda/vissza vonal.
@@ -13,14 +14,14 @@ import Form from "react-bootstrap/Form";
  * @param {Object} masikVonal - Egy objektum, amely információkat tartalmaz egy másik vonalról. Ez a POST kérésben segít, hogy az azonos információkat használja fel.
  * @param {Object} meta - Egy objektum, amely meta információkat tartalmaz, ha esetleg nincs még oda/vissza vonal.
  * @param {string} name - Az útvaonal íránya. ("oda" vagy "vissza" lehet)
- * @param {Function} setMegallok - Egy callback függvény, amely beállítja a `megallok` állapotát.
- * @param {Function} setRegiMegallok - Egy callback függvény, amely beállítja a `regiMegallok` állapotát.
  *
  * @returns {React.Element} A React element that represents a form for creating a new line.
  */
-function UjVonal({ masikVonal, meta, name, setMegallok, setRegiMegallok }) {
+function UjVonal({ masikVonal, meta, name }) {
   const { getAll, post } = useContext(AxiosContext);
-  
+  const { setMegallok } = useContext(MegallokContext);
+  const { setRegiMegallok } = useContext(MegallokContext);
+
   /**
    * @typedef {Object} adatok
    * @property {string} vonalSzam - A vonal ID-ja.
