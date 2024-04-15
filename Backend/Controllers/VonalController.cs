@@ -75,7 +75,84 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpGet("megallok/{vonalSzam}/{jarmuTipus}"), AllowAnonymous]
-        public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus) => HandleError<ActionResult>(() => {
+        public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus)
+        {
+            IReadOnlyList<Vonal> vonalak = context
+                .Vonalak
+                .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
+                .ToList()
+            ;
+            int vonalakCount = vonalak.Count();
+            return vonalakCount > 0
+                ? ((Func<ActionResult>)(() => {
+                    List<VonalMegallok> vonalMegallok = [];
+                    try
+                    {
+                        vonalak.ToList().ForEach(vonal => {
+                            vonalMegallok.Add(new VonalMegallok()
+                            {
+                                Vonal = vonal.ConvertType(),
+                                Megallok = ((Func<List<MegallDTO>>)(() => {
+                                    IReadOnlyList<Megall> megallok = context
+                                        .Megallok
+                                        .Where(megall => megall.Vonal == vonal.Id)
+                                        .ToList()
+                                    ;
+                                    if (megallok.Count > 0)
+                                    {
+                                        List<Megall> rendezettMegallok = [];
+                                        rendezettMegallok.Add(megallok.SelectFirst(out Megall? elsoMegall, megall => megall.ElozoMegallo == vonal.KezdoAll) ? elsoMegall! : throw new InvalidOperationException());
+                                        int legutobbiAllomasId = rendezettMegallok[0].Allomas;
+                                        while (legutobbiAllomasId != vonal.Vegall)
+                                        {
+                                            rendezettMegallok.Add(megallok.SelectFirst(out Megall? ujMegall, megall => megall.ElozoMegallo == legutobbiAllomasId) ? ujMegall! : throw new InvalidOperationException());
+                                            legutobbiAllomasId = rendezettMegallok[^1].Allomas;
+                                        }
+                                        return rendezettMegallok.ConvertAll(megall => megall.ConvertType());
+                                    }
+                                    else
+                                    {
+                                        return [];
+                                    }
+                                }))()
+                            });
+                        });
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        return Status500;
+                    }
+                    return Ok(vonalakCount == 1
+                        ? new OdaVissza() {
+                            Oda = vonalMegallok[0]
+                        }
+                        : new OdaVissza() {
+                            Oda = vonalMegallok[0],
+                            Vissza = vonalMegallok[1]
+                        }
+                    );
+                }))()
+                : NotFound()
+            ;
+        }
+
+        class OdaVissza
+        {
+            public VonalMegallok Oda { get; set; }
+            public VonalMegallok? Vissza { get; set; }
+        }
+
+        class VonalMegallok
+        {
+            public VonalDTO Vonal { get; set; }
+            public List<MegallDTO> Megallok { get; set; }
+        }
+    }
+
+    public partial class VonalController
+    {
+        [HttpGet("megallok/{vonalSzam}/{jarmuTipus}/fixed"), AllowAnonymous]
+        public ActionResult GetOdaVisszaFixed(string vonalSzam, int jarmuTipus) => HandleError<ActionResult>(() => {
             IReadOnlyList<Vonal> vonalak = context
                 .Vonalak
                 .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
@@ -84,9 +161,9 @@ namespace Backend.Controllers
             int vonalakCount = vonalak.Count();
             if (vonalakCount > 0)
             {
-                List<VonalMegallok> vonalMegallok = [];
+                List<VonalMegallokFixed> vonalMegallok = [];
                 vonalak.ToList().ForEach(vonal => {
-                    vonalMegallok.Add(new VonalMegallok {
+                    vonalMegallok.Add(new VonalMegallokFixed {
                         Vonal = vonal.ConvertType(),
                         Megallok = ((Func<List<AllomasEsIdo>>)(() => {
                             IReadOnlyList<AllomasJoinMegall> allomasokJoinMegallok = context
@@ -121,10 +198,10 @@ namespace Backend.Controllers
                     });
                 });
                 return Ok(vonalakCount == 1
-                    ? new OdaVissza {
+                    ? new OdaVisszaFixed {
                         Oda = vonalMegallok[0]
                     }
-                    : new OdaVissza {
+                    : new OdaVisszaFixed {
                         Oda = vonalMegallok[0],
                         Vissza = vonalMegallok[1]
                     }
@@ -136,13 +213,13 @@ namespace Backend.Controllers
             }
         });
 
-        class OdaVissza
+        class OdaVisszaFixed
         {
-            public VonalMegallok Oda { get; set; }
-            public VonalMegallok? Vissza { get; set; }
+            public VonalMegallokFixed Oda { get; set; }
+            public VonalMegallokFixed? Vissza { get; set; }
         }
 
-        class VonalMegallok
+        class VonalMegallokFixed
         {
             public VonalDTO Vonal { get; set; }
             public List<AllomasEsIdo> Megallok { get; set; }
