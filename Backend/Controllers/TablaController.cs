@@ -6,7 +6,6 @@ using Backend.ModelDTOBases;
 using Backend.Models;
 using Backend.DTOs;
 
-
 namespace Backend.Controllers
 {
     public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context, IConfiguration config) : JsonRecieverController(context, config)
@@ -29,7 +28,7 @@ namespace Backend.Controllers
         protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
             TDbFormat dbFormat = data.ConvertType();
             return TrySaveRecord(dbFormat, record => {
-                dbSet.Add(dbFormat);
+                dbSet.Add(record);
             });
         });
 
@@ -117,14 +116,14 @@ namespace Backend.Controllers
             return metadataDTOs.AsQueryable().OrderBy(metadataDTO => metadataDTO.ColumnIndex);
         }
 
-        ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
+        protected ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
 
         protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
 
         ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TJson> convert)
             where TRecord : class
             where TJson : class
-        {
+        => HandleError<ObjectResult>(() => {
             action(record);
             try
             {
@@ -139,27 +138,16 @@ namespace Backend.Controllers
             {
                 return BadRequest(e.InnerException?.Message);
             }
-            catch (InvalidOperationException e)
-            {
-                return StatusCode(500, e.InnerException?.Message);
-            }
-        }
+        });
 
         static IQueryable<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
 
         ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
 
-        ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk)
-        {
+        ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => HandleError(() => {
             TDbFormat? record = dbSet.Find(pk);
             return record != null ? handleRequest(record) : NotFound();
-        }
-
-        protected ActionResult NotFoundIfQueryIsEmpty<T>(Func<IReadOnlyList<T>> query)
-        {
-            IReadOnlyList<T> queryResult = query();
-            return queryResult.Count > 0 ? Ok(queryResult) : NotFound();
-        }
+        });
 
         protected StatusCodeResult Status405 => StatusCode(405);
 

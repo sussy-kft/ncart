@@ -94,20 +94,24 @@ namespace Backend.Controllers
 
             public IReadOnlyList<Megall> ConvertType()
             {
-                List<Megall> megallok = [new Megall {
-                    Vonal = Vonal,
-                    Allomas = Megallok[0].Allomas,
-                    ElozoMegallo = KezdoAll,
-                    HanyPerc = Megallok[0].HanyPerc
-                }];
-                for (int i = 1; i < Megallok.Count; i++)
+                List<Megall> megallok = [];
+                if (Megallok.Count > 0)
                 {
                     megallok.Add(new Megall {
                         Vonal = Vonal,
-                        Allomas = Megallok[i].Allomas,
-                        ElozoMegallo = Megallok[i - 1].Allomas,
-                        HanyPerc = Megallok[i].HanyPerc
+                        Allomas = Megallok[0].Allomas,
+                        ElozoMegallo = KezdoAll,
+                        HanyPerc = Megallok[0].HanyPerc
                     });
+                    for (int i = 1; i < Megallok.Count; i++)
+                    {
+                        megallok.Add(new Megall {
+                            Vonal = Vonal,
+                            Allomas = Megallok[i].Allomas,
+                            ElozoMegallo = Megallok[i - 1].Allomas,
+                            HanyPerc = Megallok[i].HanyPerc
+                        });
+                    }
                 }
                 return megallok;
             }
@@ -120,10 +124,10 @@ namespace Backend.Controllers
         }
     }
 
-    public partial class MegallController : IPatchableTablaController<(int vonal, int allomas), MegallController.MegallPatch>
+    public partial class MegallController : IPatchableTablaController<MegallController.PK, MegallController.MegallPatch>
     {
         [HttpPatch("{vonal}/{allomas}")]
-        public ActionResult Patch([FromRoute] (int vonal, int allomas) pk, [FromBody] MegallPatch ujMegall) => Patch(
+        public ActionResult Patch([FromRoute] PK pk, [FromBody] MegallPatch ujMegall) => Patch(
             dbSet: context.Megallok,
             updateRecord: record => {
                 CheckIfNotNull(ujMegall.ElozoMegallo, elozoMegallo => {
