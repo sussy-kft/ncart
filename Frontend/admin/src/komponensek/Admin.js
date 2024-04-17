@@ -1,10 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import NoPage from "../NoPage/NoPage";
 import UdvozloOldal from "./UdvozloOldal";
 import SzerkesztoOldal from "./SzerkesztoOldal";
 import Megallok from "./Megallok/Megallok";
 import Auth from "../HOC/Auth";
+import Documentacio from "./Documentacio";
 
 /**
  * @typedef {Object} Utvonal
@@ -35,6 +36,7 @@ function Admin() {
     <Routes>
       <Route path="/" element={<Layout />}>
       <Route index element={<UdvozloOldal />} /> 
+      <Route path="dokumentacio" element={<Documentacio />} />
         {utvonalak.map((route) => (
           <Route
             key={route.key}

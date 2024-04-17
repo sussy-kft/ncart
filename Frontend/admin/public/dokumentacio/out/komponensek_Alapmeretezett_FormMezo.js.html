@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: komponensek/Alapmeretezett/FormMezo.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: komponensek/Alapmeretezett/FormMezo.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useContext, useState } from "react";
+import Button from "react-bootstrap/Button";
+import { AxiosContext } from "../../context/AxiosContext";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { MetaadatContext } from "../../context/MetaadatContext";
+import InputMezo from "../InputMezo";
+import { Container } from "react-bootstrap";
+
+/**
+ * `FormMezo` egy komponens, ami egy űrlapot generál a `metaadat` és `url` alapján.
+ * A form mezők dinamikusan generálódnak a `metaadat` kontextus alapján, emiatt ha egy másik form mezőt akarunk, elég ha csak a `metaadat`-ot cseréljük le.
+ * A form adatok a `MetaadatContext` `url`-jére kerülnek POST kérésben elküldésre.
+ *
+ * @returns {JSX.Element} Egy {@link Form} ({@link Container}-be beágyazva) komponenst ad vissza. 
+ */
+function FormMezo() {
+  const { post } = useContext(AxiosContext);
+  const { metaadat, url } = useContext(MetaadatContext);
+
+  /**
+   * A form mezők változásait kezelő függvény.
+   *
+   * @param {object} event - Esemény objektum.
+   */
+  const [validated, setValidated] = useState(false);
+  const [adatok, setAdatok] = useState({});
+
+  const handleChange = ({ target: { name, type, checked, value } }) =>
+    setAdatok((values) => ({
+      ...values,
+      [name]:
+        type === "checkbox"
+          ? checked
+            ? [...(values[name] ?? []), value]
+            : (values[name] ?? []).filter((elem) => elem !== value)
+          : value,
+    }));
+
+  /**
+   * A form mezők generálása a `metaadat` kontextus alapján.
+   *
+   * @param {Array} lista - Egy lista, ami a generálandó mezőket tartalmazza.
+   * @returns {Array} A legenerált form mezők, amiket már meg lehet jeleníteni.
+   */
+  const generateInput = (lista) =>
+    lista?.flatMap((input) =>
+      Array.isArray(input.dataType) ? 
+        generateInput(input.dataType)
+        : (
+        &lt;Form.Group key={input.columnName} as={Col} md="4">
+          &lt;Form.Label>{`${input.columnName}: `}&lt;/Form.Label>
+          &lt;InputMezo input={input} handleChange={handleChange} />
+          &lt;Form.Control.Feedback type="invalid" />
+        &lt;/Form.Group>
+      )
+    ) || [];
+
+  /**
+   * A form elküldésekor lefutó függvény.
+   *
+   * @param {object} event - Esemény objektum.
+   */
+  const kuldes = (event) => {
+    const form = event.currentTarget;
+    event.preventDefault();
+    if (form.checkValidity()) {
+      event.stopPropagation();
+      post(url, adatokGenerator(metaadat));
+    }
+    setValidated(true);
+  };
+
+  /**
+   * A form mezőkből egy objektumot generál, amit a POST kérésben lehet használni.
+   *
+   * @param {Array} mintaAdat - Egy minta objektum lista, amiből tudja, hogy hogyan kell kiolvasni az adatokat.
+   * @returns {object} A generált válasz objektum.
+   */
+  const adatokGenerator = (mintaAdat) =>
+    mintaAdat.reduce(
+      (tmp, kulcs) => ({
+        ...tmp,
+        [kulcs.columnName]: Array.isArray(kulcs.dataType)
+          ? adatokGenerator(kulcs.dataType)
+          : adatok[kulcs.columnName],
+      }),
+      {}
+    );
+
+  if (!metaadat) return &lt;h1>Betöltés...&lt;/h1>;
+
+  return (
+    &lt;Container>
+      &lt;Form noValidate validated={validated} onSubmit={kuldes}>
+        &lt;h2 className="mt-3">Új adat hozzáadása:&lt;/h2>
+        &lt;Row className="mb-2 mt-3">{generateInput(metaadat)}&lt;/Row>
+        &lt;Button className="mb-4" type="submit">
+          Küldés
+        &lt;/Button>
+      &lt;/Form>
+    &lt;/Container>
+  );
+}
+
+export default FormMezo;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#Documentacio">Documentacio</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloOldal">MegalloOldal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#Megallok">Megallok</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 00:49:56 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
