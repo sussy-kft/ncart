@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.css";
 import Admin from "./Admin";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Bejelentkezes from "../login/Bejelentkezes";
+import Bejelentkezes from "../Login/Bejelentkezes";
 import Providerek from "./Providerek";
 
 /**

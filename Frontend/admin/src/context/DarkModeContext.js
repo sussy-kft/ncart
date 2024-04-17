@@ -1,6 +1,12 @@
 import { createContext, useState } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
+/**
+ * @typedef {Object} Tema
+ * @property {string} DARK - A sötét témát reprezentálja.
+ * @property {string} LIGHT - A világos témát reprezentálja.
+ * @description Egy objektum, ami a lehetséges téma értékeket tartalmazza.
+ */
 export const Tema = {
     DARK: 'dark',
     LIGHT: 'light'
@@ -41,7 +47,7 @@ export const DarkModeProvider = ({ children }) => {
     }
     
     return (
-        <DarkModeContext.Provider value={{darkMode, setDarkMode, getText}}>
+        <DarkModeContext.Provider value={{setDarkMode, getText}}>
             <HelmetProvider>
                 <Helmet htmlAttributes={{"data-bs-theme": darkMode}}/>
                 {children}

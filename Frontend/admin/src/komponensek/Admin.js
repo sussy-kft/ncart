@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Layout from "./Layout";
+import Layout from "./Layout/Layout";
 import NoPage from "../NoPage/NoPage";
 import SzerkesztoOldal from "./SzerkesztoOldal";
 import Megallok from "./Megallok/Megallok";
