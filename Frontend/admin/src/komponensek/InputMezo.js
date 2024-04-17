@@ -1,96 +1,106 @@
-import React, { Children, useEffect, useState } from 'react';
-import { Form, Col } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { useContext } from 'react';
 import { AxiosContext } from '../context/AxiosContext';
 
-function InputMezo( props ) {
+function InputMezo( { 
+    as = 'react.fragment', 
+    flag = true, 
+    input, 
+    isSelect, 
+    handleChange, 
+    value, 
+    pool, 
+    name, 
+    idk, 
+    veryCoolValue, 
+    checked 
+} ) {
     const { getAll } = useContext(AxiosContext);
 
     
-    const flag = props.flag ?? true;
     const [opciok, setOpciok] = useState([]);
     const [onceFlag, setOnceFlag] = useState(false);
 
-    const As = props.as ?? 'react.fragment';
+    const As = as ?? 'react.fragment';
 
     useEffect(() => {
-        if (props.input?.references)
-            getAll(props.input?.references, setOpciok);
-    }, [props.input?.references]);
+        if (input?.references)
+            getAll(input?.references, setOpciok);
+    }, [input?.references]);
 
     useEffect(() => {
-        if (props.input?.references?.split("/").length ==1 || props.isSelect && props.handleChange && !onceFlag && (props.value || opciok[0]?.id || (props.pool && props.pool[0]?.[props.name]))) {
+        if (input?.references?.split("/").length ==1 || isSelect && handleChange && !onceFlag && (value || opciok[0]?.id || (pool && pool[0]?.[name]))) {
             console.log("kys");
-            props.handleChange({
+            handleChange({
                 target: {
-                    name: (props.name || props.input?.columnName) ?? "",
+                    name: (name || input?.columnName) ?? "",
                     //ha több időm lenne, akkor nem így csinálnám, de most ez a leggyorsabb megoldás :D
                     //ezért megértem, ha nem tetszik, de most ez van
                     //ez a kód a leggyorsabb megoldás, hogy a selecteket is kezelni tudjuk
                     //ha nem tetszik, akkor kérlek írj egy jobbat
                     
                     //ps. ezért megérte megvenni a copilotot, hogy ilyen commenteket írjon
-                    value: props?.idk ? ((props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? props.value ?? "" ) : (props.value ?? (props.input?.references && opciok[0]?.id) ?? (props.pool && props.pool[0]?.[props.name]) ?? "" ),
-                    type: typeConverter(props.input?.dataType) ?? ""
+                    value: idk ? ((input?.references && opciok[0]?.id) ?? (pool && pool[0]?.[name]) ?? value ?? "" ) : (value ?? (input?.references && opciok[0]?.id) ?? (pool && pool[0]?.[name]) ?? "" ),
+                    type: typeConverter(input?.dataType) ?? ""
                 }
             });
             setOnceFlag(true);
         }
-        else if(flag && props.handleChange && !onceFlag && props.input?.dataType.substring(props.input?.dataType.length - 2) == "[]" ){
-            props.handleChange({
+        else if(flag && handleChange && !onceFlag && input?.dataType.substring(input?.dataType.length - 2) == "[]" ){
+            handleChange({
                 target: {
-                    name: (props.name || props.input?.columnName) ?? "",
-                    value: 2 ?? [],
-                    type: "checkbox", //typeConverter(props.input?.dataType) ?? "",
-                    checked: props.checked ? true : false
+                    name: (name || input?.columnName) ?? "",
+                    type: "checkbox", 
+                    checked: checked ? true : false
                 }
             });
             setOnceFlag(true);
         }
-    }, [props.value, props.input, opciok[0]?.id, props.pool]); 
+    }, [value, input, opciok[0]?.id, pool]); 
 
-    if(!props.input && !props.value && !opciok[0]) return null;
+    if(!input && !value && !opciok[0]) return null;
 
-    return props.input?.dataType.substring(props.input?.dataType.length - 2) != "[]" || props.isSelect ? (
+    return input?.dataType.substring(input?.dataType.length - 2) != "[]" || isSelect ? (
         <As>
             <Form.Control
-                as={props.input?.references || props.isSelect ? "select" : "input"}
-                required={!props.input?.isNullable}
-                name={(props.name || props.input?.columnName) ?? ""}
-                defaultValue={props.value ?? ""}
-                {...props.veryCoolValue ? {value: props.veryCoolValue ?? {}} : {}}
-                type={typeConverter(props.input?.dataType) ?? ""}
-                maxLength={props.input?.characterMaximumLength ?? ""}
-                minLength={props.input?.characterMinimumLength ?? ""}
+                as={input?.references || isSelect ? "select" : "input"}
+                required={!input?.isNullable}
+                name={(name || input?.columnName) ?? ""}
+                defaultValue={value ?? ""}
+                {...veryCoolValue ? {value: veryCoolValue ?? {}} : {}}
+                type={typeConverter(input?.dataType) ?? ""}
+                maxLength={input?.characterMaximumLength ?? ""}
+                minLength={input?.characterMinimumLength ?? ""}
                 step={"any"}
-                min={minConverter(props.input?.dataType) ?? ""}
-                max={maxConverter(props.input?.dataType) ?? ""}
-                onChange={props.handleChange}
+                min={minConverter(input?.dataType) ?? ""}
+                max={maxConverter(input?.dataType) ?? ""}
+                onChange={handleChange}
                 >
                 {
-                    props.input?.references ?
+                    input?.references ?
                         opciok.map((opcio, index) => {
                             return <option key={index} value={opcio.id}>{opcio.id}</option>
                         })
-                        : props.isSelect ?
-                            props.pool.map((opcio, index) => {
-                                return <option key={index} value={opcio[props.name]}>{opcio[props.value]}</option>
+                        : isSelect ?
+                            pool.map((opcio, index) => {
+                                return <option key={index} value={opcio[name]}>{opcio[value]}</option>
                             }) : null
                 }
             </Form.Control>
         </As>
     )
         : (
-            (props.pool ? props.pool : opciok).map((opcio, index) => {
+            (pool ?? opciok).map((opcio, index) => {
                 return <As>
                     <Form.Check
-                        name={props.input?.columnName}
+                        name={input?.columnName}
                         key={index}
                         value={opcio}
                         type={"checkbox"}
                         label={opcio}
-                        defaultChecked={props.checked}
-                        onChange={props.handleChange}
+                        defaultChecked={checked}
+                        onChange={handleChange}
                     />
                 </As>
             })
