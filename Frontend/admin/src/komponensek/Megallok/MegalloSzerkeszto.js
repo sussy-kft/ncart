@@ -1,28 +1,43 @@
 import React, { useContext } from "react";
 import { MetaadatContext } from "../../context/MetaadatContext";
+import { MegallokContext } from "./MegallokContext";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Button, Row } from "react-bootstrap";
 import AllomasKartya from "./AllomasKartya";
 import UjAllomas from "./UjAllomas";
+import _ from "lodash";
 
 /**
+ * MegalloSzerkeszto egy olyan komponens, ami lehetővé teszi a megállók szerkesztését egy drag and drop felületen.
  *
  * @component
- * @param {Object} value - Az adot vonal megállóit tartalmazó objektum.
- * @param {string} name - A vonal íránya. (oda vagy vissza)
- * @param {Function} handleChange - Egy callback függvény, amely kezeli az állomások változását.
- * @param {Function} handleSave - Egy callback függvény, amely kezeli a mentést.
- * @param {Function} torol - Egy callback függvény, amely kezeli az állomások törlését.
- * @param {Object} megallok - Egy objektum, ami az oda és vissza irányú megállókat tartalmazza.
- * @param {Function} atmasol - Egy callback függvény, amely átmásolja az adatokat, a másik megállóba.
- * @param {Function} filterPool - Function to filter the pool.
- * @returns {JSX.Element} Egy Drag and Drop komponens, hol a megállókat lehet szerkeszteni.
+ * @param {string} name - A vonal neve. (oda vagy vissza)
+ *
+ * @returns {JSX.Element} Egy Drag and Drop komponenst, ahol a megállók szerkeszthetőek.
  */
-function MegalloSzerkeszto( { value, name, handleChange, handleSave, torol, megallok, atmasol, filterPool,  } ) {
+function MegalloSzerkeszto( { name } ) {
 
-  const { kulsoAdatok, createOppositeKey } = useContext(MetaadatContext);
+  const { kulsoAdatok } = useContext(MetaadatContext);
+  const { megallok, oppositeKey, atmasol} = useContext(MegallokContext);
 
-  const OppositeKey = createOppositeKey(megallok);
+  /**
+   * A `filterPool` egy függvény, ami kiszűri azokat a megállókat, amelyek még nem szerepelnek a vonalban.
+   * 
+   * @param {string} key - A vonal kulcsa, hogy oda vagy vissza vonalról van-e szó.
+   * @returns {Array|null} A szűrt megállók tömbje, vagy null, ha nincsenek már más megállók.
+   */
+  const filterPool = (key) => {
+    if (!kulsoAdatok.Allomasok) return null;
+
+    return kulsoAdatok.Allomasok.filter((value) => {
+      return !(
+        value.id === megallok[key].megallok[0]?.elozoMegallo ||
+        megallok[key].megallok.some((val2) => {
+          return value.id === val2.allomas;
+        })
+      );
+    });
+  };
 
   /**
    *
@@ -38,8 +53,7 @@ function MegalloSzerkeszto( { value, name, handleChange, handleSave, torol, mega
           <AllomasKartya
             allomas={allomas}
             nev={kulsoAdatok.Allomasok.find((val) => val.id === allomas.allomas)?.nev}
-            torol={value.megallok.length > 1 ? torol.bind(this, name) : null}
-            handleChange={handleChange.bind(this, name)}
+            irany={name}
           />
         </div>
       )}
@@ -50,18 +64,18 @@ function MegalloSzerkeszto( { value, name, handleChange, handleSave, torol, mega
 
   return (
     <>
-      <h3>{`vonal: ${value.vonal.id}`}</h3>
-      <h4>Kezdőállomás: {value.megallok[0].elozoMegallo}</h4>
+      <h3>{`vonal: ${megallok[name].vonal.id}`}</h3>
+      <h4>Kezdőállomás: {megallok[name].megallok[0].elozoMegallo}</h4>
       <Droppable droppableId={name} type={name}>
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            {value.megallok.map(renderDraggable)}
+            {megallok[name].megallok.map(renderDraggable)}
             {provided.placeholder}
           </div>
         )}
       </Droppable>
-      <UjAllomas handleSave={handleSave.bind(null, name)} pool={filterPool(name)} />
-      {megallok[OppositeKey(name)] && (
+      <UjAllomas irany={name} pool={filterPool(name)} />
+      {megallok[oppositeKey(name)] && (
         <Row className="m-0 ">
           <Button  variant="primary" onClick={() => atmasol(name)}>Adatok átmásolása</Button>
         </Row>

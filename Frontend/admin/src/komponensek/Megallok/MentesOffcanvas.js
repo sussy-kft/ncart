@@ -1,22 +1,53 @@
-import React from "react";
+import React, { useContext } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
+import { MegallokContext } from "./MegallokContext";
+import { AxiosContext } from "../../context/AxiosContext";
+import { MetaadatContext } from "../../context/MetaadatContext";
+import _ from "lodash";
 
 /**
- * 
+ * `MentesOffcanvas` egy React komponens, amely egy offcanvas UI elemet jelenít meg.
+ * Ez a komponens a mentetlen változtatások állapotát kezeli és lehetőséget biztosít ezek elvetésére vagy mentésére.
  * @component
- * @param {boolean} show - Az állapot, hogy megjelenjen-e az offcanvas.
- * @param {Function} setShow - Egy függvény, ami beállítja az offcanvas megjelenését.
- * @param {Function} visszaallit - Egy callback függvény, ami lefut, ha a "Mégse" gombra kattintanak.
- * @param {Function} kuldes - Egy callback függvény, ami lefut, ha a "Mentés" gombra kattintanak.
- * 
- * @example
- * <MentesOffcanvas show={true} setShow={setShow} visszaallit={visszaallit} kuldes={kuldes} />
- * 
- * @returns {React.Element} MentesOffcanvas komponenst.
+ *
+ * @returns {React.Element} Egy offcanvas UI elemet, amely akkor jelenik meg, ha vannak nem mentett változtatások.
+ * Két gombot tartalmaz: egyet a változtatások elvetéséhez és egyet a változtatások mentéséhez.
+ *
  */
-function MentesOffcanvas({show, setShow, visszaallit, kuldes}){
-    return (
+function MentesOffcanvas(){
+  const { post } = useContext(AxiosContext);
+  const { url } = useContext(MetaadatContext);
+  const { megallok, setMegallok, regiMegallok, setRegiMegallok, show, setShow, setChecked } = useContext(MegallokContext);
+  
+  /**
+   * `kuldes` egy aszinkron függvény, amely elküldi a `megallok` aktuális állapotát.
+   * A post művelet után beállítja a `regiMegallok` értékét a `megallok` aktuális állapotára, és elrejti az offcanvas UI-t.
+   */
+  const kuldes = async () => {
+    for (const value of Object.values(megallok)) {
+      if (value) {
+        await post(`${url}/batch`, {
+          vonal: value.vonal.id,
+          kezdoAll: value.megallok[0].elozoMegallo,
+          megallok: value.megallok,
+        });
+        setRegiMegallok(_.cloneDeep(megallok));
+        setShow(false);
+      }
+    }
+  };
+
+  /**
+   * `visszaallit` egy olyan függvény, amely visszaállítja a `megallok` állapotát a `regiMegallok` állapotára, és viszaállítja a szinronizáló gombot, majd elrejti az off-canvas UI-t.
+   */
+  const visszaallit = () => {
+    setChecked(false);
+    setShow(false);
+    setMegallok(_.cloneDeep(regiMegallok));
+  };
+
+  return (
         <Offcanvas
         style={{ height: "70px" }}
         show={show}

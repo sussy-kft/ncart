@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import InputMezo from "../InputMezo";
 import kep from "../../media/xd.png";
+import { MegallokContext } from "../Megallok/MegallokContext";
+import _ from "lodash";
 
 /**
  * Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
@@ -11,14 +13,72 @@ import kep from "../../media/xd.png";
  * @param {string} allomas.allomas - Az állomás ID-ja.
  * @param {number} allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
  * @param {string} nev - Az állomás neve.
- * @param {Function} torol - Egy függvény, ami meghívódik, amikor a törlés gombra kattintanak.
- * @param {Function} handleChange - The function to be called when the input field value changes.
+ * @param {string} irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
  *
  * @returns {React.Element} A megjelenítendő állomás kártyát vagy `null`-t, ha az állomás objektum nem létezik.
  */
-function AllomasKartya({allomas, nev, torol, handleChange }) {
+function AllomasKartya({ allomas, nev, irany }) {
+  const { megallok, setMegallok, checked, oppositeKey, megfordit, setShow } =
+    useContext(MegallokContext);
 
-  if (!allomas) return null;
+  /**
+   * A jelenlegi állomás időtartamát módosítja.
+   *
+   * @param {Event} event - Egy esemény objektum.
+   */
+  const handleChange = (event) => {
+    setShow(true);
+    const tmp = _.cloneDeep(megallok[irany].megallok);
+    const { value } = event.target;
+    tmp.find((val) => val.allomas === allomas.allomas).hanyPerc = value * 1;
+    setMegallok((prevMegallok) => ({
+      ...prevMegallok,
+      [irany]: {
+        ...prevMegallok[irany],
+        megallok: tmp,
+      },
+
+      ...(checked && {
+        [oppositeKey(irany)]: {
+          ...prevMegallok[oppositeKey(irany)],
+          megallok: megfordit(_.cloneDeep(tmp)).reverse(),
+        },
+      }),
+    }));
+  };
+
+  /**
+   * A jelenlegi állomást törli a listából.
+   *
+   */
+  const torol = () => {
+    let index = megallok[irany].megallok.findIndex(
+      (value) => JSON.stringify(value) === JSON.stringify(allomas)
+    );
+    if (index > 0 && index < megallok[irany].megallok.length - 1)
+      megallok[irany].megallok[index + 1].elozoMegallo =
+        megallok[irany].megallok[index - 1].allomas;
+    const tmp = megallok[irany].megallok.filter(
+      (value) => JSON.stringify(value) !== JSON.stringify(allomas)
+    );
+    setMegallok((prevMegallok) => ({
+      ...prevMegallok,
+      [irany]: {
+        ...prevMegallok[irany],
+        megallok: tmp,
+      },
+      ...(checked
+        ? {
+            [oppositeKey(irany)]: {
+              ...prevMegallok[oppositeKey(irany)],
+              megallok: megfordit(_.cloneDeep(tmp)).reverse(),
+            },
+          }
+        : {}),
+    }));
+  };
+
+  if (!allomas || !megallok) return null;
 
   console.log("sussy", allomas);
   return (
@@ -49,20 +109,17 @@ function AllomasKartya({allomas, nev, torol, handleChange }) {
               <InputMezo
                 veryCoolValue={allomas.hanyPerc}
                 input={{ columnName: "hanyPerc", dataType: "tinyint" }}
-                handleChange={(event) => handleChange(allomas, event)}
+                handleChange={(event) => handleChange(event)}
               />
               <br />
             </div>
-            {torol && (
+            {megallok[irany].megallok.length > 1 && (
               <Button variant="danger" onClick={() => torol(allomas)}>
                 Állomás törlése
               </Button>
             )}
           </div>
-
-          {/* <br/> */}
         </Card.Text>
-        {/* {props.allomas.hanyPerc}</Card.Text> */}
       </Card.Body>
     </Card>
   );
