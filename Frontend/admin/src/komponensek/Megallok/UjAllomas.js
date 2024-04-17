@@ -14,7 +14,8 @@ function UjAllomas({ pool, irany }) {
 
   /**
    * Az új állomás adatai
-   * @type {[Object, Function]}
+   * @type {Object} adatok - A jelenlegi állomás adatai.
+   * @type {Function} setAdatok - Az állapot frissítésére szolgáló függvény.
    */
   const [adatok, setAdatok] = useState({ ...pool[0], ido: 1 });
 

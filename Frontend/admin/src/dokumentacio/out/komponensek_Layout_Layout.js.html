@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: komponensek/Layout/Layout.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: komponensek/Layout/Layout.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Outlet, Link } from "react-router-dom";
+import { Navbar, Container, Nav } from "react-bootstrap";
+import LogoutIcon from "./LogoutIcon";
+import DarkModeSwitch from "./DarkModeSwitch";
+
+function Layout() {
+  /**
+   * Egy tömb, ami az alkalmazásban használt útvonalakat tartalmazza a navigációhoz.
+   * Minden objektum egy útvonalat reprezentál és két tulajdonsága van:
+   * - `path`: Az útvonal URL-je.
+   * - `label`: A navigációs link szövege az útvonalhoz.
+   *
+   * @type {Array&lt;{path: string, label: string}>}
+   */
+  const utvonalak = [
+    { path: "kezelok", label: "Kezelők" },
+    { path: "allomasok", label: "Állomások" },
+    { path: "jarmuTipusok", label: "Járműtípusok" },
+    { path: "vonalak", label: "Vonalak" },
+    { path: "inditasok", label: "Indítások" },
+    { path: "megallok", label: "Megállok" },
+  ];
+
+  /**
+   * Egy Layout komponens, ami egy navigációs sávot és az alkalmazás jeleti tartalmát rendereli.
+   * A navigációs sáv linkeket tartalmaz a `utvonalak` tömbben definiált különböző útvonalakat jeleníti meg.
+   *
+   * @component
+   *
+   * @returns {JSX.Element} Egy Navbar komponenst, ami tartalmazza a navigációs sávhoz tartozó összes menüpontot és az oldal tartalmát.
+   */
+  return (
+    &lt;>
+      &lt;Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+        &lt;Container>
+          &lt;Navbar.Brand>
+            &lt;LogoutIcon />
+            {window.sessionStorage.getItem("felhasznalo")}
+          &lt;/Navbar.Brand>
+          &lt;DarkModeSwitch />
+          &lt;Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          &lt;Navbar.Collapse id="responsive-navbar-nav">
+            &lt;Nav className="me-auto">
+              {utvonalak.map((route) => (
+                &lt;Nav.Link as={Link} key={route.path} to={route.path}>
+                  {route.label}
+                &lt;/Nav.Link>
+              ))}
+            &lt;/Nav>
+          &lt;/Navbar.Collapse>
+        &lt;/Container>
+      &lt;/Navbar>
+      &lt;Outlet />
+    &lt;/>
+  );
+}
+
+export default Layout;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloOldal">MegalloOldal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#Megallok">Megallok</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 23:33:42 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

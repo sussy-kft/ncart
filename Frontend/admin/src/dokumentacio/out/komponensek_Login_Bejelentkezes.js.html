@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: komponensek/Login/Bejelentkezes.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: komponensek/Login/Bejelentkezes.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import { Form } from "react-bootstrap";
+import InputMezo from "../InputMezo";
+import Button from "react-bootstrap/Button";
+import { AxiosContext } from "../../context/AxiosContext";
+import "./Bejelentkezes.css";
+import { useNavigate } from "react-router-dom";
+import { DarkModeContext } from "../../context/DarkModeContext";
+import { InfoPanelContext } from "../../context/InfoPanelContext";
+
+/**
+ * A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
+ * @returns {JSX.Element} A megjeleníteni kivánt `Bejelentkezes` komponenst.
+ */
+function Bejelentkezes() {
+  const { getText } = React.useContext(DarkModeContext);
+  const { post } = React.useContext(AxiosContext);
+  const { resetInfoPanel } = React.useContext(InfoPanelContext);
+
+  const navigate = useNavigate();
+  const inputs = [
+    { columnName: "email", dataType: "email" },
+    { columnName: "password", dataType: "password", characterMinimumLength: 8 },
+  ];
+
+  const [validated, setValidated] = React.useState(false);
+  const [adatok, setAdatok] = React.useState({});
+  
+  /**
+   * Egy függvény, ami generál form input mezőket az inputs listából.
+   * @returns {Form.Group[]} Egy tömböt, ami a generált form input mezőket tartalmazza.
+   */
+  const inputGenerator = () => {
+    return (
+      inputs?.map((input) => {
+        return (
+          &lt;Form.Group className="mb-3" key={input.columnName}>
+            &lt;Form.Label>{input.columnName + ": "}&lt;/Form.Label>
+            &lt;InputMezo input={input} handleChange={handleChange} />
+            &lt;Form.Control.Feedback type="invalid" />
+          &lt;/Form.Group>
+        );
+      }) || []
+    );
+  };
+
+  /**
+   * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a token-t, amit a localStorage-ba menti.
+   * Továbbá a felhasználó email címét a sessionStorage-be menti, átirányítja az admin oldalra és törli az összes info panelt.
+   * @param {Event} event - A form küldési eseménye.
+   */
+  const handleSumbit = (event) => {
+    event.preventDefault();
+    setValidated(true);
+    post("kezelok/login", adatok, (valasz) => {
+      resetInfoPanel()
+      window.sessionStorage.setItem("felhasznalo", adatok.email);
+      localStorage.setItem("token", valasz.token);
+      navigate("/admin");
+    });
+  };
+
+  /**
+   * Egy függvény, ami a form input mezőinek változását kezeli.
+   * @param {Event} event - A megváltozott input mező eseménye.
+   */
+  const handleChange = (event) => {
+    setAdatok((values) => ({
+      ...values,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  return (
+    &lt;div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "100vh" }}
+    >
+      &lt;Form
+        noValidate
+        validated={validated}
+        id="bejelentkezes"
+        style={{
+          backgroundColor: getText() === "dark" ? "#1f2938" : "#f3f4f6",
+          color: getText() === "dark" ? "white" : "black",
+        }}
+        onSubmit={(event) => handleSumbit(event)}
+      >
+        {inputGenerator()}
+        &lt;div className="d-flex justify-content-end mt-5">
+          &lt;Button
+            type="submit"
+            variant={getText() === "dark" ? "light" : "dark"}
+          >
+            Bejelentkezés
+          &lt;/Button>
+        &lt;/div>
+      &lt;/Form>
+    &lt;/div>
+  );
+}
+
+export default Bejelentkezes;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloOldal">MegalloOldal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#Megallok">Megallok</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 23:33:42 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
