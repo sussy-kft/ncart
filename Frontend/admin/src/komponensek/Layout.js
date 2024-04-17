@@ -1,10 +1,10 @@
 import { Outlet, Link, redirect } from "react-router-dom";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import FormCheck from 'react-bootstrap/FormCheck';
-import { DarkModeContext } from "./context/DarkModeContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 import { useContext } from "react";
 import * as Icon from 'react-bootstrap-icons';
-import { MetaadatContext } from "./context/MetaadatContext";
+import { MetaadatContext } from "../context/MetaadatContext";
 import { useNavigate } from "react-router-dom";
 
 function Layout() {

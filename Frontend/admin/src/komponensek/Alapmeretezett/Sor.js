@@ -1,8 +1,8 @@
 import React, { useState, useContext, useCallback } from "react";
 import Button from "react-bootstrap/Button";
-import InputMezo from "./InputMezo";
-import { AxiosContext } from "../context/AxiosContext";
-import { MetaadatContext } from "../context/MetaadatContext";
+import InputMezo from "../InputMezo";
+import { AxiosContext } from "../../context/AxiosContext";
+import { MetaadatContext } from "../../context/MetaadatContext";
 import _ from "lodash";
 
 /**

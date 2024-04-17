@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
-import NoPage from "./NoPage/NoPage";
-import SzerkesztoOldal from "./komponensek/SzerkesztoOldal";
-import Megallok from "./komponensek/Megallok/Megallok";
-import Auth from "./idk/Auth";
+import NoPage from "../NoPage/NoPage";
+import SzerkesztoOldal from "./SzerkesztoOldal";
+import Megallok from "./Megallok/Megallok";
+import Auth from "../HOC/Auth";
 
 /**
  * @typedef {Object} Utvonal

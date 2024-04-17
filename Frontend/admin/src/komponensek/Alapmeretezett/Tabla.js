@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import Table from "react-bootstrap/Table";
 import PopUpPanel from "./PopUpPanel";
-import { AxiosContext } from "../context/AxiosContext";
-import { MetaadatContext } from "../context/MetaadatContext";
+import { AxiosContext } from "../../context/AxiosContext";
+import { MetaadatContext } from "../../context/MetaadatContext";
 import Sor from "./Sor";
 
 /**

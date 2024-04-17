@@ -1,11 +1,11 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import deleteImage from "../media/delete.gif";
+import deleteImage from "../../media/delete.gif";
 import { useContext } from "react";
-import { AxiosContext } from "../context/AxiosContext";
-import { MetaadatContext } from "../context/MetaadatContext";
-import text from "../media/delete";
+import { AxiosContext } from "../../context/AxiosContext";
+import { MetaadatContext } from "../../context/MetaadatContext";
+import text from "../../media/delete";
 
 /**
  * A PopUpPanel egy React komponens, ami a bootstrap {@link Modal} komponensét használja egy törlési megerősítő ablak megjelenítésére.

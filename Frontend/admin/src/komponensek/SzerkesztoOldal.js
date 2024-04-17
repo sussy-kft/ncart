@@ -1,8 +1,8 @@
-import Tabla from "./Tabla";
+import Tabla from "./Alapmeretezett/Tabla";
 import React, { useEffect, useContext } from "react";
 import { InfoPanelContext } from "../context/InfoPanelContext";
 import { ToastContainer } from "react-bootstrap";
-import FormMezo from "./FormMezo";
+import FormMezo from "./Alapmeretezett/FormMezo";
 import { useLocation } from "react-router-dom";
 import { MetaadatContext } from "../context/MetaadatContext";
 
