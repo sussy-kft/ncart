@@ -1,51 +1,40 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("vonalak"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    [Route("vonalak"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
     public partial class VonalController(AppDbContext context, IConfiguration config) : TablaController<int, Vonal, VonalDTO>(context, config)
     {
-        public override IEnumerable<VonalDTO> Get() => GetAll(context.Vonalak);
+        protected override DbSet<Vonal> dbSet => context.Vonalak;
+
+        public override IEnumerable<VonalDTO> Get() => PerformGetAll();
 
         [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.Vonalak, id);
+        public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
         public override ActionResult Post([FromBody] VonalDTO data)
         {
-            ActionResult result = Post(context.Vonalak, data);
+            ActionResult result = PerformPost(data);
             return result is OkObjectResult ? GetOdaVissza(data.VonalSzam, data.JarmuTipus) : result;
         }
 
-        [HttpPut("{id}")]
-        public override ActionResult Put([FromRoute] int id, [FromBody] VonalDTO ujVonal) => Put(
-            dbSet: context.Vonalak,
-            data: ujVonal,
-            updateRecord: (vonal, ujVonal) => {
-                vonal.VonalSzam = ujVonal.VonalSzam;
-                vonal.JarmuTipus = ujVonal.JarmuTipus;
-                vonal.KezdoAll = ujVonal.KezdoAll;
-                vonal.Vegall = ujVonal.Vegall;
-            },
-            pk: id
-        );
-
-        public override ActionResult Delete() => DeleteAll(context.Vonalak);
+        public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Vonalak, id);
+        public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Vonalak");
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Vonalak));
     }
 
     public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch([FromRoute] int id, [FromBody] VonalPatch ujVonal) => Patch(
-            dbSet: context.Vonalak,
+        public ActionResult Patch([FromRoute] int id, [FromBody] VonalPatch ujVonal) => PerformPatch(
             updateRecord: record => {
                 CheckIfNotNull(ujVonal.VonalSzam, vonalSzam => {
                     record.VonalSzam = vonalSzam;
@@ -77,11 +66,7 @@ namespace Backend.Controllers
         [HttpGet("megallok/{vonalSzam}/{jarmuTipus}"), AllowAnonymous]
         public ActionResult GetOdaVissza(string vonalSzam, int jarmuTipus)
         {
-            IReadOnlyList<Vonal> vonalak = context
-                .Vonalak
-                .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
-                .ToList()
-            ;
+            IReadOnlyList<Vonal> vonalak = dbSet.Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus).ToList();
             int vonalakCount = vonalak.Count();
             return vonalakCount > 0
                 ? ((Func<ActionResult>)(() => {
@@ -120,7 +105,7 @@ namespace Backend.Controllers
                     }
                     catch (InvalidOperationException e)
                     {
-                        return Status500;
+                        return StatusCode(500);
                     }
                     return Ok(vonalakCount == 1
                         ? new OdaVissza() {
@@ -152,12 +137,8 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpGet("megallok/{vonalSzam}/{jarmuTipus}/fixed"), AllowAnonymous]
-        public ActionResult GetOdaVisszaFixed(string vonalSzam, int jarmuTipus) => HandleError<ActionResult>(() => {
-            IReadOnlyList<Vonal> vonalak = context
-                .Vonalak
-                .Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus)
-                .ToList()
-            ;
+        public ActionResult GetOdaVisszaFixed(string vonalSzam, int jarmuTipus) => HandleError(() => {
+            IReadOnlyList<Vonal> vonalak = dbSet.Where(vonal => vonal.VonalSzam == vonalSzam && vonal.JarmuTipus == jarmuTipus).ToList();
             int vonalakCount = vonalak.Count();
             if (vonalakCount > 0)
             {
@@ -241,8 +222,7 @@ namespace Backend.Controllers
     public partial class VonalController
     {
         [HttpGet("jaratok"), AllowAnonymous]
-        public IEnumerable<Jarat> GetVonalSzamok() => context
-            .Vonalak
+        public IEnumerable<Jarat> GetVonalSzamok() => dbSet
             .Select(vonal => new Jarat {
                 VonalSzam = vonal.VonalSzam,
                 JarmuTipus = vonal.JarmuTipus

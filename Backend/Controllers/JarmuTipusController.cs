@@ -1,35 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("jarmutipusok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    [Route("jarmutipusok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
     public class JarmuTipusController(AppDbContext context, IConfiguration config) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context, config)
     {
-        public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
+        protected override DbSet<JarmuTipus> dbSet => context.JarmuTipusok;
+
+        public override IEnumerable<JarmuTipusDTO> Get() => PerformGetAll();
 
         [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.JarmuTipusok, id);
+        public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
-        public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
+        public override ActionResult Post([FromBody] JarmuTipusDTO data) => PerformPost(data);
 
-        [HttpPut("{id}")]
-        public override ActionResult Put([FromRoute] int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
-            dbSet: context.JarmuTipusok,
-            data: ujJarmuTipus,
-            updateRecord: (jarmuTipus, ujJarmuTipus) => {
-                jarmuTipus.Megnevezes = ujJarmuTipus.Megnevezes;
-            },
-            pk: id
-        );
-
-        public override ActionResult Delete() => DeleteAll(context.JarmuTipusok);
+        public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.JarmuTipusok, id);
+        public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("JarmuTipusok");
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.JarmuTipusok));
     }
 }

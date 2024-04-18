@@ -1,20 +1,23 @@
 ﻿using System.Security.Cryptography;
+using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("kezelok"), Authorize(Policy = SzerkesztokFelvetele)]
+    [Route("kezelok"), Authorize(Policy = nameof(Engedelyek.SzerkesztokFelvetele))]
     public partial class KezeloController(AppDbContext context, IConfiguration config) : TablaController<int, Kezelo, KezeloDTO>(context, config)
     {
+        protected override DbSet<Kezelo> dbSet => context.Kezelok;
+
         static HashAlgorithmName hashAlgorithmName { get; }
 
         const char delimiter = ';';
@@ -32,12 +35,12 @@ namespace Backend.Controllers
             tokenHandler = new JwtSecurityTokenHandler();
         }
 
-        public override IEnumerable<KezeloDTO> Get() => GetAll(context.Kezelok).ForEach(kezeloDTO => {
+        public override IEnumerable<KezeloDTO> Get() => PerformGetAll().ForEach(kezeloDTO => {
             kezeloDTO.Jelszo = "";
         });
 
         [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.Kezelok, id);
+        public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
         /* ======================================================================================
          * 
@@ -67,28 +70,16 @@ namespace Backend.Controllers
             Kezelo kezelo = data.ConvertType();
             kezelo.Jelszo = EncryptPassword(kezelo.Jelszo);
             return TrySaveRecord(kezelo, record => {
-                context.Kezelok.Add(record);
+                dbSet.Add(record);
             });
         });
 
-        public override ActionResult Delete() => DeleteAll(context.Kezelok);
-
-        [HttpPut("{id}")]
-        public override ActionResult Put([FromRoute] int id, [FromBody] KezeloDTO ujKezelo) => Put(
-            dbSet: context.Kezelok,
-            data: ujKezelo,
-            updateRecord: (kezelo, ujKezelo) => {
-                kezelo.Email = ujKezelo.Email;
-                kezelo.Jelszo = EncryptPassword(ujKezelo.Jelszo);
-                kezelo.Engedelyek = ujKezelo.Engedelyek;
-            },
-            pk: id
-        );
+        public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Kezelok, id);
+        public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Kezelok")
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Kezelok))
             .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
             .OverrideSetIsHiddenTrue(metadataDTO => metadataDTO.ColumnName == "Jelszo")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
@@ -107,8 +98,7 @@ namespace Backend.Controllers
     public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch([FromRoute] int id, [FromBody] KezeloPatch ujKezelo) => Patch(
-            dbSet: context.Kezelok,
+        public ActionResult Patch([FromRoute] int id, [FromBody] KezeloPatch ujKezelo) => PerformPatch(
             updateRecord: record => {
                 CheckIfNotNull(ujKezelo.Email, email => {
                     record.Email = email;
@@ -139,9 +129,6 @@ namespace Backend.Controllers
             SzerkesztokFelvetele = 1,
             JaratokSzerkesztese = 1 << 1
         }
-
-        public const string SzerkesztokFelvetele = "SzerkesztokFelvetele";
-        public const string JaratokSzerkesztese = "JaratokSzerkesztese";
 
         public static IReadOnlyList<string> OsszesEngedelyNev { get; }
 
@@ -189,8 +176,7 @@ namespace Backend.Controllers
     {
         [HttpPost("login"), AllowAnonymous]
         public ActionResult Login(LoginData loginData) => CheckIfBadRequest(() => {
-            Kezelo? user = context
-                .Kezelok
+            Kezelo? user = dbSet
                 .Where(kezelo => kezelo.Email == loginData.Email)
                 .FirstOrDefault()
             ;
