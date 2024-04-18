@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: pages/SzerkesztoOldal.js</title>
+    <title>JSDoc: Source: pages/Main/Admin/Layout.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: pages/SzerkesztoOldal.js</h1>
+    <h1 class="page-title">Source: pages/Main/Admin/Layout.js</h1>
 
     
 
@@ -26,66 +26,64 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import Tabla from "../komponensek/Alapmeretezett/Tabla";
-import React, { useEffect, useContext } from "react";
-import { InfoPanelContext } from "../context/Alap/InfoPanelContext";
-import { ToastContainer } from "react-bootstrap";
-import FormMezo from "../komponensek/Alapmeretezett/FormMezo";
-import { useLocation } from "react-router-dom";
-import { MetaadatContext } from "../context/Alap/MetaadatContext";
+            <pre class="prettyprint source linenums"><code>import { Outlet, Link } from "react-router-dom";
+import { Navbar, Container, Nav } from "react-bootstrap";
+import LogoutIcon from "../../../komponensek/Layout/LogoutIcon";
+import DarkModeSwitch from "../../../komponensek/Layout/DarkModeSwitch";
 
-/**
- * @typedef {Object} AlapKomponensProps
- * @property {string} cim - Cím, ami megjelenik az oldalon.
- */
+function Layout() {
+  /**
+   * Egy tömb, ami az alkalmazásban használt útvonalakat tartalmazza a navigációhoz.
+   * Minden objektum egy útvonalat reprezentál és két tulajdonsága van:
+   * - `path`: Az útvonal URL-je.
+   * - `label`: A navigációs link szövege az útvonalhoz.
+   *
+   * @type {Array&lt;{path: string, label: string}>}
+   */
+  const utvonalak = [
+    { path: "kezelok", label: "Kezelők" },
+    { path: "allomasok", label: "Állomások" },
+    { path: "jarmuTipusok", label: "Járműtípusok" },
+    { path: "vonalak", label: "Vonalak" },
+    { path: "inditasok", label: "Indítások" },
+    { path: "megallok", label: "Megállok" },
+  ];
 
-/**
- * Ez az alapértelmezett komponens, ami {@link FormMezo}t, egy címet és egy {@link Tabla}t jelenít meg.
- *
- * @param {AlapKomponensProps} cim - Cím, ami megjelenik az oldalon.
- *
- * @returns {React.Element} Az `AlapKomponens`t.
- */
-const AlapKomponens = ({ cim }) => (
-  &lt;>
-    &lt;FormMezo />
-    &lt;h1>{cim}&lt;/h1>
-    &lt;Tabla />
-  &lt;/>
-);
-
-/**
- * Egy komponens, ami egy gyerek komponenst jelenít meg, ha létezik, különben egy alapértelmezett megjelenítést jelenít meg.
- * Beállítja az URL-t a {@link MetaadatContext}ben a jelenlegi elérési út alapján.
- * Továbbá megjeleníti a `ToastContainer`t, ami az {@link InfoPanelContext}ből származó `InfoPanel`eket megjeleníti a jobb felső sarokban.
- * 
- * @param {React.ReactNode|null} props.child - Egy gyerek komponens, ami arra szolgál, hogy ha egyedi megjelenítést szeretnénk az oldalon, akkor ezt jeleníti meg. Ha nincs, akkor egy alapértelmezett komponenst jelenít meg.
- *
- * @param {string} props.cim - Az oldal címe, ami megjelenik az oldalon.
- *
- * @returns {React.Element} A gyerek komponenst adja vissza, ha létezik, különben egy {@link AlapKomponens} ad vissza.
- */
-function SzerkesztoOldal({ child = &lt;AlapKomponens />, cim }) {
-  const { InfoPanels } = useContext(InfoPanelContext);
-  const { setUrl } = useContext(MetaadatContext);
-
-  const location = useLocation();
-
-  useEffect(() => {
-    setUrl(location.pathname.split("admin/")[1]);
-  }, [location.pathname]);
-
+  /**
+   * Egy Layout komponens, ami egy navigációs sávot és az alkalmazás jeleti tartalmát rendereli.
+   * A navigációs sáv linkeket tartalmaz a `utvonalak` tömbben definiált különböző útvonalakat jeleníti meg.
+   *
+   * @component
+   *
+   * @returns {JSX.Element} Egy Navbar komponenst, ami tartalmazza a navigációs sávhoz tartozó összes menüpontot és az oldal tartalmát.
+   */
   return (
     &lt;>
-      {React.cloneElement(child, { cim })}
-      &lt;ToastContainer position="top-end" className="position-fixed">
-        {InfoPanels}
-      &lt;/ToastContainer>
+      &lt;Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+        &lt;Container>
+          &lt;Navbar.Brand>
+            &lt;LogoutIcon />
+            {window.sessionStorage.getItem("felhasznalo")}
+          &lt;/Navbar.Brand>
+          &lt;DarkModeSwitch />
+          &lt;Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          &lt;Navbar.Collapse id="responsive-navbar-nav">
+            &lt;Nav className="me-auto">
+              {utvonalak.map((route) => (
+                &lt;Nav.Link as={Link} key={route.path} to={route.path}>
+                  {route.label}
+                &lt;/Nav.Link>
+              ))}
+            &lt;/Nav>
+          &lt;/Navbar.Collapse>
+        &lt;/Container>
+      &lt;/Navbar>
+      &lt;Outlet />
     &lt;/>
   );
 }
 
-export default SzerkesztoOldal;
+export default Layout;
 </code></pre>
         </article>
     </section>
@@ -102,7 +100,7 @@ export default SzerkesztoOldal;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 14:24:05 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 15:30:08 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
