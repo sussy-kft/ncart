@@ -1,12 +1,12 @@
 import React from "react";
 import { Form } from "react-bootstrap";
-import InputMezo from "../../komponensek/kozos/InputMezo";
+import InputMezo from "../../../komponensek/kozos/InputMezo";
 import Button from "react-bootstrap/Button";
-import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { AxiosContext } from "../../../context/Alap/AxiosContext";
 import "./Bejelentkezes.css";
 import { useNavigate } from "react-router-dom";
-import { DarkModeContext } from "../../context/Alap/DarkModeContext";
-import { InfoPanelContext } from "../../context/Alap/InfoPanelContext";
+import { DarkModeContext } from "../../../context/Alap/DarkModeContext";
+import { InfoPanelContext } from "../../../context/Alap/InfoPanelContext";
 
 /**
  * A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.

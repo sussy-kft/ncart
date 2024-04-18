@@ -1,7 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import { Navbar, Container, Nav } from "react-bootstrap";
-import LogoutIcon from "./LogoutIcon";
-import DarkModeSwitch from "./DarkModeSwitch";
+import LogoutIcon from "../../../komponensek/Layout/LogoutIcon";
+import DarkModeSwitch from "../../../komponensek/Layout/DarkModeSwitch";
 
 function Layout() {
   /**

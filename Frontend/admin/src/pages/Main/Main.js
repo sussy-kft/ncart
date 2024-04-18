@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.css";
-import Admin from "./Admin";
+import Admin from "./Admin/Admin";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Bejelentkezes from "./Login/Bejelentkezes";
-import Providerek from "../HOC/Providerek";
+import Bejelentkezes from "./Bejelentkezes/Bejelentkezes";
+import Providerek from "../../HOC/Providerek";
 
 /**
  * Egy komponens, ami az alkalmazás különböző context providerekkel és "/login" és "/admin/*" útvonalakkal rendelkezik.

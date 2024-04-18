@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import Layout from "../komponensek/Layout/Layout";
-import NoPage from "./NoPage/NoPage";
+import Layout from "./Layout";
+import NoPage from "./NoPage";
 import UdvozloOldal from "./UdvozloOldal";
 import SzerkesztoOldal from "./SzerkesztoOldal";
 import MegalloOdlal from "./MegalloOldal";
-import Auth from "../HOC/Auth";
+import Auth from "../../../HOC/Auth";
 import Documentacio from "./DocumentacioOldal";
 
 /**
