@@ -12,44 +12,44 @@ namespace Backend.Controllers
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
+        protected abstract DbSet<TDbFormat> dbSet { get; }
+
+        protected StatusCodeResult Status405 => StatusCode(405);
+
         [HttpGet, AllowAnonymous]
         public abstract IEnumerable<TJsonFormat> Get();
 
         [AllowAnonymous]
         public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
-        protected IQueryable<TJsonFormat> GetAll(DbSet<TDbFormat> dbSet) => ConvertAllToDTO(dbSet.ToList());
+        protected IQueryable<TJsonFormat> PerformGetAll() => ConvertAllToDTO(dbSet.ToList());
 
-        protected ActionResult Get(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
+        protected ActionResult PerformGet(params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
 
         [HttpPost]
         public abstract ActionResult Post([FromBody] TJsonFormat data);
 
-        protected ActionResult Post(DbSet<TDbFormat> dbSet, TJsonFormat data) => CheckIfBadRequest(() => {
-            TDbFormat dbFormat = data.ConvertType();
-            return TrySaveRecord(dbFormat, record => {
-                dbSet.Add(record);
+        protected ActionResult PerformPost(TJsonFormat data) => CheckIfBadRequest(() => HandlePost(dbSet, data.ConvertType()));
+
+        [HttpPut]
+        public virtual ActionResult Put([FromBody] TJsonFormat data) => Status405;
+
+        protected ActionResult PerformPut(TDbFormat data, params object?[]? pk) => CheckIfBadRequest(() => {
+            TDbFormat? record = dbSet.Find(pk);
+            return record is null ? HandlePost(dbSet, data) : TrySaveRecord(record!, record => {
+                dbSet.Remove(record);
+                dbSet.Add(data);
             });
         });
 
-        public abstract ActionResult Put([FromRoute] TPrimaryKey pk, [FromBody] TJsonFormat data);
-
-        protected ActionResult Put(DbSet<TDbFormat> dbSet, TJsonFormat data, Action<TDbFormat, TDbFormat> updateRecord, params object?[]? pk) => CheckAll(
-            dbSet: dbSet,
-            handleRequest: record => TrySaveRecord(record, record => {
-                updateRecord(record, data.ConvertType());
-            }),
-            pk: pk
-        );
-
-        protected ActionResult Patch(DbSet<TDbFormat> dbSet, Action<TDbFormat> updateRecord, params object?[]? pk) => CheckAll(dbSet, record => TrySaveRecord(record, updateRecord), pk);
+        protected ActionResult PerformPatch(Action<TDbFormat> updateRecord, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, record => TrySaveRecord(record, updateRecord), pk));
 
         public abstract ActionResult Delete([FromRoute] TPrimaryKey pk);
 
         [HttpDelete]
         public abstract ActionResult Delete();
 
-        protected ActionResult Delete(DbSet<TDbFormat> dbSet, params object?[]? pk) => CheckIfNotFound(
+        protected ActionResult PerformDelete(params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
             handleRequest: record => TrySaveRecord(record, record => {
                 dbSet.Remove(record);
@@ -57,12 +57,12 @@ namespace Backend.Controllers
             pk: pk
         );
 
-        protected ObjectResult DeleteAll(DbSet<TDbFormat> dbSet) => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
+        protected ObjectResult PerformDeleteAll() => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
 
         [HttpGet("metadata"), AllowAnonymous]
-        public abstract IEnumerable<IMetadataDTO<object>> Metadata();
+        public abstract IEnumerable<IMetadataDTO<object>> GetMetadata();
 
-        protected IQueryable<IMetadataDTO<string>> Metadata(string tableName)
+        protected IQueryable<IMetadataDTO<string>> PerformGetMetadata(string tableName)
         {
             IQueryable<Metadata> metadatas = context
                 .Database
@@ -75,7 +75,7 @@ namespace Backend.Controllers
                 )
                 .Where(metadata => !metadata.IsIdentity)
             ;
-            List<IMetadataDTO<string>> metadataDTOs = new List<IMetadataDTO<string>>();
+            List<IMetadataDTO<string>> metadataDTOs = [];
             metadatas
                 .Select(group => group.ColumnName)
                 .Distinct()
@@ -84,24 +84,13 @@ namespace Backend.Controllers
                     IQueryable<Metadata> thisColumnNameMetadatas = metadatas.Where(metadata => metadata.ColumnName == columnName);
                     IQueryable<Metadata> notNullConstraintNameMetadatas = thisColumnNameMetadatas.Where(metadata => metadata.ConstraintName != null);
                     Metadata metadata = thisColumnNameMetadatas.First();
-                    (bool isPartOfPk, string? references) constraints = notNullConstraintNameMetadatas.Count() > 0
-                        ? (
-                            notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("PK")).Count() > 0,
-                            ((Func<string?>)(() => {
-                                IQueryable<Metadata> foreignKeys = notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("FK"));
-                                return foreignKeys.Count() > 0
-                                    ? foreignKeys
-                                        .Select(metadata => metadata.ConstraintName!)
-                                        .First()
-                                        .Split("_")[2]
-                                    : null
-                                ;
-                            }))()
-                        )
-                        : (false, null)
-                    ;
-                    metadataDTOs.Add(new MetadataDTO<string>
-                    {
+                    (bool isPartOfPk, string? references) constraints = notNullConstraintNameMetadatas.Count() == 0 ? (false, null) : (notNullConstraintNameMetadatas.Where(metadata => metadata.ConstraintName!.StartsWith("PK")).Count() > 0, notNullConstraintNameMetadatas
+                        .Where(metadata => metadata.ConstraintName!.StartsWith("FK"))
+                        .Select(metadata => metadata.ConstraintName!)
+                        .FirstOrDefault()?
+                        .Split('_')[2]
+                    );
+                    metadataDTOs.Add(new MetadataDTO<string> {
                         ColumnIndex = metadata.ColumnIndex,
                         ColumnName = metadata.ColumnName,
                         DataType = metadata.DataType,
@@ -116,19 +105,23 @@ namespace Backend.Controllers
             return metadataDTOs.AsQueryable().OrderBy(metadataDTO => metadataDTO.ColumnIndex);
         }
 
-        protected ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record.ConvertType);
+        ActionResult HandlePost(DbSet<TDbFormat> dbSet, TDbFormat dbFormat) => TrySaveRecord(dbFormat, record => {
+            dbSet.Add(record);
+        });
 
-        protected ObjectResult TrySaveRange(IReadOnlyList<TDbFormat> records, Action<IReadOnlyList<TDbFormat>> action) => TrySave(records, action, () => ConvertAllToDTO(records));
+        protected ObjectResult TrySaveRecord(TDbFormat record, Action<TDbFormat> action) => TrySave(record, action, record => record.ConvertType());
 
-        ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TJson> convert)
+        protected ObjectResult TrySaveRange(IEnumerable<TDbFormat> records, Action<IEnumerable<TDbFormat>> action) => TrySave(records, action, ConvertAllToDTO);
+
+        ObjectResult TrySave<TRecord, TJson>(TRecord record, Action<TRecord> action, Func<TRecord, TJson> convert)
             where TRecord : class
             where TJson : class
-        => HandleError<ObjectResult>(() => {
+        => HandleError(() => {
             action(record);
             try
             {
                 context.SaveChanges();
-                return Ok(convert());
+                return Ok(convert(record));
             }
             catch (DbUpdateConcurrencyException e)
             {
@@ -140,24 +133,18 @@ namespace Backend.Controllers
             }
         });
 
-        static IQueryable<TJsonFormat> ConvertAllToDTO(IReadOnlyList<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
-
-        ActionResult CheckAll(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => CheckIfBadRequest(() => CheckIfNotFound(dbSet, handleRequest, pk));
+        static IQueryable<TJsonFormat> ConvertAllToDTO(IEnumerable<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
 
         ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => HandleError(() => {
             TDbFormat? record = dbSet.Find(pk);
-            return record != null ? handleRequest(record) : NotFound();
+            return record is not null ? handleRequest(record) : NotFound();
         });
-
-        protected StatusCodeResult Status405 => StatusCode(405);
-
-        protected StatusCodeResult Status500 => StatusCode(500);
 
         protected static void CheckIfNotNull<T>(T? value, Action<T> action) where T : class
         {
             if (value is not null)
             {
-                action(value);
+                action(value!);
             }
         }
 

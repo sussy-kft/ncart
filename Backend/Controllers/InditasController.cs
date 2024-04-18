@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    [Route("inditasok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
-    public partial class InditasController(AppDbContext context, IConfiguration config) : BatchPostableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context, config)
+    [Route("inditasok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
+    public partial class InditasController(AppDbContext context, IConfiguration config) : BatchPuttableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context, config)
     {
+        protected override DbSet<Inditas> dbSet => context.Inditasok;
+
         public class PK
         {
             public int vonal { get; set; }
@@ -17,35 +20,38 @@ namespace Backend.Controllers
             public short inditasIdeje { get; set; }
         }
 
-        public override IEnumerable<InditasDTO> Get() => GetAll(context.Inditasok);
+        public override IEnumerable<InditasDTO> Get() => PerformGetAll();
 
         [HttpGet("{vonal}/{nap}/{inditasIdeje}")]
         public override ActionResult Get([FromRoute] PK pk) => Status405;
 
-        public override ActionResult Post([FromBody] InditasDTO data) => Post(context.Inditasok, data);
+        public override ActionResult Post([FromBody] InditasDTO data) => PerformPost(data);
 
-        [HttpPut("{vonal}/{nap}/{inditasIdeje}")]
-        public override ActionResult Put([FromRoute] PK pk, [FromBody] InditasDTO data) => Status405;
+        public override ActionResult Put([FromBody] InditasDTO data)
+        {
+            Inditas inditas = data.ConvertType();
+            return PerformPut(inditas, inditas.Vonal, inditas.Nap, inditas.InditasIdeje);
+        }
 
-        public override ActionResult Delete() => DeleteAll(context.Inditasok);
+        public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{vonal}/{nap}/{inditasIdeje}")]
-        public override ActionResult Delete([FromRoute] PK pk) => Delete(context.Inditasok, pk.vonal, pk.nap, pk.inditasIdeje);
+        public override ActionResult Delete([FromRoute] PK pk) => PerformDelete(pk.vonal, pk.nap, pk.inditasIdeje);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Inditasok");
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Inditasok));
     }
 
     public partial class InditasController
     {
-        public override ActionResult PostBatch([FromBody] InditasBatch data) => PostBatch(context.Inditasok, data);
+        public override ActionResult PutBatch([FromBody] InditasBatch data) => PerformPutBatch(data);
 
-        public class InditasBatch : IConvertible<IReadOnlyList<Inditas>>
+        public class InditasBatch : IConvertible<IEnumerable<Inditas>>
         {
             [Required] public int Vonal { get; set; }
             [Required] public List<byte> Napok { get; set; }
             [Required] public List<short> InditasiIdopontok { get; set; }
 
-            public IReadOnlyList<Inditas> ConvertType()
+            public IEnumerable<Inditas> ConvertType()
             {
                 List<Inditas> inditasok = new List<Inditas>();
                 Napok.ForEach(nap => {

@@ -1,39 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
-    [Route("allomasok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
+    [Route("allomasok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
     public partial class AllomasController(AppDbContext context, IConfiguration config) : TablaController<int, Allomas, AllomasDTO>(context, config)
     {
-        public override IEnumerable<AllomasDTO> Get() => GetAll(context.Allomasok);
+        protected override DbSet<Allomas> dbSet => context.Allomasok;
+
+        public override IEnumerable<AllomasDTO> Get() => PerformGetAll();
 
         [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.Allomasok, id);
+        public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
-        public override ActionResult Post([FromBody] AllomasDTO data) => Post(context.Allomasok, data);
+        public override ActionResult Post([FromBody] AllomasDTO data) => PerformPost(data);
 
-        [HttpPut("{id}")]
-        public override ActionResult Put([FromRoute] int id, [FromBody] AllomasDTO ujAllomas) => Put(
-            dbSet: context.Allomasok,
-            data: ujAllomas,
-            updateRecord: (allomas, ujAllomas) => {
-                allomas.Nev = ujAllomas.Nev;
-                allomas.Koord = ujAllomas.Koord;
-            },
-            pk: id
-        );
-
-        public override ActionResult Delete() => DeleteAll(context.Allomasok);
+        public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.Allomasok, id);
+        public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("Allomasok")
-            .OverrideDataType<IReadOnlyList<MetadataDTO<string>>>(metadataDTO => metadataDTO.ColumnName == "Koord", _ => [
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Allomasok))
+            .OverrideDataType<IEnumerable<MetadataDTO<string>>>(metadataDTO => metadataDTO.ColumnName == "Koord", _ => [
                 new MetadataDTO<string> {
                     ColumnName = "X",
                     DataType = "float",
@@ -59,8 +51,7 @@ namespace Backend.Controllers
     public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
     {
         [HttpPatch("{id}")]
-        public ActionResult Patch([FromRoute] int id, [FromBody] AllomasPatch ujAllomas) => Patch(
-            dbSet: context.Allomasok,
+        public ActionResult Patch([FromRoute] int id, [FromBody] AllomasPatch ujAllomas) => PerformPatch(
             updateRecord: record => {
                 CheckIfNotNull(ujAllomas.Nev, nev => {
                     record.Nev = nev;
