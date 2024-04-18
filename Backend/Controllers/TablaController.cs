@@ -64,6 +64,7 @@ namespace Backend.Controllers
 
         protected IQueryable<IMetadataDTO<string>> PerformGetMetadata(string tableName)
         {
+            Response.Headers.Append("Origin", tableName);
             IQueryable<Metadata> metadatas = context
                 .Database
                 .SqlQueryRaw<Metadata>(
