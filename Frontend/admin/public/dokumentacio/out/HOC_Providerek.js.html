@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: HOC/Providerek.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,50 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: HOC/Providerek.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { DarkModeProvider } from "../context/Alap/DarkModeContext";
+import { AxiosProvider } from "../context/Alap/AxiosContext";
+import { MetaadatProvider } from "../context/Alap/MetaadatContext";
+import { InfoPanelProvider } from "../context/Alap/InfoPanelContext";
 
+/**
+ * Egy komponens, ami a gyereket az alábbi context providerekkel látja el:
+ * 
+ * ඞ {@link InfoPanelProvider}
+ * 
+ * ඞ {@link DarkModeProvider}
+ * 
+ * ඞ {@link AxiosProvider}
+ * 
+ * ඞ {@link MetaadatProvider}
+ * 
+ * @returns {React.Component} A gyerek komponenst, ami providerekkel van beágyazva.
+ */
+function Providerek({children}){
+    return(
+      &lt;InfoPanelProvider>
+        &lt;DarkModeProvider>
+            &lt;AxiosProvider>
+            &lt;MetaadatProvider>
+                {children}
+            &lt;/MetaadatProvider>
+            &lt;/AxiosProvider>
+        &lt;/DarkModeProvider>
+      &lt;/InfoPanelProvider>
+    )
+}
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default Providerek;</code></pre>
+        </article>
+    </section>
 
 
 

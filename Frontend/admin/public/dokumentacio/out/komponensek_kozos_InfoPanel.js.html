@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: komponensek/kozos/InfoPanel.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,51 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: komponensek/kozos/InfoPanel.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import Toast from 'react-bootstrap/Toast';
 
+/**
+ * A `react-bootstrap` komponensével készített {@link Toast} komponens, ami egy üzenetet jelenít meg a felhasználónak.
+ * Ez arra alkalmas, hogy a felhasználó értesítéseket kapjon a weboldalon, hogyha valami történik a háttérben és visszajelzést szeretnénk neki küldeni.
+ * Automatikusan eltűnik 5s után.
+ *
+ * 
+ * @param {string} bg - A háttérszín a Toastnak. (A Bootstrap színeit használja)
+ * @param {string} text - A szöveg, amit a Toastban megjelenít.
+ *
+ * @returns {JSX.Element} Egy Toast komponenst.
+ */
+function InfoPanel({ bg, text }) {
+    const [show, setShow] = useState(true);
+  
+    return ( 
+    &lt;Toast bg={bg} onClose={() => setShow(false)} show={show} delay={5000} autohide>
+          &lt;Toast.Header>
+            &lt;img
+              src="holder.js/20x20?text=%20"
+              className="rounded me-2"
+              alt=""
+            />
+            &lt;strong className="me-auto">Ncart: újratervezés&lt;/strong>
+            &lt;small>Most&lt;/small>
+          &lt;/Toast.Header>
+          &lt;Toast.Body className='text-white'>{text}&lt;/Toast.Body>
+    &lt;/Toast>
+  );
+}
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default InfoPanel;</code></pre>
+        </article>
+    </section>
 
 
 

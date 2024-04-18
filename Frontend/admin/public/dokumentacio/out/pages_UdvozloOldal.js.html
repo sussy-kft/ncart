@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: pages/UdvozloOldal.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,58 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: pages/UdvozloOldal.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
+/**
+ * UdvozloOldal egy komponens, ami az üdvözlő oldalt jeleníti meg.
+ *
+ * Egy rövid üdvözlő üzenetet jelenít meg, amelyben röviden bemutatja az adminisztrációs felület funkcióit,
+ * és egy linket a dokumentációs oldalra.
+ *
+ * @returns {JSX.Element} Az üdvözlő oldalt tartalmazó elem.
+ */
+function UdvozloOldal() {
+  const location = useLocation();
 
-    <h3> </h3>
+  return (
+    &lt;div>
+      &lt;h1
+        style={{
+          marginTop: "50px",
+          marginBottom: "20px",
+        }}
+      >
+        Üdvözöljük az adminisztrációs felületen!
+      &lt;/h1>
+      &lt;h5>
+        Itt lehetősége van a menetrendek, járatok, állomások, járműtípusok és az
+        admin felhasználók egyszerű és gyors kezelésére.
+      &lt;/h5>
+      &lt;p className="text-muted">
+        Ha esetleg segítségre lenne szüksége, vagy a redszerről több információt
+        szeretne megtudni,
+        &lt;Link to={`${location.pathname}/dokumentacio`}>
+          itt találja a dokumentációt.
+        &lt;/Link>
+      &lt;/p>
+    &lt;/div>
+  );
+}
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default UdvozloOldal;
+</code></pre>
+        </article>
+    </section>
 
 
 

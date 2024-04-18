@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: pages/Main.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,45 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: pages/Main.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import "bootstrap/dist/css/bootstrap.css";
+import Admin from "./Admin";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Bejelentkezes from "./Login/Bejelentkezes";
+import Providerek from "../HOC/Providerek";
 
+/**
+ * Egy komponens, ami az alkalmazás különböző context providerekkel és "/login" és "/admin/*" útvonalakkal rendelkezik.
+ *
+ * @returns {React.Component} Az alkalmazás fő komponensét adja vissza, ami a context providerekkel és útvonalakkal van beágyazva.
+ */
+function Main() {
+  return (
+    &lt;div className="App">
+      &lt;Providerek>
+        &lt;Router>
+          &lt;Routes>
+            &lt;Route path="/login" element={&lt;Bejelentkezes />} />
+            &lt;Route path="/admin/*" element={&lt;Admin />} />
+          &lt;/Routes>
+        &lt;/Router>
+      &lt;/Providerek>
+    &lt;/div>
+  );
+}
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default Main;
+</code></pre>
+        </article>
+    </section>
 
 
 

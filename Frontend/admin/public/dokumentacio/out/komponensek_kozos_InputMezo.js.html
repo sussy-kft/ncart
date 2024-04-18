@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: komponensek/InputMezo.js</title>
+    <title>JSDoc: Source: komponensek/kozos/InputMezo.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: komponensek/InputMezo.js</h1>
+    <h1 class="page-title">Source: komponensek/kozos/InputMezo.js</h1>
 
     
 
@@ -29,7 +29,7 @@
             <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useContext } from "react";
-import { AxiosContext } from "../context/AxiosContext";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
 import SelectMezo from "./SelectMezo";
 
 /**
@@ -285,13 +285,13 @@ export default InputMezo;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#Documentacio">Documentacio</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloOldal">MegalloOldal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#Megallok">Megallok</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#Documentacio">Documentacio</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloDnD">MegalloDnD</a></li><li><a href="global.html#MegalloOdlal">MegalloOdlal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 00:49:56 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 14:24:05 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

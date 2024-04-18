@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: context/Alap/InfoPanelContext.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,57 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: context/Alap/InfoPanelContext.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createContext, useState } from 'react';
 
+/**
+ * @type {React.Context}
+ */
+export const InfoPanelContext = createContext();
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
+/**
+ * Egy Provider komponens, ami az InfoPanelContext-et adja a gyerekeinek.
+ * @param {React.ReactNode} props.children Egy gyerek komponens, amit be akarunk ágyazni.
+ * @returns {React.ReactNode} Egy Provider komponenst.
+ */
+export const InfoPanelProvider = ({ children }) => {
+    /**
+     * State hook, amely az info paneleket tárolja.
+     * @type {Array.&lt;(Object|Function)>}
+     */
+    const [InfoPanels, setInfoPanels] = useState([]);
     
+    /**
+     * Függvény, ami egy új info panelt ad hozzá az InfoPanels listához.
+     * @param {Object} panel Amit hozzá akarunk adni a listához.
+     */
+    const addInfoPanel = (panel) => {
+        setInfoPanels([...InfoPanels, panel]);
+    }
 
+    /**
+     * Függvény, ami kitörli az összes info panelt az InfoPanels listából.
+     */
+    const resetInfoPanel = () => {
+        setInfoPanels([]);
+    }
 
-
-
-
+    return (
+        &lt;InfoPanelContext.Provider value={{addInfoPanel, resetInfoPanel, InfoPanels}}>
+            {children}  
+        &lt;/InfoPanelContext.Provider>
+    );
+}</code></pre>
+        </article>
+    </section>
 
 
 

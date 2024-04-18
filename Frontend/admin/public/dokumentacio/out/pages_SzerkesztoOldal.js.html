@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: pages/SzerkesztoOldal.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,78 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: pages/SzerkesztoOldal.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Tabla from "../komponensek/Alapmeretezett/Tabla";
+import React, { useEffect, useContext } from "react";
+import { InfoPanelContext } from "../context/Alap/InfoPanelContext";
+import { ToastContainer } from "react-bootstrap";
+import FormMezo from "../komponensek/Alapmeretezett/FormMezo";
+import { useLocation } from "react-router-dom";
+import { MetaadatContext } from "../context/Alap/MetaadatContext";
 
+/**
+ * @typedef {Object} AlapKomponensProps
+ * @property {string} cim - Cím, ami megjelenik az oldalon.
+ */
 
-    <h3> </h3>
+/**
+ * Ez az alapértelmezett komponens, ami {@link FormMezo}t, egy címet és egy {@link Tabla}t jelenít meg.
+ *
+ * @param {AlapKomponensProps} cim - Cím, ami megjelenik az oldalon.
+ *
+ * @returns {React.Element} Az `AlapKomponens`t.
+ */
+const AlapKomponens = ({ cim }) => (
+  &lt;>
+    &lt;FormMezo />
+    &lt;h1>{cim}&lt;/h1>
+    &lt;Tabla />
+  &lt;/>
+);
 
+/**
+ * Egy komponens, ami egy gyerek komponenst jelenít meg, ha létezik, különben egy alapértelmezett megjelenítést jelenít meg.
+ * Beállítja az URL-t a {@link MetaadatContext}ben a jelenlegi elérési út alapján.
+ * Továbbá megjeleníti a `ToastContainer`t, ami az {@link InfoPanelContext}ből származó `InfoPanel`eket megjeleníti a jobb felső sarokban.
+ * 
+ * @param {React.ReactNode|null} props.child - Egy gyerek komponens, ami arra szolgál, hogy ha egyedi megjelenítést szeretnénk az oldalon, akkor ezt jeleníti meg. Ha nincs, akkor egy alapértelmezett komponenst jelenít meg.
+ *
+ * @param {string} props.cim - Az oldal címe, ami megjelenik az oldalon.
+ *
+ * @returns {React.Element} A gyerek komponenst adja vissza, ha létezik, különben egy {@link AlapKomponens} ad vissza.
+ */
+function SzerkesztoOldal({ child = &lt;AlapKomponens />, cim }) {
+  const { InfoPanels } = useContext(InfoPanelContext);
+  const { setUrl } = useContext(MetaadatContext);
 
+  const location = useLocation();
 
+  useEffect(() => {
+    setUrl(location.pathname.split("admin/")[1]);
+  }, [location.pathname]);
 
+  return (
+    &lt;>
+      {React.cloneElement(child, { cim })}
+      &lt;ToastContainer position="top-end" className="position-fixed">
+        {InfoPanels}
+      &lt;/ToastContainer>
+    &lt;/>
+  );
+}
 
-
-
-
-
-
-    
-
-
-
-
-
+export default SzerkesztoOldal;
+</code></pre>
+        </article>
+    </section>
 
 
 
