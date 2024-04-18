@@ -23,7 +23,7 @@ function InfoPanel({ bg, text }) {
               className="rounded me-2"
               alt=""
             />
-            <strong className="me-auto">Bootstrap</strong>
+            <strong className="me-auto">Ncart: újratervezés</strong>
             <small>Most</small>
           </Toast.Header>
           <Toast.Body className='text-white'>{text}</Toast.Body>

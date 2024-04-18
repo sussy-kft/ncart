@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { MetaadatContext } from "../../context/MetaadatContext";
+import { MetaadatContext } from "../Alap/MetaadatContext";
 import _ from "lodash";
 
 export const MegallokContext = createContext();

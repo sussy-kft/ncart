@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
-import { MegallokContext } from "./MegallokContext";
-import { AxiosContext } from "../../context/AxiosContext";
-import { MetaadatContext } from "../../context/MetaadatContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import _ from "lodash";
 
 /**

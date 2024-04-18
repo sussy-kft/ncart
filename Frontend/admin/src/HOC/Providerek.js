@@ -1,7 +1,7 @@
-import { DarkModeProvider } from "../context/DarkModeContext";
-import { AxiosProvider } from "../context/AxiosContext";
-import { MetaadatProvider } from "../context/MetaadatContext";
-import { InfoPanelProvider } from "../context/InfoPanelContext";
+import { DarkModeProvider } from "../context/Alap/DarkModeContext";
+import { AxiosProvider } from "../context/Alap/AxiosContext";
+import { MetaadatProvider } from "../context/Alap/MetaadatContext";
+import { InfoPanelProvider } from "../context/Alap/InfoPanelContext";
 
 /**
  * Egy komponens, ami a gyereket az alábbi context providerekkel látja el:

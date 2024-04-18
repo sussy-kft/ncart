@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ToggleButton } from "react-bootstrap";
-import { MegallokContext } from "./MegallokContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
  * `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.

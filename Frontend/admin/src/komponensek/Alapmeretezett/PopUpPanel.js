@@ -3,8 +3,8 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import deleteImage from "../../media/delete.gif";
 import { useContext } from "react";
-import { AxiosContext } from "../../context/AxiosContext";
-import { MetaadatContext } from "../../context/MetaadatContext";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import text from "../../media/delete";
 
 /**

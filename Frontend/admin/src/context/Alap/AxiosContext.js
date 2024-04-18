@@ -1,6 +1,6 @@
 import { createContext, useState, useContext } from 'react';
 import axios from 'axios';
-import InfoPanel from '../komponensek/InfoPanel';
+import InfoPanel from '../../komponensek/kozos/InfoPanel';
 import { InfoPanelContext } from './InfoPanelContext';
 
 /**

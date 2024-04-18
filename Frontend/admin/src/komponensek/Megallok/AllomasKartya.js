@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import InputMezo from "../InputMezo";
+import InputMezo from "../kozos/InputMezo";
 import kep from "../../media/xd.png";
-import { MegallokContext } from "../Megallok/MegallokContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
 
 /**

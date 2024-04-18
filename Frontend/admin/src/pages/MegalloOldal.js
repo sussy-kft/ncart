@@ -2,7 +2,7 @@ import React from "react";
 import VonalSzuro from "../komponensek/Megallok/VonalSzuro";
 import { Form, Row } from "react-bootstrap";
 import MegalloSzerkeszto from "../komponensek/Megallok/MegalloSzerkeszto";
-import { MegallokProvider } from "../komponensek/Megallok/MegallokContext";
+import { MegallokProvider } from "../context/Megallok/MegallokContext";
 
 /**
  * Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.

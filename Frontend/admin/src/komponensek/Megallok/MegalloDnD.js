@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { MetaadatContext } from "../../context/MetaadatContext";
-import { MegallokContext } from "./MegallokContext";
+import { MetaadatContext } from "../../context/Alap/MetaadatContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Button, Row } from "react-bootstrap";
 import AllomasKartya from "./AllomasKartya";

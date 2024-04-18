@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { AxiosContext } from "../../context/AxiosContext";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
 import Col from "react-bootstrap/Col";
-import InputMezo from "../InputMezo";
+import InputMezo from "../kozos/InputMezo";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { MegallokContext } from "./MegallokContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
  * `UjVonal` egy React komponens, amely egy új vonal létrehozására szolgál, ha még nincs oda/vissza vonal.

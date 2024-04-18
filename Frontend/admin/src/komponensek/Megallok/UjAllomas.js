@@ -1,7 +1,7 @@
 import { Button, Row, Col } from "react-bootstrap";
 import { useState, useContext } from "react";
-import InputMezo from "../InputMezo";
-import { MegallokContext } from "./MegallokContext";
+import InputMezo from "../kozos/InputMezo";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
 /**
  * @param {Array} pool - Azok a megállók, amik még nem szerepelnek az adott vonalon.

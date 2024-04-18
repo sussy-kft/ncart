@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
-import InputMezo from "../InputMezo";
-import { AxiosContext } from "../../context/AxiosContext";
-import { MetaadatContext } from "../../context/MetaadatContext";
-import { MegallokContext } from "./MegallokContext";
+import InputMezo from "../kozos/InputMezo";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { MetaadatContext } from "../../context/Alap/MetaadatContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
  * A `VonalSzuro` egy React komponens, ami egy csoport select inputot jelenít meg, hogy a felhasználó kiválaszthassa, hogy melyik vonalat akarja szerkeszteni.

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useContext } from "react";
-import { AxiosContext } from "../context/AxiosContext";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
 
 /**
  * SelectMezo egy komponens, ami egy select form vezérlőt jelenít meg.

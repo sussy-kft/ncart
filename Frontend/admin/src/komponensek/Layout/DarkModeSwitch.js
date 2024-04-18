@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { FormCheck } from "react-bootstrap";
-import { DarkModeContext, Tema } from "../../context/DarkModeContext";
+import { DarkModeContext, Tema } from "../../context/Alap/DarkModeContext";
 import * as Icon from "react-bootstrap-icons";
 
 /**

@@ -1,10 +1,10 @@
 import Tabla from "../komponensek/Alapmeretezett/Tabla";
 import React, { useEffect, useContext } from "react";
-import { InfoPanelContext } from "../context/InfoPanelContext";
+import { InfoPanelContext } from "../context/Alap/InfoPanelContext";
 import { ToastContainer } from "react-bootstrap";
 import FormMezo from "../komponensek/Alapmeretezett/FormMezo";
 import { useLocation } from "react-router-dom";
-import { MetaadatContext } from "../context/MetaadatContext";
+import { MetaadatContext } from "../context/Alap/MetaadatContext";
 
 /**
  * @typedef {Object} AlapKomponensProps
