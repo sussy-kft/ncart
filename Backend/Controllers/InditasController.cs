@@ -27,12 +27,6 @@ namespace Backend.Controllers
 
         public override ActionResult Post([FromBody] InditasDTO data) => PerformPost(data);
 
-        public override ActionResult Put([FromBody] InditasDTO data)
-        {
-            Inditas inditas = data.ConvertType();
-            return PerformPut(inditas, inditas.Vonal, inditas.Nap, inditas.InditasIdeje);
-        }
-
         public override ActionResult Delete() => PerformDeleteAll();
 
         [HttpDelete("{vonal}/{nap}/{inditasIdeje}")]
