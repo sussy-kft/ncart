@@ -1,17 +1,17 @@
 import React from "react";
-import VonalSzuro from "./VonalSzuro";
+import VonalSzuro from "../komponensek/Megallok/VonalSzuro";
 import { Form, Row } from "react-bootstrap";
-import MegalloOldal from "./MegalloOldal";
-import { MegallokProvider } from "./MegallokContext";
+import MegalloSzerkeszto from "../komponensek/Megallok/MegalloSzerkeszto";
+import { MegallokProvider } from "../komponensek/Megallok/MegallokContext";
 
 /**
- * A fő Megállók komponens, ami a VonalSzűrőt és a MegállóOldalt tartalmazza.
+ * Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
  *
  * @component
  * @param {string} cim - Az oldal címe.
  * @returns {JSX.Element} A megjeélítendő komponens.
  */
-function Megallok({ cim }) {
+function MegalloOdlal({ cim }) {
 
   /**
    * A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
@@ -53,9 +53,9 @@ function Megallok({ cim }) {
           />
         </Row>
       </Form>
-      <MegalloOldal meta={meta} />
+      <MegalloSzerkeszto meta={meta} />
     </MegallokProvider>
   );
 }
 
-export default Megallok;
+export default MegalloOdlal;

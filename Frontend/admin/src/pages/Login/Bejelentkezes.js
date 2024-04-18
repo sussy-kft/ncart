@@ -1,6 +1,6 @@
 import React from "react";
 import { Form } from "react-bootstrap";
-import InputMezo from "../InputMezo";
+import InputMezo from "../../komponensek/InputMezo";
 import Button from "react-bootstrap/Button";
 import { AxiosContext } from "../../context/AxiosContext";
 import "./Bejelentkezes.css";

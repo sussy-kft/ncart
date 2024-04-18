@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Layout from "./Layout/Layout";
-import NoPage from "../NoPage/NoPage";
+import Layout from "../komponensek/Layout/Layout";
+import NoPage from "./NoPage/NoPage";
 import UdvozloOldal from "./UdvozloOldal";
 import SzerkesztoOldal from "./SzerkesztoOldal";
-import Megallok from "./Megallok/Megallok";
+import MegalloOdlal from "./MegalloOldal";
 import Auth from "../HOC/Auth";
-import Documentacio from "./Documentacio";
+import Documentacio from "./DocumentacioOldal";
 
 /**
  * @typedef {Object} Utvonal
@@ -24,7 +24,7 @@ const utvonalak = [
   { key: "vonalak", cim: "Vonalak" },
   { key: "allomasok", cim: "Állomások" },
   { key: "inditasok", cim: "Indítások" },
-  { key: "megallok", cim: "Megállok", child: <Megallok /> },
+  { key: "megallok", cim: "Megállok", child: <MegalloOdlal /> },
 ];
 
 /**

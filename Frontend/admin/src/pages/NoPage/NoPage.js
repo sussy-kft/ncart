@@ -1,4 +1,4 @@
-import NoPageMedia from "../media/Metro_404.mp4";
+import NoPageMedia from "../../media/Metro_404.mp4";
 import React, { useEffect } from "react";
 
 /**

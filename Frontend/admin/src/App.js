@@ -1,4 +1,4 @@
-import Main from "./komponensek/Main";
+import Main from "./pages/Main";
 import "./App.css";
 
 function App() {
