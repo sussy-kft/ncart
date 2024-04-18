@@ -16,7 +16,7 @@ import _ from "lodash";
  *
  */
 function MentesOffcanvas(){
-  const { post } = useContext(AxiosContext);
+  const { put } = useContext(AxiosContext);
   const { url } = useContext(MetaadatContext);
   const { megallok, setMegallok, regiMegallok, setRegiMegallok, show, setShow, setChecked } = useContext(MegallokContext);
   
@@ -27,7 +27,7 @@ function MentesOffcanvas(){
   const kuldes = async () => {
     for (const value of Object.values(megallok)) {
       if (value) {
-        await post(`${url}/batch`, {
+        await put(`${url}/batch`, {
           vonal: value.vonal.id,
           kezdoAll: value.megallok[0].elozoMegallo,
           megallok: value.megallok,
