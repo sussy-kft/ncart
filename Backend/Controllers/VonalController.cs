@@ -141,7 +141,16 @@ namespace Backend.Controllers
                 List<VonalMegallokFixed> vonalMegallok = [];
                 vonalak.ToList().ForEach(vonal => {
                     vonalMegallok.Add(new VonalMegallokFixed {
-                        Vonal = vonal.ConvertType(),
+                        Vonal = new VonalMegallokVonalDTO {
+                            Id = vonal.Id,
+                            VonalSzam = vonal.VonalSzam,
+                            JarmuTipus = vonal.JarmuTipus,
+                            KezdoAll = context
+                                .Allomasok
+                                .Where(allomas => allomas.Id == vonal.KezdoAll)
+                                .First()
+                                .ConvertType()
+                        },
                         Megallok = ((Func<List<AllomasEsIdo>>)(() => {
                             IReadOnlyList<AllomasJoinMegall> allomasokJoinMegallok = context
                                 .Allomasok
@@ -198,8 +207,16 @@ namespace Backend.Controllers
 
         class VonalMegallokFixed
         {
-            public VonalDTO Vonal { get; set; }
+            public VonalMegallokVonalDTO Vonal { get; set; }
             public List<AllomasEsIdo> Megallok { get; set; }
+        }
+
+        class VonalMegallokVonalDTO
+        {
+            public int Id { get; set; }
+            public string VonalSzam { get; set; }
+            public int JarmuTipus { get; set; }
+            public AllomasDTO KezdoAll { get; set; }
         }
 
         class AllomasJoinMegall
