@@ -10,6 +10,7 @@
     box-sizing: border-box;
     color: white;
     user-select: none;
+    overflow: hidden;
 }
 
 nav {
@@ -67,8 +68,10 @@ a {
 }
 
 #map {
+    position: absolute;
     width: calc(100% - 400px); /* Térkép szélessége panel elrejtésekor */
     margin-left: 400px; /* Térkép margója panel elrejtésekor */
+    z-index: -1;
 }
 
 #panel {
@@ -122,9 +125,12 @@ td {
     text-align: center;
 }
 #map {
-    width: 100%; /* A térképnek teljes szélességet kell kapnia */
+    width: 2000px; /* A térképnek teljes szélességet kell kapnia */
     margin-left: 0; /* A térkép margóját 0-ra állítjuk */
-    background-color: rgb(13, 40, 64);
+    background-color: rgb(13, 40, 64);#map {
+        overflow: hidden;
+    }
+    
 }
 
 #map img {
