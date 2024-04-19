@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: komponensek/Megallok/AllomasKartya.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: komponensek/Megallok/AllomasKartya.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useContext } from "react";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import InputMezo from "../kozos/InputMezo";
+import kep from "../../media/xd.png";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
+import _ from "lodash";
+
+/**
+ * Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
+ *
+ * @param {Object} allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
+ * @param {string} allomas.allomas - Az állomás ID-ja.
+ * @param {number} allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
+ * @param {string} nev - Az állomás neve.
+ * @param {string} irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
+ *
+ * @returns {React.Element} A megjelenítendő állomás kártyát vagy `null`-t, ha az állomás objektum nem létezik.
+ */
+function AllomasKartya({ allomas, nev, irany }) {
+  const { megallok, setMegallok, checked, oppositeKey, megfordit, setShow } =
+    useContext(MegallokContext);
+
+  /**
+   * A jelenlegi állomás időtartamát módosítja.
+   *
+   * @param {Event} event - Egy esemény objektum.
+   */
+  const handleChange = (event) => {
+    setShow(true);
+    const tmp = _.cloneDeep(megallok[irany].megallok);
+    const { value } = event.target;
+    tmp.find((val) => val.allomas === allomas.allomas).hanyPerc = value * 1;
+    setMegallok((prevMegallok) => ({
+      ...prevMegallok,
+      [irany]: {
+        ...prevMegallok[irany],
+        megallok: tmp,
+      },
+
+      ...(checked &amp;&amp; {
+        [oppositeKey(irany)]: {
+          ...prevMegallok[oppositeKey(irany)],
+          megallok: megfordit(_.cloneDeep(tmp)).reverse(),
+        },
+      }),
+    }));
+  };
+
+  /**
+   * A jelenlegi állomást törli a listából.
+   *
+   */
+  const torol = () => {
+    let index = megallok[irany].megallok.findIndex(
+      (value) => JSON.stringify(value) === JSON.stringify(allomas)
+    );
+    if (index > 0 &amp;&amp; index &lt; megallok[irany].megallok.length - 1)
+      megallok[irany].megallok[index + 1].elozoMegallo =
+        megallok[irany].megallok[index - 1].allomas;
+    const tmp = megallok[irany].megallok.filter(
+      (value) => JSON.stringify(value) !== JSON.stringify(allomas)
+    );
+    setMegallok((prevMegallok) => ({
+      ...prevMegallok,
+      [irany]: {
+        ...prevMegallok[irany],
+        megallok: tmp,
+      },
+      ...(checked
+        ? {
+            [oppositeKey(irany)]: {
+              ...prevMegallok[oppositeKey(irany)],
+              megallok: megfordit(_.cloneDeep(tmp)).reverse(),
+            },
+          }
+        : {}),
+    }));
+  };
+
+  if (!allomas || !megallok) return null;
+
+  console.log("sussy", allomas);
+  return (
+    &lt;Card className="d-flex flex-row text-start">
+      &lt;Card.Img
+        className="flex-fill"
+        variant="top"
+        src={kep}
+        alt=""
+        style={{
+          maxHeight: "100px",
+          maxWidth: "100px",
+          minHeight: "100px",
+          minWidth: "100px",
+        }}
+      />
+      &lt;Card.Body className="flex-fill text-left ps-0">
+        &lt;Card.Title>
+          {nev} (állomásID: {allomas.allomas})
+        &lt;/Card.Title>
+        &lt;Card.Text>
+          &lt;div
+            className="d-flex justify-content-between align-items-center"
+            style={{ width: "100%" }}
+          >
+            &lt;div className="d-flex align-items-center">
+              &lt;span className="me-2">idő: &lt;/span>
+              &lt;InputMezo
+                veryCoolValue={allomas.hanyPerc}
+                input={{ columnName: "hanyPerc", dataType: "tinyint" }}
+                handleChange={(event) => handleChange(event)}
+              />
+              &lt;br />
+            &lt;/div>
+            {megallok[irany].megallok.length > 1 &amp;&amp; (
+              &lt;Button variant="danger" onClick={() => torol(allomas)}>
+                Állomás törlése
+              &lt;/Button>
+            )}
+          &lt;/div>
+        &lt;/Card.Text>
+      &lt;/Card.Body>
+    &lt;/Card>
+  );
+}
+
+export default AllomasKartya;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#Documentacio">Documentacio</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloDnD">MegalloDnD</a></li><li><a href="global.html#MegalloOdlal">MegalloOdlal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li><a href="global.html#getText">getText</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Apr 18 2024 15:30:08 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

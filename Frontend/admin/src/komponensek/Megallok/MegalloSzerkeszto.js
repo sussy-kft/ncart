@@ -1,415 +1,121 @@
-import React from "react";
-import UjAllomas from "./UjAllomas";
-import { Row, Col, Button } from "react-bootstrap";
+import React, { useContext } from "react";
+import { Row, Col } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useContext } from "react";
-import { AxiosContext } from "../../context/AxiosContext";
-import { MetaadatContext } from "../../context/MetaadatContext";
-import { useState } from "react";
-import { ToggleButton } from "react-bootstrap";
-import AllomasKartya from "./AllomasKartya";
-import { Offcanvas } from "react-bootstrap";
+import { DragDropContext } from "react-beautiful-dnd";
+import { MetaadatContext } from "../../context/Alap/MetaadatContext";
+import { MegallokContext } from "../../context/Megallok/MegallokContext";
+import MegalloDnD from "./MegalloDnD";
 import UjVonal from "./UjVonal";
+import SzinkronizaloGomb from "./SzinkronizaloGomb";
+import MentesOffcanvas from "./MentesOffcanvas";
+import _ from "lodash";
 
-function MegalloSzerkeszto(props) {
-  const _ = require("lodash");
-  
-  const { getAll, post } = useContext(AxiosContext);
-  const { url } = useContext(MetaadatContext);
+/**
+ * `MegalloSzerkeszto` egy React komponens, amely egy űrlapot renderel a "megallok" kezelésére.
+ * A komponens megvalósítja a drag-and-drop funkcionalitást a megállók átrendezéséhez, valamint a megállók megfordításához.
+ * Továbbá rendelkezik egy szinkronizáló gombbal is, amely a megállók szinkronizálását teszi lehetővé.
+ * Így ha a felhasználó megváltoztatja az egyik irányú megállókat, akkor a másik irányú megállók is megváltoznak.
+ * Az adatokat egy felugró ablakban lehet menteni, vagy esetleg visszaállítani, az előző állapotra.
+ *
+ * @component
+ * @param {Object} meta - Azokat az infókat tartalmazza, amihez szükséges egy új vonal létrehozásához.
+ * Ez azért kell, ha esetleg a felhasználó új vonalat akar létrehozni, de még nincs se oda, se vissza vonala, akkor a meta objektum segítségével ezeket a vonalakat létre tudja hozni.
+ *
+ * @returns {React.Element} Egy űrlapot, amely a megállók kezelésére szolgál.
+ */
+function MegalloSzerkeszto({ meta }) {
+  const { kulsoAdatok } = useContext(MetaadatContext);
+  const { megallok, setMegallok, oppositeKey, megfordit, checked } =
+    useContext(MegallokContext);
 
-  const [opcio, setOpciok] = React.useState(null);
-  const [megallok, setMegallok] = React.useState(props.megallok);
-  const [regiMegallok, setRegiMegallok] = React.useState(
-    _.cloneDeep(props.megallok)
-  );
-  const [checked, setChecked] = useState(false);
-  const [show, setShow] = useState(false);
+  /**
+   * A `handleDragEnd` egy függvény, amely a drag-and-drop műveletet kezeli.
+   * Frissíti a megállók sorrendjét és ha kell akkor az elöző megállókat is.
+   * Továbbá a `checked` (a szinkronizálás be van-e kapcsolva) állapotától függően tökrözi a megállókat fordított sorrendben.
+   * Tehát ha a szinkronizálás be van kapcsolva, akkor a megállók sorrendje is megfordul..
+   *
+   * @param {Object} result Az eredmény objektum a react-beautiful-dnd onDragEnd eseményéből.
+   * @param {Object} result.source Egy objektum, amely leírja a drag művelet forrását.
+   * @param {string} result.source.droppableId A forrás droppable ID-je.
+   * @param {number} result.source.index A forrás draggable indexe a droppable-on belül.
+   * @param {Object} result.destination Egy objektum, amely leírja a drag művelet célját.
+   * @param {string} result.destination.droppableId A cél droppable ID-je.
+   * @param {number} result.destination.index Az index, ahol a draggable-t a droppable-on belül eldobták.
+   */
+  const handleDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination || source.index === destination.index) return;
 
+    const sourceDroppableId = source.droppableId;
+    const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
+    const a = { ...sourceAllomasok[0] };
+    const [removed] = sourceAllomasok.splice(source.index, 1);
 
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
+    sourceAllomasok.splice(destination.index, 0, removed);
 
-  // console.log("bbbbbbbbbbbbb", megallok, regiMegallok);
-
-  const filterPool = (key) => {
-    // console.warn(opcio);
-    // console.error(megallok[key].megallok);
-    if (!opcio) return null;
-    return opcio.filter((value) => {
-      //console.log(!megallok[key].megallok.some(val2 => {return value.id == val2.allomas}));
-      return !(
-        value.id === megallok[key].megallok[0]?.elozoMegallo ||
-        megallok[key].megallok.some((val2) => {
-          //console.log("sus",value.id, val2.allomas)
-          return value.id === val2.allomas;
-        })
-      );
-    });
-  };
-
-  const OppositeKey = (key) => {
-    return Object.keys(megallok).filter((k) => k !== key)[0];
-  };
-
-  const handleChange = (key, obj, event) => {
-    setShow(true);
-    const tmp = [...megallok[key].megallok];
-    const { value } = event.target;
-
-    tmp.find((val) => val.allomas === obj.allomas).hanyPerc = value * 1;
-    // console.log(megallok[key].megallok.hanyPerc);
-    // console.log(regiMegallok[key].megallok.hanyPerc);
-    // console.warn(regiMegallok);
-    // console.warn(value);
-    // console.warn(megallok, regiMegallok);
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: tmp,
-      },
-
-      ...(checked
-        ? {
-            [OppositeKey(key)]: {
-              ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
-            },
-          }
-        : {}),
-    }));
-  };
-
-  const handleSave = (event, obj, key, callback, a) => {
-    event.preventDefault();
-    let tmp = {};
-    tmp["allomas"] = obj["id"] * 1;
-    tmp["hanyPerc"] = obj["ido"] * 1;
-    tmp["elozoMegallo"] =
-      megallok[key].megallok[megallok[key].megallok.length - 1].allomas;
-    tmp["vonal"] = megallok[key].megallok[0].vonal;
-
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: [...prevMegallok[key].megallok, tmp],
-      },
-
-      ...(checked
-        ? {
-            [OppositeKey(key)]: {
-              ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit([
-                JSON.parse(JSON.stringify(tmp)),
-                ...JSON.parse(JSON.stringify(megallok[key].megallok)).reverse(),
-              ]),
-            },
-          }
-        : {}),
-    }));
-    if (a) callback({ target: { name: "id", value: a.id } });
-  };
-
-  const kuldes = () => {
-    for (const [key, value] of Object.entries(megallok)) {
-      if (value) {
-        // console.warn("meg", megallok);
-        post(url + "/batch", {
-          vonal: value.vonal.id,
-          kezdoAll: value.megallok[0].elozoMegallo,
-          megallok: value.megallok,
-        });
-        setRegiMegallok(_.cloneDeep(megallok));
-        setShow(false);
-      }
+    if (source.index > 0)
+      sourceAllomasok[source.index].elozoMegallo =
+        sourceAllomasok[source.index - 1].allomas;
+    else {
+      sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
     }
 
-    console.warn("Küldés");
-  };
+    if (source.index < sourceAllomasok.length - 1)
+      sourceAllomasok[source.index + 1].elozoMegallo =
+        sourceAllomasok[source.index].allomas;
 
-  console.log(regiMegallok, megallok);
+    if (destination.index > 0)
+      sourceAllomasok[destination.index].elozoMegallo =
+        sourceAllomasok[destination.index - 1].allomas;
+    else sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
+    if (destination.index < sourceAllomasok.length - 1)
+      sourceAllomasok[destination.index + 1].elozoMegallo =
+        sourceAllomasok[destination.index].allomas;
 
-  const atmasol = (key) => {
-    console.warn(OppositeKey(key));
-    let tmp = JSON.parse(JSON.stringify(megallok[key].megallok));
-    tmp.reverse();
-    megfordit(tmp);
-
-    // console.log("tmp", tmp);
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
-      [OppositeKey(key)]: {
-        //...prevMegallok[key],
-        megallok: tmp,
-        vonal: _.cloneDeep(prevMegallok[OppositeKey(key)].vonal),
+      [sourceDroppableId]: {
+        ...prevMegallok[sourceDroppableId],
+        megallok: sourceAllomasok,
       },
-    }));
-  };
-
-  const megfordit = (lista) => {
-    let copy = [...lista];
-
-    for (let ix = 0; ix < copy.length; ix++) {
-      [copy[ix].allomas, copy[ix].elozoMegallo] = [
-        copy[ix].elozoMegallo,
-        copy[ix].allomas,
-      ];
-    }
-
-    console.error("megfordit", copy);
-    return copy;
-  };
-
-  const szinkronizalhato = () => {
-    //console.error(megallok);
-    return (
-      megallok.oda &&
-      megallok.vissza &&
-      megallok.oda.megallok.length === megallok.vissza.megallok.length &&
-      megallok.oda.megallok.every(
-        (value, index) =>
-          value.allomas ===
-            megallok.vissza.megallok[
-              megallok.vissza.megallok.length - index - 1
-            ].elozoMegallo &&
-          value.elozoMegallo ===
-            megallok.vissza.megallok[
-              megallok.vissza.megallok.length - index - 1
-            ].allomas
-      )
-    );
-  };
-
-  const visszaallit = () => {
-    setChecked(false);
-    setShow(false);
-    setMegallok(JSON.parse(JSON.stringify(regiMegallok)));
-    console.log(megallok, regiMegallok);
-  };
-
-  const torol = (key, obj) => {
-    let index = megallok[key].megallok.findIndex(
-      (value) => JSON.stringify(value) === JSON.stringify(obj)
-    );
-    if (index > 0 && index < megallok[key].megallok.length - 1)
-      megallok[key].megallok[index + 1].elozoMegallo =
-        megallok[key].megallok[index - 1].allomas;
-    const tmp = megallok[key].megallok.filter(
-      (value) => JSON.stringify(value) !== JSON.stringify(obj)
-    );
-    setMegallok((prevMegallok) => ({
-      ...prevMegallok,
-      [key]: {
-        ...prevMegallok[key],
-        megallok: tmp,
-      },
-      ...(checked
+      [oppositeKey(sourceDroppableId)]: checked
         ? {
-            [OppositeKey(key)]: {
-              ...prevMegallok[OppositeKey(key)],
-              megallok: megfordit(JSON.parse(JSON.stringify(tmp)).reverse()),
-            },
+            ...prevMegallok[oppositeKey(sourceDroppableId)],
+            megallok: megfordit(_.cloneDeep(sourceAllomasok).reverse()),
           }
-        : {}),
+        : prevMegallok[oppositeKey(sourceDroppableId)],
     }));
   };
 
-  React.useEffect(() => {
-    getAll("allomasok", setOpciok);
-  }, []);
+  const renderMegallok = () =>
+    Object.entries(megallok).map(([key, value]) => (
+      <Col>
+        {value ? (
+          <MegalloDnD name={key} value={value} />
+        ) : (
+          <UjVonal
+            name={key}
+            masikVonal={megallok[oppositeKey(key)]?.vonal ?? {}}
+            meta={meta}
+          />
+        )}
+      </Col>
+    ));
 
-  React.useEffect(() => {
-    setShow(!_.isEqual(megallok, regiMegallok));
-  }, [megallok]);
-
-  if (!megallok || !opcio) return null;
+  if (!megallok || !kulsoAdatok?.Allomasok) return null;
 
   return (
-    <>
-      <Form className="container" style={{ marginBottom: "80px" }}>
-        {/* kys */}
-
-        <DragDropContext
-          onDragEnd={(result) => {
-            const { source, destination } = result;
-            if (!destination || source.index === destination.index) return;
-
-            const sourceDroppableId = source.droppableId;
-            const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
-            const a = { ...sourceAllomasok[0] };
-            const [removed] = sourceAllomasok.splice(source.index, 1);
-
-            sourceAllomasok.splice(destination.index, 0, removed);
-
-            if (source.index > 0)
-              sourceAllomasok[source.index].elozoMegallo =
-                sourceAllomasok[source.index - 1].allomas;
-            else {
-              sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
-            }
-
-            if (source.index < sourceAllomasok.length - 1)
-              sourceAllomasok[source.index + 1].elozoMegallo =
-                sourceAllomasok[source.index].allomas;
-
-            if (destination.index > 0)
-              sourceAllomasok[destination.index].elozoMegallo =
-                sourceAllomasok[destination.index - 1].allomas;
-            else
-              sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
-            if (destination.index < sourceAllomasok.length - 1)
-              sourceAllomasok[destination.index + 1].elozoMegallo =
-                sourceAllomasok[destination.index].allomas;
-
-            setMegallok((prevMegallok) => ({
-              ...prevMegallok,
-              [sourceDroppableId]: {
-                ...prevMegallok[sourceDroppableId],
-                megallok: sourceAllomasok,
-              },
-              [OppositeKey(sourceDroppableId)]: checked
-                ? {
-                    ...prevMegallok[OppositeKey(sourceDroppableId)],
-                    megallok: megfordit(
-                      JSON.parse(JSON.stringify(sourceAllomasok)).reverse()
-                    ),
-                  }
-                : prevMegallok[OppositeKey(sourceDroppableId)],
-            }));
-          }}
-        >
-          <Row>
-            {Object.entries(megallok).map(([key, value], index) => {
-              //console.log(key);
-              console.warn(value);
-              if (!value)
-                return (
-                  <Col>
-                    <UjVonal
-                      name={key}
-                      masikVonal={megallok[OppositeKey(key)]?.vonal ?? {}}
-                      meta={props.meta}
-                      setMegallok={setMegallok}
-                      setRegiMegallok={setRegiMegallok}
-                      megallok={megallok}
-                    />
-                  </Col>
-                );
-              return (
-                <Col>
-                  <h3>{`${value.vonal.id} vonal:`}</h3>
-                  {/* most csak a kezdőállomást írja ki statikusan*/}
-                  <h4>Kezdőállomás: {value.megallok[0].elozoMegallo}</h4>
-                  <Droppable droppableId={key} type={key}>
-                    {(provided) => (
-                      <div {...provided.droppableProps} ref={provided.innerRef}>
-                        {value.megallok.map((allomas, index) => (
-                          <Draggable
-                            key={key + "-" + allomas.allomas + "-" + index}
-                            draggableId={
-                              key + "-" + allomas.allomas + "-" + index
-                            }
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <AllomasKartya
-                                  name={key}
-                                  allomas={allomas}
-                                  torol={
-                                    value.megallok.length > 1 ? torol : null
-                                  }
-                                  handleChange={handleChange.bind(this, key)}
-                                />
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                  <UjAllomas
-                    handleSave={handleSave}
-                    name={key}
-                    pool={filterPool(key)}
-                  />
-                  {megallok[OppositeKey(key)] && (
-                    <Row>
-                      <Button variant="primary" onClick={() => atmasol(key)}>
-                        Adatok átmásolása
-                      </Button>
-                    </Row>
-                  )}
-                </Col>
-              );
-            })}
-          </Row>
-          <ToggleButton
-            id="toggle-check"
-            className={megallok.vissza ? "" : "d-none"}
-            type="checkbox"
-            variant={checked ? "success" : "warning"}
-            onMouseOver={(e) =>
-              (e.target.className = checked
-                ? "btn btn-danger"
-                : "btn btn-success")
-            }
-            onMouseLeave={(e) =>
-              (e.target.className = checked
-                ? "btn btn-warning"
-                : "btn btn-warning")
-            }
-            checked={checked}
-            onChange={(e) => {
-              setChecked(e.currentTarget.checked);
-              // console.log(e.currentTarget.checked);
-            }}
-            {...{ disabled: !szinkronizalhato() }}
-          >
-            Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
-          </ToggleButton>
-          {/* <Button variant="primary" onClick={}>
-          Mentés
-        </Button> */}
-        </DragDropContext>
-      </Form>
-
-      <Offcanvas
-        style={{ height: "70px" }}
-        show={show}
-        onHide={() => setShow(false)}
-        placement="bottom"
-        scroll={true}
-        backdrop={false}
-        keyboard={false}
-      >
-        <Offcanvas.Header>
-          <Offcanvas.Title className="w-100">
-            <div className="d-flex justify-content-between">
-              <span>Nem mentet változtatások vannak</span>
-              <div
-                style={{ width: "170px", marginRight: "3vw" }}
-                className="d-flex justify-content-between"
-              >
-                <Button variant="secondary" onClick={visszaallit}>
-                  Mégse
-                </Button>
-                <Button variant="success" onClick={kuldes}>
-                  Mentés
-                </Button>
-              </div>
-            </div>
-          </Offcanvas.Title>
-        </Offcanvas.Header>
-      </Offcanvas>
-    </>
+    <Form
+      className="container megallo-oldal-form"
+      style={{ marginBottom: "80px" }}
+    >
+      {/*kys */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Row>{renderMegallok()}</Row>
+        <SzinkronizaloGomb/>
+      </DragDropContext>
+      <MentesOffcanvas />
+    </Form>
   );
 }
 

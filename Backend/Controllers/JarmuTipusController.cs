@@ -1,36 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Controllers
 {
-    [Route("jarmutipusok"), Authorize(Policy = KezeloController.JaratokSzerkesztese)]
-    public class JarmuTipusController(AppDbContext context, IConfiguration config) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context, config)
+    [Route("jarmutipusok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
+    public partial class JarmuTipusController(AppDbContext context, IConfiguration config) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context, config)
     {
-        public override IEnumerable<JarmuTipusDTO> Get() => GetAll(context.JarmuTipusok);
+        protected override DbSet<JarmuTipus> dbSet => context.JarmuTipusok;
+
+        public override IEnumerable<JarmuTipusDTO> Get() => PerformGetAll();
 
         [HttpGet("{id}")]
-        public override ActionResult Get([FromRoute] int id) => Get(context.JarmuTipusok, id);
+        public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
-        public override ActionResult Post([FromBody] JarmuTipusDTO data) => Post(context.JarmuTipusok, data);
+        public override ActionResult Post([FromBody] JarmuTipusDTO data) => PerformPost(data);
 
-        [HttpPut("{id}")]
-        public override ActionResult Put([FromRoute] int id, [FromBody] JarmuTipusDTO ujJarmuTipus) => Put(
-            dbSet: context.JarmuTipusok,
-            data: ujJarmuTipus,
-            updateRecord: (jarmuTipus, ujJarmuTipus) => {
-                jarmuTipus.Megnevezes = ujJarmuTipus.Megnevezes;
+        public override ActionResult Delete() => PerformDeleteAll();
+
+        [HttpDelete("{id}")]
+        public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
+
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.JarmuTipusok));
+    }
+
+    public partial class JarmuTipusController : IPatchableIdentityPkTablaController<JarmuTipusController.JarmuTipusPatch>
+    {
+        [HttpPatch("{id}")]
+        public ActionResult Patch([FromRoute] int id, [FromBody] JarmuTipusPatch ujJarmuTipus) => PerformPatch(
+            updateRecord: record => {
+                CheckIfNotNull(ujJarmuTipus.Megnevezes, megnevezes => {
+                    record.Megnevezes = megnevezes;
+                });
             },
             pk: id
         );
 
-        public override ActionResult Delete() => DeleteAll(context.JarmuTipusok);
-
-        [HttpDelete("{id}")]
-        public override ActionResult Delete([FromRoute] int id) => Delete(context.JarmuTipusok, id);
-
-        public override IEnumerable<IMetadataDTO<object>> Metadata() => Metadata("JarmuTipusok");
+        public class JarmuTipusPatch
+        {
+            [MaxLength(16)] public string? Megnevezes { get; set; }
+        }
     }
 }

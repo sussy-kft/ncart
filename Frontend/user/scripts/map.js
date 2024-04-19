@@ -2,9 +2,11 @@ var allomasok = [];
 var jarmuvek = []; // Járműtípusokat tároló tömb
 var vonalak = [];
 
+let baseUrl = "https://localhost:44339";
+
 function getAllAllomas() {
     axios
-        .get("https://localhost:44339/allomasok")
+        .get(baseUrl+"/allomasok")
         .then(function (serverResponse) {
             /*
             [
@@ -36,7 +38,56 @@ function getAllAllomas() {
         });
 }
 
+async function showLines() {
+    let numberOfColors = 100; 
+    let colorPairs = Array.from({length: numberOfColors}, generateRandomColorPair);
+
+    let lightColors = colorPairs.map(pair => pair[0]);
+    let darkColors = colorPairs.map(pair => pair[1]);
+    
+    let vonalJaratok= await axios.get(baseUrl+"/vonalak/jaratok").then(response => response.data);
+
+    let megallok  = await Promise.all(vonalJaratok.map(async vonalJarat => {
+        return await axios.get(baseUrl+`/vonalak/megallok/${vonalJarat.vonalSzam}/${vonalJarat.jarmuTipus}/fixed`)
+            .then(response => response.data)
+            .catch(error => undefined);
+    })).then(response => response.filter(vonal => vonal !== undefined));
+
+    megallok.forEach((vonal, index) => {
+        if(vonal.oda.megallok.length < 2) return
+        let line= ""
+        vonal.oda.megallok.forEach(megallo => {
+            line += megallo.allomas.koord.x + "," + megallo.allomas.koord.y + " ";
+        })
+        let polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('points', line);
+        polyline.setAttribute('style', `fill:none;stroke:${lightColors[index]};stroke-width:3`);
+        
+        $("#vonalrajz").append(polyline);
+    })
+}
+
+function generateRandomColorPair() {
+    // Generate a random hue
+    let hue = Math.floor(Math.random() * 360);
+    // Generate a random saturation between 50% and 100%
+    let saturation = Math.floor(Math.random() * 50 + 50);
+    // Generate a lightness for the light color: between 70% and 90%
+    let lightnessLight = Math.floor(Math.random() * 20 + 70);
+    // Generate a lightness for the dark color: between 30% and 50%
+    let lightnessDark = Math.floor(Math.random() * 20 + 30);
+    // Return the HSL color strings
+    return [`hsl(${hue}, ${saturation}%, ${lightnessLight}%)`, `hsl(${hue}, ${saturation}%, ${lightnessDark}%)`];
+}
+
 function displayIconAtCoordinates(stationName, x, y) {
+   
+    var iconDiv = document.createElement("div");
+    iconDiv.style.position = "absolute";
+    iconDiv.style.left = x-8 + "px";
+    iconDiv.style.top = y-15 + "px";
+    iconDiv.style.zIndex = 1000;
+    iconDiv.style.overflow = "visible"
     // Létrehozunk egy új ikon elemet
     var icon = document.createElement("i");
     icon.className = "bi bi-geo-fill"; // Bootstrap ikon osztályának beállítása
@@ -45,19 +96,41 @@ function displayIconAtCoordinates(stationName, x, y) {
     icon.style.color = "rgb(255, 231, 33)";
 
     // Állítsuk be az ikon pozícióját a térképen a megadott koordinátákkal
-    icon.style.position = "absolute";
-    icon.style.left = x + "px";
-    icon.style.top = y + "px";
+    // icon.style.position = "absolute";
+    // icon.style.left = x-8 + "px";
+    // icon.style.top = y-15 + "px";
+    // icon.style.zIndex = 1000;
 
+    iconDiv.appendChild(icon);
+
+    var relativeDiv = document.createElement("div");
+    relativeDiv.style.position = "relative";
+    relativeDiv.style.left = "-50%";
+    relativeDiv.style.opacity = 0;
+    relativeDiv.innerHTML = stationName;
+
+    // Add the relative div to the icon div
+    iconDiv.appendChild(relativeDiv);
     // Adjuk hozzá az ikont a térkép elemhez
     var map = document.getElementById("map");
-    map.appendChild(icon);
+    map.appendChild(iconDiv);
 
     // Opcionális: Adjunk hozzá egy eseménykezelőt az ikonhoz, ha szükséges
     icon.addEventListener("click", function() {
         // Valamilyen művelet végrehajtása az ikonra kattintva
         console.log("Icon clicked for station: " + stationName);
     });
+
+    $(icon).hover(
+        function() {
+            $(relativeDiv).stop().animate({opacity: 1}, 400);
+        },
+        function() {
+            $(relativeDiv).stop().animate({opacity: 0}, 400);
+        }
+    );
+
+    
 }
 
 
@@ -322,3 +395,5 @@ function percekToOraPerc(percek) {
 getAllAllomas();
 getJarmuvek();
 getVonalak();
+
+showLines();
