@@ -8,7 +8,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: black;
+    color: white;
     user-select: none;
 }
 
@@ -16,7 +16,6 @@ nav {
     display: flex;
     padding: 20px;
     background-color: rgb(13, 40, 64);
-    display: flex;
     justify-content: space-between;
     width: 100%;
     font-size: 40px;
@@ -67,28 +66,75 @@ a {
     color: rgb(255, 231, 33);
 }
 
-#map img {
-    width: 100%;
+#map {
+    width: calc(100% - 400px); /* Térkép szélessége panel elrejtésekor */
+    margin-left: 400px; /* Térkép margója panel elrejtésekor */
 }
 
 #panel {
+    font-size: 20px;
     padding: 20px;
+    padding-left: 50px;
     background-color: rgb(13, 40, 64);
     position: absolute;
-    top: 500px;
-    left: 2%;
-    border: 4px solid rgb(255, 231, 33);
+    top: 90px;
+    width: 540px; /* Panel szélessége */
+    transition: left 0.5s ease; /* Animáció a bal oldalra elrejtéshez és megjelenítéshez */
+    border-right: 4px solid rgb(255, 231, 33); /* Jobb oldali szegély */
+    border-bottom: 4px solid rgb(255, 231, 33); /* Jobb oldali szegély */
+    border-top: 4px solid rgb(255, 231, 33); /* Jobb oldali szegély */
 }
 
-table{
-    border: 4px solid rgb(255, 231, 33);
+#togglePanelButton {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1; /* Felül az ikonra */
+    top: 320px;
 }
 
-th{
-    border: 4px solid rgb(255, 231, 33);
+#togglePanelButton i {
+    font-size: 32px;
+    color: rgb(255, 231, 33);
 }
-td{
+
+input {
+    color: black;
+}
+
+#jarat {
+    width: 100%;
+}
+
+th {
     border: 4px solid rgb(255, 231, 33);
+    padding: 5px;
+}
+
+td {
+    border: 4px solid rgb(255, 231, 33);
+    padding: 5px;
+    text-align: center;
+}
+#map {
+    width: 100%; /* A térképnek teljes szélességet kell kapnia */
+    margin-left: 0; /* A térkép margóját 0-ra állítjuk */
+    background-color: rgb(13, 40, 64);
+}
+
+#map img {
+    width: 100%;
+    border-bottom: 4px solid rgb(255, 231, 33); /* Jobb oldali szegély */
+}
+
+#jarat {
+    margin-top: 20px;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 1200px) {
