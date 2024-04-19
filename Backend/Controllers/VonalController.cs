@@ -10,9 +10,9 @@ namespace Backend.Controllers
     [Route("vonalak"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
     public partial class VonalController(AppDbContext context, IConfiguration config) : TablaController<int, Vonal, VonalDTO>(context, config)
     {
-        protected override DbSet<Vonal> dbSet => context.Vonalak;
+        protected override string tableName => nameof(AppDbContext.Vonalak);
 
-        public override IEnumerable<VonalDTO> Get() => PerformGetAll();
+        protected override DbSet<Vonal> dbSet => context.Vonalak;
 
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => PerformGet(id);
@@ -23,12 +23,8 @@ namespace Backend.Controllers
             return result is OkObjectResult ? GetOdaVissza(data.VonalSzam, data.JarmuTipus) : result;
         }
 
-        public override ActionResult Delete() => PerformDeleteAll();
-
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
-
-        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Vonalak));
     }
 
     public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>

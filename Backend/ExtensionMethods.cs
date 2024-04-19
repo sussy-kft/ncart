@@ -17,16 +17,16 @@ namespace Backend
             return found;
         }
 
-        public static IQueryable<IMetadataDTO<string>> OverrideReferences(this IQueryable<IMetadataDTO<string>> metadataDTOs, Func<IMetadataDTO<string>, bool> predicate, Func<IMetadataDTO<string>, string?> references) => metadataDTOs.Override(predicate, metadataDTO => metadataDTO.DataType, references);
+        public static IEnumerable<IMetadataDTO<string>> OverrideReferences(this IEnumerable<IMetadataDTO<string>> metadataDTOs, Func<IMetadataDTO<string>, bool> predicate, Func<IMetadataDTO<string>, string?> references) => metadataDTOs.Override(predicate, metadataDTO => metadataDTO.DataType, references);
 
-        public static IQueryable<IMetadataDTO<object>> OverrideDataType<TDataType>(this IQueryable<IMetadataDTO<object>> metadataDTOs, Func<IMetadataDTO<object>, bool> predicate, Func<IMetadataDTO<object>, TDataType> dataType) where TDataType : class => metadataDTOs.Override(predicate, dataType, metadataDTO => metadataDTO.References);
+        public static IEnumerable<IMetadataDTO<object>> OverrideDataType<TDataType>(this IEnumerable<IMetadataDTO<object>> metadataDTOs, Func<IMetadataDTO<object>, bool> predicate, Func<IMetadataDTO<object>, TDataType> dataType) where TDataType : class => metadataDTOs.Override(predicate, dataType, metadataDTO => metadataDTO.References);
 
-        static IQueryable<IMetadataDTO<T>> Override<T, TDataType>(this IQueryable<IMetadataDTO<T>> metadataDTOs, Func<IMetadataDTO<T>, bool> predicate, Func<IMetadataDTO<T>, TDataType> dataType, Func<IMetadataDTO<T>, string?> references)
+        static IEnumerable<IMetadataDTO<T>> Override<T, TDataType>(this IEnumerable<IMetadataDTO<T>> metadataDTOs, Func<IMetadataDTO<T>, bool> predicate, Func<IMetadataDTO<T>, TDataType> dataType, Func<IMetadataDTO<T>, string?> references)
             where T : class
             where TDataType : class, T
         {
             List<IMetadataDTO<T>> overriddenMetadataDTOs = [];
-            metadataDTOs.ForEach(metadataDTO => {
+            metadataDTOs.ToList().ForEach(metadataDTO => {
                 overriddenMetadataDTOs.Add(!predicate(metadataDTO) ? metadataDTO : new MetadataDTO<TDataType> {
                     ColumnIndex = metadataDTO.ColumnIndex,
                     ColumnName = metadataDTO.ColumnName,
@@ -41,14 +41,14 @@ namespace Backend
             return overriddenMetadataDTOs.AsQueryable();
         }
 
-        public static IQueryable<IMetadataDTO<object>> OverrideSetIsHiddenTrue(this IQueryable<IMetadataDTO<object>> metadataDTOs, Func<IMetadataDTO<object>, bool> predicate) => metadataDTOs.ForEach(metadataDTO => {
+        public static IEnumerable<IMetadataDTO<object>> OverrideSetIsHiddenTrue(this IEnumerable<IMetadataDTO<object>> metadataDTOs, Func<IMetadataDTO<object>, bool> predicate) => metadataDTOs.ForEach(metadataDTO => {
             if (predicate(metadataDTO))
             {
                 metadataDTO.SetIsHiddenTrue();
             }
         });
 
-        public static IQueryable<T> ForEach<T>(this IQueryable<T> items, Action<T> action)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
             items.ToList().ForEach(action);
             return items;
