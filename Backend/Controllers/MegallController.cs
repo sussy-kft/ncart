@@ -11,6 +11,8 @@ namespace Backend.Controllers
     [Route("megallok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
     public partial class MegallController(AppDbContext context, IConfiguration config) : BatchPuttableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context, config)
     {
+        protected override string tableName => nameof(AppDbContext.Megallok);
+
         protected override DbSet<Megall> dbSet => context.Megallok;
 
         public class PK
@@ -18,8 +20,6 @@ namespace Backend.Controllers
             public int vonal { get; set; }
             public int allomas { get; set; }
         }
-
-        public override IEnumerable<MegallDTO> Get() => PerformGetAll();
 
         [HttpGet("{vonal}/{allomas}")]
         public override ActionResult Get([FromRoute] PK pk) => PerformGet(pk.vonal, pk.allomas);
@@ -32,12 +32,8 @@ namespace Backend.Controllers
             return PerformPut(megall, megall.Vonal, megall.Allomas);
         }
 
-        public override ActionResult Delete() => PerformDeleteAll();
-
         [HttpDelete("{vonal}/{allomas}")]
         public override ActionResult Delete([FromRoute] PK pk) => PerformDelete(pk.vonal, pk.allomas);
-
-        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Megallok));
     }
 
     public partial class MegallController

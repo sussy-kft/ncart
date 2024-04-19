@@ -11,6 +11,16 @@ namespace Backend.Controllers
         [HttpPut("batch")]
         public abstract ActionResult PutBatch([FromBody] TBatchFormat data);
 
-        protected ActionResult PerformPutBatch(TBatchFormat data) => CheckIfBadRequest(() => TrySaveRange(data.ConvertType(), dbSet.AddRange));
+        protected ActionResult PerformPutBatch(TBatchFormat data, Func<TDbFormat, object?[]?> extractPk) => CheckIfBadRequest(() => {
+            IEnumerable<TDbFormat> dbFormats = data.ConvertType();
+            dbFormats.ToList().ForEach(dbFormat => {
+                TDbFormat? record = dbSet.Find(extractPk(dbFormat));
+                if (record is not null)
+                {
+                    dbSet.Remove(record);
+                }
+            });
+            return TrySaveRange(dbFormats, dbSet.AddRange);
+        });
     }
 }

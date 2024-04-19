@@ -16,6 +16,8 @@ namespace Backend.Controllers
     [Route("kezelok"), Authorize(Policy = nameof(Engedelyek.SzerkesztokFelvetele))]
     public partial class KezeloController(AppDbContext context, IConfiguration config) : TablaController<int, Kezelo, KezeloDTO>(context, config)
     {
+        protected override string tableName => nameof(AppDbContext.Kezelok);
+
         protected override DbSet<Kezelo> dbSet => context.Kezelok;
 
         static HashAlgorithmName hashAlgorithmName { get; }
@@ -74,12 +76,10 @@ namespace Backend.Controllers
             });
         });
 
-        public override ActionResult Delete() => PerformDeleteAll();
-
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Kezelok))
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata()
             .OverrideReferences(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "Kezelok/Engedelyek")
             .OverrideSetIsHiddenTrue(metadataDTO => metadataDTO.ColumnName == "Jelszo")
             .OverrideDataType(metadataDTO => metadataDTO.ColumnName == "Engedelyek", _ => "nvarchar[]")
