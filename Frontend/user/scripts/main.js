@@ -14,16 +14,16 @@ function togglePanel() {
 
     if (panel.style.left === "0px") {
         panel.style.left = "-540px"; // Elrejtés balra
-        toggleButtonIcon.className = "bi bi-chevron-left"; // Nyíl balra
+        toggleButtonIcon.className = "bi bi-chevron-right"; // Nyíl jobbra
     } else {
         panel.style.left = "0px"; // Megjelenítés
-        toggleButtonIcon.className = "bi bi-chevron-right"; // Nyíl jobbra
+        toggleButtonIcon.className = "bi bi-chevron-left"; // Nyíl balra
     }
 }
 
 $(document).ready(function () {
     var x = 0;
-    var y = 0;
+    var y = 94.4;
     var img = $("#map");
     var isDragging = false;
 
@@ -59,12 +59,12 @@ $(document).ready(function () {
             } else if (newX < parentWidth - imgWidth) {
                 newX = parentWidth - imgWidth;
             }
-            if (newY > 0) {
-                newY = 0;
-            } else if (newY < parentHeight - imgHeight) {
-                newY = parentHeight - imgHeight;
+            if (newY > 94.4) {
+                newY = 94.4;
+            } else if (newY < parentHeight - imgHeight + innerHeight) {
+                newY = parentHeight - imgHeight + innerHeight;
             }
-
+            console.log(parentHeight - imgHeight);
             img.css({left: newX + "px", top: newY + "px"});
         }
 
