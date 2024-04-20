@@ -7,18 +7,18 @@ namespace Backend.Controllers
     public class TestController() : ApiController()
     {
         [HttpGet]
-        public ActionResult Get() => Ok();
+        public ActionResult Get() => Ok("xd");
 
         [HttpPost]
-        public ActionResult Post() => Ok();
+        public ActionResult Post() => Ok("xd");
 
         [HttpPut]
-        public ActionResult Put() => Ok();
+        public ActionResult Put() => Ok("xd");
 
         [HttpPatch]
-        public ActionResult Patch() => Ok();
+        public ActionResult Patch() => Ok("xd");
 
         [HttpDelete]
-        public ActionResult Delete() => Ok();
+        public ActionResult Delete() => Ok("xd");
     }
 }

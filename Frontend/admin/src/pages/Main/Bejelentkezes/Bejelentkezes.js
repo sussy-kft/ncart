@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import InputMezo from "../../../komponensek/kozos/InputMezo";
 import Button from "react-bootstrap/Button";
@@ -14,7 +14,7 @@ import { InfoPanelContext } from "../../../context/Alap/InfoPanelContext";
  */
 function Bejelentkezes() {
   const { getText } = React.useContext(DarkModeContext);
-  const { post } = React.useContext(AxiosContext);
+  const { post, getAll } = React.useContext(AxiosContext);
   const { resetInfoPanel } = React.useContext(InfoPanelContext);
 
   const navigate = useNavigate();
@@ -22,6 +22,14 @@ function Bejelentkezes() {
     { columnName: "email", dataType: "email" },
     { columnName: "password", dataType: "password", characterMinimumLength: 8 },
   ];
+
+  useEffect(() => {
+    const asd = async () => {
+      const  a = await getAll("test").then((valasz) => valasz);
+      console.log(a);
+    };
+    asd();
+  }, [getAll]);
 
   const [validated, setValidated] = React.useState(false);
   const [adatok, setAdatok] = React.useState({});
