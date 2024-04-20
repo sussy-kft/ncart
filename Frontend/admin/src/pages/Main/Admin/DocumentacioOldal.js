@@ -10,7 +10,7 @@ import React from "react";
 function Documentacio() {
   return (
     <iframe
-      src="/dokumentacio/out/index.html"
+      src="/docs/index.html"
       title="Dokumentáció"
       width="100%"
       style={{

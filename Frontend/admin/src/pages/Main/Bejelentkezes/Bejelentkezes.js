@@ -35,7 +35,8 @@ function Bejelentkezes() {
   const [adatok, setAdatok] = React.useState({});
   
   /**
-   * Egy függvény, ami generál form input mezőket az inputs listából.
+   * @function
+   * @description Egy függvény, ami generál form input mezőket az inputs listából.
    * @returns {Form.Group[]} Egy tömböt, ami a generált form input mezőket tartalmazza.
    */
   const inputGenerator = () => {
@@ -53,7 +54,8 @@ function Bejelentkezes() {
   };
 
   /**
-   * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a tokent és a lejárati időpontot, amit a localStorage-ba menti.
+   * @function
+   * @description Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a tokent és a lejárati időpontot, amit a localStorage-ba menti.
    * Továbbá a felhasználó email címét is a `localStorage`-ba menti, átirányítja az admin oldalra és törli az összes info panelt.
    * @param {Event} event - A form küldési eseménye.
    */
@@ -70,7 +72,8 @@ function Bejelentkezes() {
   };
 
   /**
-   * Egy függvény, ami a form input mezőinek változását kezeli.
+   * @function
+   * @description Egy függvény, ami a form input mezőinek változását kezeli.
    * @param {Event} event - A megváltozott input mező eseménye.
    */
   const handleChange = (event) => {

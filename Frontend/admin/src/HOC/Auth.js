@@ -7,7 +7,7 @@ import { MetaadatContext } from "../context/Alap/MetaadatContext";
  * Ha a felhasználó hitelesítve van, akkor megjeleníti a megadott komponenst.
  * Ha a felhasználó nincs hitelesítve, vagy a token lejár, akkor átirányítja a felhasználót a bejelentkezési oldalra. (/login)
  *
- * @param {React.Component} Component - Egy komponens, ami hitelesítésre vár mielőt megjelenítjük.
+ * @param {React.Component} Component - Egy komponens, ami hitelesítésre vár mielőtt megjelenítjük.
  * @returns {React.Component|null} - Ha sikerült a hitelesítés, akkor visszaadja a komponenst, vagy `null`, ha a hitelesítés nem sikerült.
  */
 function Auth(Component) {

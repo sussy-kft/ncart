@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: komponensek/kozos/SelectMezo.js | Source: komponensek/kozos/SelectMezo.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        
+            <img src="img/toast-ui.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Source: komponensek/kozos/SelectMezo.js</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#Admin">Admin</a></li><li><a href="global.html#AlapKomponens">AlapKomponens</a></li><li class="hidden"><a href="global.html#AlapKomponensProps">AlapKomponensProps</a></li><li><a href="global.html#AllomasKartya">AllomasKartya</a></li><li><a href="global.html#Auth">Auth</a></li><li><a href="global.html#AxiosContext">AxiosContext</a></li><li><a href="global.html#AxiosProvider">AxiosProvider</a></li><li><a href="global.html#Bejelentkezes">Bejelentkezes</a></li><li><a href="global.html#DarkModeContext">DarkModeContext</a></li><li><a href="global.html#DarkModeProvider">DarkModeProvider</a></li><li><a href="global.html#DarkModeSwitch">DarkModeSwitch</a></li><li><a href="global.html#Documentacio">Documentacio</a></li><li><a href="global.html#FormMezo">FormMezo</a></li><li><a href="global.html#InfoPanel">InfoPanel</a></li><li><a href="global.html#InfoPanelContext">InfoPanelContext</a></li><li><a href="global.html#InfoPanelProvider">InfoPanelProvider</a></li><li><a href="global.html#InputMezo">InputMezo</a></li><li><a href="global.html#LogoutIcon">LogoutIcon</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MegalloDnD">MegalloDnD</a></li><li><a href="global.html#MegalloOdlal">MegalloOdlal</a></li><li><a href="global.html#MegalloSzerkeszto">MegalloSzerkeszto</a></li><li><a href="global.html#MegallokProvider">MegallokProvider</a></li><li><a href="global.html#MentesOffcanvas">MentesOffcanvas</a></li><li><a href="global.html#MetaadatContext">MetaadatContext</a></li><li><a href="global.html#MetaadatProvider">MetaadatProvider</a></li><li><a href="global.html#NoPage">NoPage</a></li><li><a href="global.html#PopUpPanel">PopUpPanel</a></li><li><a href="global.html#Providerek">Providerek</a></li><li><a href="global.html#SelectMezo">SelectMezo</a></li><li><a href="global.html#Sor">Sor</a></li><li><a href="global.html#SzerkesztoOldal">SzerkesztoOldal</a></li><li><a href="global.html#SzinkronizaloGomb">SzinkronizaloGomb</a></li><li><a href="global.html#Tabla">Tabla</a></li><li class="hidden"><a href="global.html#Tema">Tema</a></li><li><a href="global.html#UdvozloOldal">UdvozloOldal</a></li><li><a href="global.html#UjAllomas">UjAllomas</a></li><li><a href="global.html#UjVonal">UjVonal</a></li><li class="hidden"><a href="global.html#Utvonal">Utvonal</a></li><li><a href="global.html#VonalSzuro">VonalSzuro</a></li><li class="hidden"><a href="global.html#adatok">adatok</a></li><li><a href="global.html#getText">getText</a></li><li class="hidden"><a href="global.html#it">it</a></li><li><a href="global.html#maxConverter">maxConverter</a></li><li class="hidden"><a href="global.html#metainfo">metainfo</a></li><li><a href="global.html#minConverter">minConverter</a></li><li><a href="global.html#typeConverter">typeConverter</a></li><li><a href="global.html#utvonalak">utvonalak</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
+import { useContext } from "react";
+import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { typeConverter } from "./InputMezo"
+
+/**
+ * SelectMezo egy komponens, ami egy select form vezérlőt jelenít meg.
+ * A select form vezérlő az `input` segítségével állítja be a szüksges adatokat.
+ * Egy flag-et is kezel, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
+ * Továbbá lekéri opcióit a szerverről (ha esetleg nem opciókat a `pool`-ból), kezeli a változásokat és beállítja az alapértelmezett értéket.
+ * 
+ * @component
+ * @param {string} as - Egy komponens típusa, amibe majd beágyazza a select form vezérlőt.
+ * @param {Object} input - Az input mező metaadatai.
+ * @param {function} handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
+ * @param {string} value - A select vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani a select vezérlőn keresztül.
+ * @param {Array} pool - A select vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
+ * @param {string} name - A select vezérlő neve.
+ * @param {boolean} idk - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {string} veryCoolValue - A select control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
+ * 
+ * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
+ */
+function SelectMezo({
+  as = "react.fragment",
+  input,
+  handleChange,
+  value,
+  pool,
+  name,
+  idk,
+  veryCoolValue: statikusValue,
+}) {
+  const { getAll } = useContext(AxiosContext);
+  /**
+   * Egy useState hook, ami a select vezérlő opcióit kezeli.
+   */
+  const [opciok, setOpciok] = useState([]);
+  /**
+   * Egy useState hook, ami flag-et kezel, hogy a handleChange függvényt csak egyszer hívják meg.
+   * useState hook to manage a flag that ensures the handleChange function is only called once.
+   */
+  const [onceFlag, setOnceFlag] = useState(false);
+  const As = as ?? "react.fragment";
+
+  /**
+   * Egy UseEffect hook, ami a lekéri az opciókat a szerverről, ha a `references` mező nem üres.
+   */
+  useEffect(() => {
+    if (input?.references) getAll(input?.references, setOpciok);
+  }, [input?.references]);
+
+  /**
+   * Egy UseEffect hook, ami a egy alkalommal meghívja a handleChange függvényt, hogy legyen alapértelmezett értéke.
+   */
+  useEffect(() => {
+    if (
+      input?.references?.split("/").length == 1 ||
+      (handleChange &amp;&amp;
+        !onceFlag &amp;&amp;
+        (value || opciok[0]?.id || (pool &amp;&amp; pool[0]?.[name])))
+    ) {
+      handleChange({
+        target: {
+          name: (name || input?.columnName) ?? "",
+          value: idk
+            ? (input?.references &amp;&amp; opciok[0]?.id) ??
+              (pool &amp;&amp; pool[0]?.[name]) ??
+              value ??
+              ""
+            : value ??
+              (input?.references &amp;&amp; opciok[0]?.id) ??
+              (pool &amp;&amp; pool[0]?.[name]) ??
+              "",
+          type: typeConverter(input?.dataType) ?? "",
+        },
+      });
+      setOnceFlag(true);
+    }
+  }, [value, input, opciok[0]?.id, pool]);
+
+  if (!input &amp;&amp; !value &amp;&amp; !opciok[0]) return null;
+
+  return (
+    &lt;As>
+      &lt;Form.Control
+        as="select"
+        required={!input?.isNullable}
+        name={(name || input?.columnName) ?? ""}
+        defaultValue={value ?? ""}
+        {...(statikusValue ? { value: statikusValue ?? {} } : {})}
+        onChange={handleChange}
+      >
+        {input?.references
+          ? opciok.map((opcio, index) => (
+              &lt;option key={index} value={opcio.id}>
+                {opcio.id}
+              &lt;/option>
+            ))
+          : pool.map((opcio, index) => (
+              &lt;option key={index} value={opcio[name]}>
+                {opcio[value]}
+              &lt;/option>
+            ))}
+      &lt;/Form.Control>
+    &lt;/As>
+  );
+}
+
+export default SelectMezo;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
