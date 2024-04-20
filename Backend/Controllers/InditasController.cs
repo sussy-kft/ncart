@@ -9,7 +9,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("inditasok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class InditasController(AppDbContext context, IConfiguration config) : BatchPuttableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context, config)
+    public partial class InditasController(AppDbContext context) : BatchPuttableController<InditasController.PK, Inditas, InditasDTO, InditasController.InditasBatch>(context)
     {
         protected override string tableName => nameof(AppDbContext.Inditasok);
 

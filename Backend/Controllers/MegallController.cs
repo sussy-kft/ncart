@@ -9,7 +9,7 @@ using Backend.ModelDTOBases;
 namespace Backend.Controllers
 {
     [Route("megallok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class MegallController(AppDbContext context, IConfiguration config) : BatchPuttableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context, config)
+    public partial class MegallController(AppDbContext context) : BatchPuttableController<MegallController.PK, Megall, MegallDTO, MegallController.MegallBatch>(context)
     {
         protected override string tableName => nameof(AppDbContext.Megallok);
 

@@ -8,7 +8,7 @@ using Backend.DTOs;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context, IConfiguration config) : JsonRecieverController(context, config)
+    public abstract class TableController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context) : ControllerContext(context)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
