@@ -45,8 +45,8 @@ function Bejelentkezes() {
   };
 
   /**
-   * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a token-t, amit a localStorage-ba menti.
-   * Továbbá a felhasználó email címét a sessionStorage-be menti, átirányítja az admin oldalra és törli az összes info panelt.
+   * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a tokent és a lejárati időpontot, amit a localStorage-ba menti.
+   * Továbbá a felhasználó email címét is a `localStorage`-ba menti, átirányítja az admin oldalra és törli az összes info panelt.
    * @param {Event} event - A form küldési eseménye.
    */
   const handleSumbit = (event) => {
@@ -54,8 +54,9 @@ function Bejelentkezes() {
     setValidated(true);
     post("kezelok/login", adatok, (valasz) => {
       resetInfoPanel()
-      window.sessionStorage.setItem("felhasznalo", adatok.email);
+      localStorage.setItem("felhasznalo", adatok.email);
       localStorage.setItem("token", valasz.token);
+      localStorage.setItem("lejaratiIdopont", valasz.lejaratiIdopont);
       navigate("/admin");
     });
   };

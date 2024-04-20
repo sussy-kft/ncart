@@ -113,6 +113,12 @@ export const MetaadatProvider = ({ children }) => {
   const createOppositeKey = (obj) => {
     return (...keys) => Object.keys(obj).filter((k) => !keys.includes(k));
   };
+  
+  /**
+   * Egy függvény, ami a `localStorage`-ban tárolt `lejaratiIdopont` értékét és a jelenlegi időpontot használja a maradék idő kiszámításához.
+   * @returns {number} Hogy mennyi idő van hátra.
+   */
+  const getMaradekIdo = () => (new Date(localStorage.getItem("lejaratiIdopont")) - Date.now());
 
   return (
     <MetaadatContext.Provider
@@ -124,6 +130,7 @@ export const MetaadatProvider = ({ children }) => {
         url,
         setUrl,
         createOppositeKey,
+        getMaradekIdo,
       }}
     >
       {children}

@@ -16,7 +16,7 @@ function LogoutIcon() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    window.sessionStorage.removeItem("felhasznalo");
+    window.localStorage.removeItem("felhasznalo");
     window.localStorage.removeItem("token");
     navigate("/login");
   };
@@ -27,7 +27,7 @@ function LogoutIcon() {
       title="Kijelentkezés"
       size={20}
       onClick={handleLogout}
-      style={{ marginRight: "10px", cursor: "pointer" }}
+      style={{ marginRight: "10px", marginLeft: "4px", cursor: "pointer" }}
     />
   );
 }
