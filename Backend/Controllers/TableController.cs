@@ -8,21 +8,23 @@ using Backend.DTOs;
 
 namespace Backend.Controllers
 {
-    public abstract class TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context, IConfiguration config) : JsonRecieverController(context, config)
+    public abstract class TableController<TPrimaryKey, TDbFormat, TJsonFormat>(AppDbContext context) : ControllerContext(context)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
     {
+        protected abstract string tableName { get; }
+
         protected abstract DbSet<TDbFormat> dbSet { get; }
 
         protected StatusCodeResult Status405 => StatusCode(405);
 
         [HttpGet, AllowAnonymous]
-        public abstract IEnumerable<TJsonFormat> Get();
+        public virtual IEnumerable<TJsonFormat> Get() => PerformGetAll();
 
         [AllowAnonymous]
         public abstract ActionResult Get([FromRoute] TPrimaryKey pk);
 
-        protected IQueryable<TJsonFormat> PerformGetAll() => ConvertAllToDTO(dbSet.ToList());
+        protected IEnumerable<TJsonFormat> PerformGetAll() => ConvertAllToDTO(dbSet.ToList());
 
         protected ActionResult PerformGet(params object?[]? pk) => CheckIfNotFound(dbSet, record => Ok(record.ConvertType()), pk);
 
@@ -47,7 +49,7 @@ namespace Backend.Controllers
         public abstract ActionResult Delete([FromRoute] TPrimaryKey pk);
 
         [HttpDelete]
-        public abstract ActionResult Delete();
+        public ActionResult Delete() => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
 
         protected ActionResult PerformDelete(params object?[]? pk) => CheckIfNotFound(
             dbSet: dbSet,
@@ -57,12 +59,10 @@ namespace Backend.Controllers
             pk: pk
         );
 
-        protected ObjectResult PerformDeleteAll() => TrySaveRange(dbSet.ToList(), dbSet.RemoveRange);
-
         [HttpGet("metadata"), AllowAnonymous]
-        public abstract IEnumerable<IMetadataDTO<object>> GetMetadata();
+        public virtual IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata();
 
-        protected IQueryable<IMetadataDTO<string>> PerformGetMetadata(string tableName)
+        protected IEnumerable<IMetadataDTO<string>> PerformGetMetadata()
         {
             Response.Headers.Append("Origin", tableName);
             IQueryable<Metadata> metadatas = context
@@ -134,7 +134,7 @@ namespace Backend.Controllers
             }
         });
 
-        static IQueryable<TJsonFormat> ConvertAllToDTO(IEnumerable<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
+        protected static IEnumerable<TJsonFormat> ConvertAllToDTO(IEnumerable<TDbFormat> records) => records.ToList().ConvertAll(record => record.ConvertType()).AsQueryable();
 
         ActionResult CheckIfNotFound(DbSet<TDbFormat> dbSet, Func<TDbFormat, ActionResult> handleRequest, params object?[]? pk) => HandleError(() => {
             TDbFormat? record = dbSet.Find(pk);

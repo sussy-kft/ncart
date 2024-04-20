@@ -51,9 +51,9 @@ namespace Backend.Controllers
 
             for (int ix = 0; ix < csomopontok.Count; ix++)
             {
-                lehetsegesMegallok=megallok
+                lehetsegesMegallok = megallok
                     .Where(x => x.ElozoMegallo == csomopontok[ix].megallo.Allomas && x.Vonal != csomopontok[ix].megallo.Vonal)
-                    .Aggregate(new List<Megall>(),(lista, elem) => [.. lista, .. megallok.Where(x => elem.Vonal == x.Vonal)]);
+                    .Aggregate(new List<Megall>(), (lista, elem) => [.. lista, .. megallok.Where(x => elem.Vonal == x.Vonal)]);
 
                 foreach (Megall item in lehetsegesMegallok)
                 {
@@ -61,7 +61,7 @@ namespace Backend.Controllers
                     if (!csomopont.ismetlodke(csomopont.megallo))
                         csomopontok.Add(csomopont);
 
-                    if (bV.Contains(csomopont.megallo.Vonal)) 
+                    if (bV.Contains(csomopont.megallo.Vonal))
                     {
                         List<ValaszVonal>? utvonal = utvonalMegallapitas(tervezesiFeltetelek, csomopont);
                         if(utvonal is null)
@@ -74,10 +74,10 @@ namespace Backend.Controllers
             //1. Preheat the oven to 450°F.
             //2. Season the chicken with salt and pepper.
             //3. Place the chicken in lehetsegesIndulasok baking dish and bake for 10 minutes or until the chicken is cooked through
-            
+
             return NotFound();
 
-        }
+        });
 
         private List<ValaszVonal>? utvonalMegallapitas(TervezesiFeltetelekDTO tervezesiFeltetelek, Csomopont csomopont)
         {

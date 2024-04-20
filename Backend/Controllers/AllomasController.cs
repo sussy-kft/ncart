@@ -8,23 +8,21 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("allomasok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class AllomasController(AppDbContext context, IConfiguration config) : TablaController<int, Allomas, AllomasDTO>(context, config)
+    public partial class AllomasController(AppDbContext context) : TableController<int, Allomas, AllomasDTO>(context)
     {
-        protected override DbSet<Allomas> dbSet => context.Allomasok;
+        protected override string tableName => nameof(AppDbContext.Allomasok);
 
-        public override IEnumerable<AllomasDTO> Get() => PerformGetAll();
+        protected override DbSet<Allomas> dbSet => context.Allomasok;
 
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => PerformGet(id);
 
         public override ActionResult Post([FromBody] AllomasDTO data) => PerformPost(data);
 
-        public override ActionResult Delete() => PerformDeleteAll();
-
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
 
-        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Allomasok))
+        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata()
             .OverrideDataType<IEnumerable<MetadataDTO<string>>>(metadataDTO => metadataDTO.ColumnName == "Koord", _ => [
                 new MetadataDTO<string> {
                     ColumnName = "X",

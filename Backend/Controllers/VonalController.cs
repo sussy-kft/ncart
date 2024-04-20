@@ -8,11 +8,11 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class VonalController(AppDbContext context, IConfiguration config) : TablaController<int, Vonal, VonalDTO>(context, config)
+    public partial class VonalController(AppDbContext context) : TableController<int, Vonal, VonalDTO>(context)
     {
-        protected override DbSet<Vonal> dbSet => context.Vonalak;
+        protected override string tableName => nameof(AppDbContext.Vonalak);
 
-        public override IEnumerable<VonalDTO> Get() => PerformGetAll();
+        protected override DbSet<Vonal> dbSet => context.Vonalak;
 
         [HttpGet("{id}")]
         public override ActionResult Get([FromRoute] int id) => PerformGet(id);
@@ -23,12 +23,8 @@ namespace Backend.Controllers
             return result is OkObjectResult ? GetOdaVissza(data.VonalSzam, data.JarmuTipus) : result;
         }
 
-        public override ActionResult Delete() => PerformDeleteAll();
-
         [HttpDelete("{id}")]
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
-
-        public override IEnumerable<IMetadataDTO<object>> GetMetadata() => PerformGetMetadata(nameof(AppDbContext.Vonalak));
     }
 
     public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
@@ -145,7 +141,16 @@ namespace Backend.Controllers
                 List<VonalMegallokFixed> vonalMegallok = [];
                 vonalak.ToList().ForEach(vonal => {
                     vonalMegallok.Add(new VonalMegallokFixed {
-                        Vonal = vonal.ConvertType(),
+                        Vonal = new VonalMegallokVonalDTO {
+                            Id = vonal.Id,
+                            VonalSzam = vonal.VonalSzam,
+                            JarmuTipus = vonal.JarmuTipus,
+                            KezdoAll = context
+                                .Allomasok
+                                .Where(allomas => allomas.Id == vonal.KezdoAll)
+                                .First()
+                                .ConvertType()
+                        },
                         Megallok = ((Func<List<AllomasEsIdo>>)(() => {
                             IReadOnlyList<AllomasJoinMegall> allomasokJoinMegallok = context
                                 .Allomasok
@@ -202,8 +207,16 @@ namespace Backend.Controllers
 
         class VonalMegallokFixed
         {
-            public VonalDTO Vonal { get; set; }
+            public VonalMegallokVonalDTO Vonal { get; set; }
             public List<AllomasEsIdo> Megallok { get; set; }
+        }
+
+        class VonalMegallokVonalDTO
+        {
+            public int Id { get; set; }
+            public string VonalSzam { get; set; }
+            public int JarmuTipus { get; set; }
+            public AllomasDTO KezdoAll { get; set; }
         }
 
         class AllomasJoinMegall
