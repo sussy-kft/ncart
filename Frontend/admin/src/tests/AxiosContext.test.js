@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import { AxiosContext, AxiosProvider } from './AxiosContext';
+import { AxiosContext, AxiosProvider } from '../context/Alap/AxiosContext';
 import axios from 'axios';
-import { InfoPanelContext } from './InfoPanelContext'; // Import the InfoPanelContext
+import { InfoPanelContext } from '../context/Alap/InfoPanelContext'; // Import the InfoPanelContext
 import MockAdapter from 'axios-mock-adapter';
 
 // Don't mock axios
