@@ -52,19 +52,25 @@ function Tabla() {
 
   const fejlecElemRef = useRef();
   fejlecElemRef.current = (elem) =>
-    Object.keys(elem).map((key) => {
-      if (Array.isArray(elem[key]))
-        return kulsoAdatok[findKey(key).references].map((opcio, index) => {
-          return <th key={index}>{opcio}</th>;
-        });
-      if (findKey(key)?.isHidden) return null;
-      if (typeof elem[key] !== "object") return <th key={key}>{key}</th>;
-      return fejlecElemRef.current(elem[key]);
-    });
+    Object.entries(elem)
+      .sort(([keyA], [keyB]) => {
+        const metaA = findKey(keyA) ?? { columnIndex: 0 };
+        const metaB = findKey(keyB) ?? { columnIndex: 0 };
+        return metaA.columnIndex - metaB.columnIndex;
+      })
+      .map(([key, value]) => {
+        if (Array.isArray(elem[key]))
+          return kulsoAdatok[findKey(key).references].map((opcio, index) => {
+            return <th key={index}>{opcio}</th>;
+          });
+        if (findKey(key)?.isHidden) return null;
+        if (typeof elem[key] !== "object") return <th key={key}>{key}</th>;
+        return fejlecElemRef.current(elem[key]);
+      });
 
   /**
-   * Egy rekúrzív függvény, ami a táblázat fejlécét generálja az `elem` objektum kulcsai alapján.
-   * `useRef`-et és `useCallback`-et hookokat használ, hogy biztosítsa, hogy a függvény mindig a legfrissebb verzióját hívja meg.
+   * Egy rekúrzív függvény, ami lőször rendezi az objektumokat a `columnIndex` alapján, majd táblázat fejlécét generálja az `elem` objektum kulcsai alapján.
+   * Az `useRef`-et és `useCallback`-et hookokat használ, hogy biztosítsa, hogy a függvény mindig a legfrissebb verzióját hívja meg.
    * Azért van szükség a `useCallback`-re, hogy elkerülje a függvény felesleges számolásokat, amikor a függvény függőségei (`findKey`, `kulsoAdatok`) nem változnak.
    * A `useRef`-et azért használja, hogy a függvény mindig a legfrissebb verzióját hívja meg, mivel a függvény rekurzív, előfordulhat, hogy közben a függőség frissül, emiatt az `useCallback` nem a megfelelő verziót hívná meg.
    *
@@ -81,10 +87,10 @@ function Tabla() {
       <img src="https://http.cat/102" alt="Betöltés..." />
     );
 
-  return (
-    adatok.length === 0 
-    ? <h5>Még nincs rekord az adatbázisban.</h5>
-    :<>
+  return adatok.length === 0 ? (
+    <h5>Még nincs rekord az adatbázisban.</h5>
+  ) : (
+    <>
       <Table striped bordered hover>
         <thead>
           <tr>

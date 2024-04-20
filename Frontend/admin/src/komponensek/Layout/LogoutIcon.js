@@ -16,6 +16,7 @@ function LogoutIcon() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    window.localStorage.removeItem("lejaratiIdopont");
     window.localStorage.removeItem("felhasznalo");
     window.localStorage.removeItem("token");
     navigate("/login");

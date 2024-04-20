@@ -17,7 +17,7 @@ import _ from "lodash";
  * @example
  * <Sor row={row} callback={callback} ix={ix} />
  */
-function Sor({row , ix, callback}) {
+function Sor({ row, ix, callback }) {
   const { patch } = useContext(AxiosContext);
   const { url, findKey, getPKs, kulsoAdatok } = useContext(MetaadatContext);
 
@@ -53,7 +53,7 @@ function Sor({row , ix, callback}) {
    * @param {boolean} event.target.checked - A checkbox értéke, hogy be van-e pipálva.
    * @param {string} event.target.value - Az input mező értéke.
    */
-  const handleChange = ({target: { name, type, checked, value }} ) => {
+  const handleChange = ({ target: { name, type, checked, value } }) => {
     let obj = _.cloneDeep(adatok);
 
     if (type === "checkbox") {
@@ -89,6 +89,7 @@ function Sor({row , ix, callback}) {
 
   /**
    * Egy rekurzív függvény, ami az objektumban mélyen elhelyezkedő értékeket is megjeleníti.
+   * Először rendezi az objektumokat a `columnIndex` alapján, majd csak azután kezdi megjeleníteni az értékeket.
    * Mivel a {@link row}-ban is lehet több beágyazott objektum, ezért megkeresi az összeset és azokat is megjeleníti egy cellában.
    *
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
@@ -99,21 +100,27 @@ function Sor({row , ix, callback}) {
    * @returns {Array} A legenerált cella lista.
    */
   const CellaGeneralo = (elem, cellaLista, cellaTartalom) =>
-    Object.entries(elem).flatMap(([key, value]) => {
-      const metainfo = findKey(key);
-      if (metainfo?.isHidden) return [];
-      if (metainfo?.references?.split("/").length > 1)
-        return cellaLista(value, key, metainfo);
-      if (getPKs().includes(key))
-        return (
-          <td>
-            <p>{value}</p>
-          </td>
-        );
-      if (typeof value === "object")
-        return CellaGeneralo(value, cellaLista, cellaTartalom);
-      return cellaTartalom(key, value, metainfo);
-    });
+    Object.entries(elem)
+      .sort(([keyA], [keyB]) => {
+        const metaA = findKey(keyA) ?? { columnIndex: 0 };
+        const metaB = findKey(keyB) ?? { columnIndex: 0 };
+        return metaA.columnIndex - metaB.columnIndex;
+      })
+      .flatMap(([key, value]) => {
+        const metainfo = findKey(key);
+        if (metainfo?.isHidden) return [];
+        if (metainfo?.references?.split("/").length > 1)
+          return cellaLista(value, key, metainfo);
+        if (getPKs().includes(key))
+          return (
+            <td>
+              <p>{value}</p>
+            </td>
+          );
+        if (typeof value === "object")
+          return CellaGeneralo(value, cellaLista, cellaTartalom);
+        return cellaTartalom(key, value, metainfo);
+      });
 
   /**
    * Egy függvény, ahhoz az állapothoz, hogy a felhasználó csak olvassa az adatokat.
@@ -122,7 +129,7 @@ function Sor({row , ix, callback}) {
    * @param {Object} elem - The element to generate cell data for.
    *
    * @returns {Array} The generated cell elements.
-   */  
+   */
   const cellaElem = (elem) => {
     const cellaLista = (value, key, metainfo) =>
       kulsoAdatok[metainfo.references].map((opcio) => (

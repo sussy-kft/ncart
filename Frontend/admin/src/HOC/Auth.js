@@ -17,6 +17,13 @@ function Auth(Component) {
     const [hitelesitve, setHitelesitve] = useState(false);
     const navigate = useNavigate();
 
+    /**
+     * Egy függvény, ami kijelentkezteti a felhasználót.
+     * Törli a tokent, a felhasználó e-mail címét és a token lejárati idejét a localStorage-ból.
+     * Átirányítja a felhasználót a bejelentkezési oldalra.
+     * Beállítja a `hitelesítve` állapotot hamisra.
+     *
+     */
     const kijelentkezes = () => {
       setHitelesitve(false);
       window.localStorage.removeItem("token");
@@ -28,7 +35,7 @@ function Auth(Component) {
     /**
      * useEffect hook to ellenőrzi, hogy a felhasználó rendelkezik érvényes tokennel.
      * Ha rendelkezik valamilyen tokennel, akkor beállítja a `hitelesítve` állapotot igazra.
-     * Ha nem rendelkezik érvényes tokennel, vagy ha eltelik egy óra, 
+     * Ha nem rendelkezik érvényes tokennel, vagy ha eltelik egy óra,
      * akkor eltávolítja a tokent, a felhasználó e-mail címát és a token lejárati idejét a localStorage-ból,
      * átirányítja a felhasználót a bejelentkezési oldalra, és beállítja a `hitelesítve` állapotot hamisra.
      */
@@ -36,8 +43,7 @@ function Auth(Component) {
       if (localStorage.getItem("token")) {
         setHitelesitve(true);
         setTimeout(kijelentkezes, getMaradekIdo());
-      } 
-        else kijelentkezes();
+      } else kijelentkezes();
     }, [navigate]);
 
     return hitelesitve ? <Component {...props} /> : null;
