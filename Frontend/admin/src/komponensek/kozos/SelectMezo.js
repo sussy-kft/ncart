@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useContext } from "react";
 import { AxiosContext } from "../../context/Alap/AxiosContext";
+import { typeConverter } from "./InputMezo"
 
 /**
  * SelectMezo egy komponens, ami egy select form vezérlőt jelenít meg.
@@ -105,36 +106,6 @@ function SelectMezo({
       </Form.Control>
     </As>
   );
-}
-
-/**
- * typeConverter egy olyan függvény, ami a backendről kapott típusokat átkonvertálja a megfelelő input típusra.
- *
- *
- * @function
- * @param {string} type - A konvertálni kívánt típus.
- * @returns {string} A megfelelő input típus.
- * @example
- * const inputType = typeConverter('nvarchar'); // returns 'text'
- */
-function typeConverter(type) {
-  switch (type) {
-    case "nvarchar":
-      return "text";
-    case "float":
-    case "int":
-    case "smallint":
-    case "tinyint":
-      return "number";
-    case "email":
-      return "email";
-    case "password":
-      return "password";
-    case "time":
-      return "time";
-    default:
-      return "text";
-  }
 }
 
 export default SelectMezo;

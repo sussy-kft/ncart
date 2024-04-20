@@ -172,7 +172,7 @@ function InputMezo({
  * @example
  * const inputType = typeConverter('nvarchar'); // returns 'text'
  */
-function typeConverter(type) {
+export function typeConverter(type) {
   switch (type) {
     case "nvarchar":
       return "text";
@@ -202,7 +202,7 @@ function typeConverter(type) {
  * @example
  * const minValue = minConverter('int'); // returns 2147483647
  */
-function maxConverter(type) {
+export function maxConverter(type) {
   switch (type) {
     case "float":
       return 3.4028235e38;
@@ -229,7 +229,7 @@ function maxConverter(type) {
  * @example
  * const minValue = minConverter('int'); // returns -2147483648
  */
-function minConverter(type) {
+export function minConverter(type) {
   switch (type) {
     case "float":
       return -3.4028235e38;
