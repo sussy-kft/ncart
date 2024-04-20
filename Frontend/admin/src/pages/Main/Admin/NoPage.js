@@ -1,5 +1,4 @@
 import NoPageMedia from "../../../media/Metro_404.mp4";
-import React, { useEffect } from "react";
 
 /**
  *
@@ -14,21 +13,6 @@ import React, { useEffect } from "react";
 
 function NoPage() {
   document.title = "404 - Az oldal nem található";
-  // useEffect(() => {
-  //   // Beállítja az oldal címét: "404 - Az oldal nem található"
-
-  //   // idk unatkoztam és írtam egy animációt a címre :D
-  //   //   let cim = "🚌404 - Az oldal nem található";
-
-  //   //   const titleInterval = setInterval(() => {
-  //   //     cim = cim.slice(cim[0]===" "|| cim[0]+cim[1]==="🚌"?2:1) + cim.slice(0, cim[0]===" " || cim[0]+cim[1]==="🚌"?2:1);
-  //   //     document.title = cim;
-  //   //   }, 500);
-
-  //   //   return () => {
-  //   //     clearInterval(titleInterval);
-  //   //   };
-  // }, []);
 
   return (
     <div
@@ -40,14 +24,11 @@ function NoPage() {
       }}
     >
       <video
+        data-testid="video"
+        muted={true}
         autoPlay
         loop
-        muted
-        style={{
-          maxWidth: "100%",
-          objectFit: "contain",
-          aspectRatio: "16/9",
-        }}
+        style={{ maxWidth: "100%", objectFit: "contain" }}
       >
         <source src={NoPageMedia} type="video/mp4" />
       </video>
