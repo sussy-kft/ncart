@@ -30,7 +30,7 @@ const AlapKomponens = ({ cim }) => (
  * Egy komponens, ami egy gyerek komponenst jelenít meg, ha létezik, különben egy alapértelmezett megjelenítést jelenít meg.
  * Beállítja az URL-t a {@link MetaadatContext}ben a jelenlegi elérési út alapján.
  * Továbbá megjeleníti a `ToastContainer`t, ami az {@link InfoPanelContext}ből származó `InfoPanel`eket megjeleníti a jobb felső sarokban.
- * 
+ * @param {Object} props - A komponens propsa.
  * @param {React.ReactNode|null} props.child - Egy gyerek komponens, ami arra szolgál, hogy ha egyedi megjelenítést szeretnénk az oldalon, akkor ezt jeleníti meg. Ha nincs, akkor egy alapértelmezett komponenst jelenít meg.
  *
  * @param {string} props.cim - Az oldal címe, ami megjelenik az oldalon.

@@ -3,10 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { MetaadatContext } from "../context/Alap/MetaadatContext";
 
 /**
+ * @module Auth
+ */
+
+/**
  * Az Auth egy higher-order component (HOC), ami ellenőrzi, hogy a felhasználó hitelesítve van.
  * Ha a felhasználó hitelesítve van, akkor megjeleníti a megadott komponenst.
  * Ha a felhasználó nincs hitelesítve, vagy a token lejár, akkor átirányítja a felhasználót a bejelentkezési oldalra. (/login)
  *
+ * @memberof Auth
  * @param {React.Component} Component - Egy komponens, ami hitelesítésre vár mielőtt megjelenítjük.
  * @returns {React.Component|null} - Ha sikerült a hitelesítés, akkor visszaadja a komponenst, vagy `null`, ha a hitelesítés nem sikerült.
  */
@@ -23,6 +28,9 @@ function Auth(Component) {
      * Átirányítja a felhasználót a bejelentkezési oldalra.
      * Beállítja a `hitelesítve` állapotot hamisra.
      *
+      * @name kijelentkezes
+      * @kind function
+      * @memberof Auth
      */
     const kijelentkezes = () => {
       setHitelesitve(false);
@@ -38,6 +46,8 @@ function Auth(Component) {
      * Ha nem rendelkezik érvényes tokennel, vagy ha eltelik egy óra,
      * akkor eltávolítja a tokent, a felhasználó e-mail címát és a token lejárati idejét a localStorage-ból,
      * átirányítja a felhasználót a bejelentkezési oldalra, és beállítja a `hitelesítve` állapotot hamisra.
+     * 
+     * @memberof Auth
      */
     useEffect(() => {
       if (localStorage.getItem("token")) {

@@ -5,11 +5,15 @@ import _ from "lodash";
 export const MegallokContext = createContext();
 
 /**
+ * @module MegallokContext
+ */
+
+/**
  * Egy Provider komponens, ami kontextust biztosít a megállók állapotának kezelésére mindkét irányban.
  *
  * @component
  * @param {ReactNode} children - Egy gyerek komponens, amit be akarunk ágyazni.
- *
+ * @memberof MegallokContext
  * @returns {ReactNode} Egy `MegallokContext.Provider` komponenst a kontextus értékeivel és metódusaival. 
  */
 export const MegallokProvider = ({ children }) => {
@@ -22,8 +26,8 @@ export const MegallokProvider = ({ children }) => {
   const [show, setShow] = useState(false);
 
   /**
-   * A `megallok` és a `regiMegallok` állapotokat is egyszerre beállítja.
-   *
+   * @description A `megallok` és a `regiMegallok` állapotokat is egyszerre beállítja.
+   * @memberof MegallokContext
    * @param {Object} mindketto - Az új oda/vissza megállók állapota.
    */
   const setMindketto = (mindketto) => {
@@ -32,8 +36,8 @@ export const MegallokProvider = ({ children }) => {
   };
   
   /**
-   * Átmásolja a megállókat a listában a másik megállóba és megfordítja őket.
-   *
+   * @description Átmásolja a megállókat a listában a másik megállóba és megfordítja őket.
+   * @memberof MegallokContext
    * @param {string} key - The key of the stop to copy and reverse.
    */
   const atmasol = (key) => {
@@ -51,8 +55,8 @@ export const MegallokProvider = ({ children }) => {
   };
 
   /**
-   * Megfordítja a megállókat a listában.
-   *
+   * @description Megfordítja a megállókat a listában.
+   * @memberof MegallokContext
    * @param {Array} lista - Egy lista, amit meg akarunk fordítani.
    * @returns {Array} A megfordított lista.
    */
@@ -70,12 +74,14 @@ export const MegallokProvider = ({ children }) => {
   };
 
   /**
-   * A {@link MetaadatContext} segítségével létrehozza az ellenkező irányú kulcsot a megállókhoz.
+   * @memberof MegallokContext
+   * @description {@link MetaadatContext} segítségével létrehozza az ellenkező irányú kulcsot a megállókhoz.
    */
   const oppositeKey = createOppositeKey(megallok);
 
   /**
-   * Ha a megállók állapota megváltozik a régi állapothoz képest, akkor megjeleníti a mentés gombot.
+   * @memberof MegallokContext
+   * @description Ha a megállók állapota megváltozik a régi állapothoz képest, akkor megjeleníti a mentés gombot.
    */
   useEffect(() => {
     setShow(!_.isEqual(megallok, regiMegallok));

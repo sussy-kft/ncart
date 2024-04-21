@@ -2,13 +2,21 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AxiosContext } from "./AxiosContext";
 
 /**
+ * @module MetaadatContext
+ */
+
+/**
  * @type {React.Context}
+ * @description Egy context, ami a metaadatokat tartalmazza.
+ * @memberof MetaadatContext
  */
 export const MetaadatContext = createContext();
 
 /**
- * @param {React.ReactNode} children Egy gyerek komponens, amit be akarunk ágyazni.
+ * @param {Object} param
+ * @param {React.ReactNode} param.children Egy gyerek komponens, amit be akarunk ágyazni.
  * @returns {React.ReactNode} Egy Provider komponenst.
+ * @memberof MetaadatContext
  */
 export const MetaadatProvider = ({ children }) => {
   const { getAll } = useContext(AxiosContext);
@@ -18,7 +26,9 @@ export const MetaadatProvider = ({ children }) => {
   const [kulsoAdatok, setKulsoAdatok] = useState();
 
   /**
-   * Lekérdezi az aktuális oldalhoz a `metaadatokat`.
+   * @description Lekérdezi az aktuális oldalhoz a `metaadatokat`.
+   * Ha a `url` változik, akkor újra lekéri a `metaadatokat`.
+   * @memberof MetaadatContext
    */
   useEffect(() => {
     setMetaadat(undefined);
@@ -26,9 +36,10 @@ export const MetaadatProvider = ({ children }) => {
   }, [url]);
 
   /**
-   * A referencia adatokat állítja be újra, ha a metaadat változik.
+   * @description A referencia adatokat állítja be újra, ha a metaadat változik.
    * Egyes adatok külső kulcsal rendelkezik, emiatt ezeket is le kell kérni.
    * Továbbá, ha a referencia egy beágyazott objektumban van, akkor azt is lekérdezi.
+   * @memberof MetaadatContext
    */
   useEffect(() => {
     const getReferenciak = async (metaadat) => {
@@ -50,8 +61,8 @@ export const MetaadatProvider = ({ children }) => {
   }, [metaadat]);
 
   /**
-   * Egy függvény, ami egy adott objektum listát kisimít, ha az adott kulcs egy tömb.
-   *
+   * @description Egy függvény, ami egy adott objektum listát kisimít, ha az adott kulcs egy tömb.
+   * @memberof MetaadatContext
    * @param {Array.<Object>} array - Egy objektumokat tartalmazó tömb, amit ki szeretnénk simítani.
    * @param {string} key - Ez a kulcs határozza meg, hogy ha az adott objektumnek az adott kulcsa egy tömb, akkor azt is simítsa ki.
    * @returns {Array.<Object>} A kisimított lista.
@@ -62,7 +73,8 @@ export const MetaadatProvider = ({ children }) => {
     );
 
   /**
-   * Visszaadja a elsődleges kulcsokat.
+   * @description Visszaadja a elsődleges kulcsokat.
+   * @memberof MetaadatContext
    * @returns {Array} Az elsődleges kulcsok tömbje.
    */
   const getPKs = () => {
@@ -81,7 +93,8 @@ export const MetaadatProvider = ({ children }) => {
   };
 
   /**
-   * Megkeresi a kulcsot a metaadatban.
+   * @description Megkeresi a kulcsot a metaadatban.
+   * @memberof MetaadatContext
    * @param {string} key - A megkeresendő kulcs.
    * @param {Array} lista - A lista, amiben keresni kell. Alapértelmezetten a metaadat, de a rekurzió miatt más elemet is meghív a függvény.
    * @returns {Object} A megtalált objektum, ha létezik, egyébként null.
@@ -99,8 +112,8 @@ export const MetaadatProvider = ({ children }) => {
   };
 
   /**
-   * Egy olyan függvényt hoz létre, ami kulcsokkal meghívva visszaadja azokat a kulcsokat az `obj` objektumból, amelyek nem egyenlőek a megadott kulcsokkal.
-   *
+   * @description Egy olyan függvényt hoz létre, ami kulcsokkal meghívva visszaadja azokat a kulcsokat az `obj` objektumból, amelyek nem egyenlőek a megadott kulcsokkal.
+   * @memberof MetaadatContext
    * @param {Object} obj - Az objektum, amelyből a kulcsokat szeretnénk visszakapni.
    * @returns {Function} Egy olyan függvény, amely egy kulcsotokat vesz át paraméterként, és visszaadja azokat a kulcsokat az `obj` objektumból, amelyek nem egyenlőek a megadott kulcsokkal.
    *
@@ -115,7 +128,8 @@ export const MetaadatProvider = ({ children }) => {
   };
   
   /**
-   * Egy függvény, ami a `localStorage`-ban tárolt `lejaratiIdopont` értékét és a jelenlegi időpontot használja a maradék idő kiszámításához.
+   * @description Egy függvény, ami a `localStorage`-ban tárolt `lejaratiIdopont` értékét és a jelenlegi időpontot használja a maradék idő kiszámításához.
+   * @memberof MetaadatContext
    * @returns {number} Hogy mennyi idő van hátra.
    */
   const getMaradekIdo = () => (new Date(localStorage.getItem("lejaratiIdopont")) - Date.now());

@@ -8,6 +8,7 @@ import { MegallokProvider } from "../../../context/Megallok/MegallokContext";
  * Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
  *
  * @component
+ * @param {Object} props A komponens propsa.
  * @param {string} cim - Az oldal címe.
  * @returns {JSX.Element} A megjeélítendő komponens.
  */

@@ -4,12 +4,19 @@ import InfoPanel from '../../komponensek/kozos/InfoPanel';
 import { InfoPanelContext } from './InfoPanelContext';
 
 /**
+ * @module AxiosContext
+ * @description 
+ * Az AxiosContext segítségével érhető el az AxiosProvider által biztosított állapotok és metódusok.
+ * @kind context
  * @type {React.Context}
  */
 export const AxiosContext = createContext();
 
 /**
- * @param {React.Component} children - Gyerek komponenst
+ * Az AxiosProvider komponens, ami az AxiosContext.Provider-t biztosítja.
+ * @memberof AxiosContext
+ * @param {Object} props - A komponens propsa
+ * @param {React.Component} props.children - Gyerek komponenst
  * @returns {React.Element} A gyerek komponesnt `AxiosProvider`-rel beágyazva.
  */
 export const AxiosProvider = ({ children }) => {
@@ -22,6 +29,8 @@ export const AxiosProvider = ({ children }) => {
     /**
      * A HTTP kérés kezeléseket kezeli.
      * @async
+     * @memberof AxiosContext
+     * @param {Object} params - A kérés paraméterei.
      * @param {string} params.method - HTTP metódus
      * @param {string} params.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
      * @param {Object} [params.data=null] - Adatok, amiket a kérés során elküldünk, hogy feldolgozásra kerüljenek
@@ -56,16 +65,18 @@ export const AxiosProvider = ({ children }) => {
 
     /**
      * Egy Objektum, ami tartalmazza a HTTP kérésekhez szükséges metódusokat.
+     * @memberof AxiosContext
      * @type {Object}
      */
     const httpMetodusok = {
         /**
+         * @memberof AxiosContext.httpMetodusok
          * @param {Object} request - A kérés paraméterei
-         * @param {string} params.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
+         * @param {string} request.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
          * @param {Function} request.callback - Callback függvény
          * @param {Function} request.errorCallback - Error callback függvény
          * @param {Object} request.item - Az adat, amit feldolgozni akarunk
-         * @param {string} request.id - ID to update
+         * @param {string} request.id - Az id, amit változtatni akarunk
          */
         getAll: (url, callback, errorCallback) => handleRequest({ method: 'get', url, callback, errorCallback }),
         destroy: (url, id) => handleRequest({ method: 'delete', url: url + "/" + id, successMessage: "A törlés sikeres volt!" }),
