@@ -7,7 +7,8 @@ import Form from "react-bootstrap/Form";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
- * `UjVonal` egy React komponens, amely egy új vonal létrehozására szolgál, ha még nincs oda/vissza vonal.
+ * @module UjVonal
+ * @description `UjVonal` egy React komponens, amely egy új vonal létrehozására szolgál, ha még nincs oda/vissza vonal.
  * Ez a komponens nagyban segíti a felhasználókat, hogy könnyen hozzáadhassanak egy új vonalat a rendszerhez, így nem kell a `Vonalak` nevű oldalon létrehozni, ha esetleg nincs még oda/vissza vonal.
  *
  * @component
@@ -23,6 +24,7 @@ function UjVonal({ masikVonal, meta, name }) {
   const { setRegiMegallok } = useContext(MegallokContext);
 
   /**
+   * @memberof UjVonal
    * @typedef {Object} adatok
    * @property {string} vonalSzam - A vonal ID-ja.
    * @property {string} jarmuTipus - A járműtípus külső kulcsa.
@@ -35,6 +37,7 @@ function UjVonal({ masikVonal, meta, name }) {
   const [opciok, setOpciok] = useState(null);
 
   /**
+   * @memberof UjVonal
    * @typedef {Object[]} metainfo
    * @property {string} cim - Az oldalon megjelenő cím az input mező előtt.
    * @property {string} name - Az ojektum kulcsa, amit a változásokkor módosítunk.
@@ -51,15 +54,17 @@ function UjVonal({ masikVonal, meta, name }) {
   ]
 
   /**
-   * Lekéri az összes állomást és beállítja az `opciok` állapotot.
+   * @name useEffect_setOpciok
+   * @description Lekéri az összes állomást és beállítja az `opciok` állapotot.
+   * @memberof UjVonal
    */
   useEffect(() => {
     getAll("allomasok", setOpciok);
   }, []);
 
   /**
-   * Az adatok változását kezelő függvény.
-   *
+   * @description Az adatok változását kezelő függvény.
+   * @memberof UjVonal
    * @param {string} customName - A kulcs, ami megmondja, hogy melyik adatot kell változtatni.
    * @param {Event} event - Esemény objektum.
    */
@@ -68,7 +73,8 @@ function UjVonal({ masikVonal, meta, name }) {
   };
 
   /**
-   * Egy új vonal létrehozásához küld egy POST kérést.
+   * @memberof UjVonal
+   * @description Egy új vonal létrehozásához küld egy POST kérést.
    * Amikor a válasz megérkezik, újra beállítja a `megallok` és a `regiMegallok` állapotokat.
    */
   const kuldes = async () => {
@@ -79,7 +85,8 @@ function UjVonal({ masikVonal, meta, name }) {
   };
 
   /**
-   * Egy `div` elemet generál egy `InputMezo` és `Form.Label` komponensekkel.
+   * @memberof UjVonal
+   * @description Egy `div` elemet generál egy `InputMezo` és `Form.Label` komponensekkel.
    *
    * @param {string} label - A `Form.Label` komponens szövege.
    * @param {string} customName - Amikor az `InputMezo` komponensben változik az érték, akkor ezzel a kulccsal állapítjuk meg, hogy melyik adatot kell módosítani az `adatok`-ban.

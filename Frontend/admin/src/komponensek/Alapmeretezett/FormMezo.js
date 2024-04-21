@@ -8,8 +8,11 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import InputMezo from "../kozos/InputMezo";
 import { Container } from "react-bootstrap";
 
+
 /**
- * `FormMezo` egy komponens, ami egy űrlapot generál a `metaadat` és `url` alapján.
+ * @module FormMezo
+ * @component
+ * @description `FormMezo` egy komponens, ami egy űrlapot generál a `metaadat` és `url` alapján.
  * A form mezők dinamikusan generálódnak a `metaadat` kontextus alapján, emiatt ha egy másik form mezőt akarunk, elég ha csak a `metaadat`-ot cseréljük le.
  * A form adatok a `MetaadatContext` `url`-jére kerülnek POST kérésben elküldésre.
  *
@@ -20,14 +23,31 @@ function FormMezo() {
   const { metaadat, url } = useContext(MetaadatContext);
 
   /**
-   * A form mezők változásait kezelő függvény.
+   * @memberof FormMezo
+   * @description A form mezők változásait kezelő függvény.
    *
    * @param {object} event - Esemény objektum.
    */
   const [validated, setValidated] = useState(false);
   const [adatok, setAdatok] = useState({});
 
-  const handleChange = ({ target: { name, type, checked, value } }) =>
+  /**
+   * @typedef {Object} Target
+   * @memberof FormMezo
+   * @property {string} name - Az objektum kulcsa az `adatok` objektumban.
+   * @property {string} type - Az input mező típusa.
+   * @property {boolean} checked - Jelzi, hogy a checkbox be van-e jelölve.
+   * @property {string} value - Az új érték, amit be kell állítani.
+   */
+
+  /**
+   * @description A változásokért felelős függvény
+   * @memberof FormMezo
+   * @param {Object} event - Egy esemény objektum.
+   * @param {Target} event.target - Az esemény célja.
+   */
+  const handleChange = ({ target }) =>{
+    const { name, type, checked, value } = target;
     setAdatok((values) => ({
       ...values,
       [name]:
@@ -37,9 +57,11 @@ function FormMezo() {
             : (values[name] ?? []).filter((elem) => elem !== value)
           : value,
     }));
+  }
 
   /**
-   * A form mezők generálása a `metaadat` kontextus alapján.
+   * @memberof FormMezo
+   * @description A form mezők generálása a `metaadat` kontextus alapján.
    *
    * @param {Array} lista - Egy lista, ami a generálandó mezőket tartalmazza.
    * @returns {Array} A legenerált form mezők, amiket már meg lehet jeleníteni.
@@ -58,7 +80,8 @@ function FormMezo() {
     ) || [];
 
   /**
-   * A form elküldésekor lefutó függvény.
+   * @memberof FormMezo
+   * @description A form elküldésekor lefutó függvény.
    *
    * @param {object} event - Esemény objektum.
    */
@@ -73,7 +96,8 @@ function FormMezo() {
   };
 
   /**
-   * A form mezőkből egy objektumot generál, amit a POST kérésben lehet használni.
+   * @memberof FormMezo
+   * @description A form mezőkből egy objektumot generál, amit a POST kérésben lehet használni.
    *
    * @param {Array} mintaAdat - Egy minta objektum lista, amiből tudja, hogy hogyan kell kiolvasni az adatokat.
    * @returns {object} A generált válasz objektum.

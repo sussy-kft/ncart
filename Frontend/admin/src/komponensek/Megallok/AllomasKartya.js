@@ -7,7 +7,8 @@ import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
 
 /**
- * Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
+ * @module AllomasKartya
+ * @description Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
  *
  * @param {Object} allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
  * @param {string} allomas.allomas - Az állomás ID-ja.
@@ -22,9 +23,10 @@ function AllomasKartya({ allomas, nev, irany }) {
     useContext(MegallokContext);
 
   /**
-   * A jelenlegi állomás időtartamát módosítja.
-   *
+   * @description A jelenlegi állomás időtartamát módosítja.
+   * @memberof AllomasKartya
    * @param {Event} event - Egy esemény objektum.
+   * @returns {void}
    */
   const handleChange = (event) => {
     setShow(true);
@@ -48,8 +50,9 @@ function AllomasKartya({ allomas, nev, irany }) {
   };
 
   /**
-   * A jelenlegi állomást törli a listából.
-   *
+   * @description A jelenlegi állomást törli a listából.
+   * @memberof AllomasKartya
+   * @returns {void}
    */
   const torol = () => {
     let index = megallok[irany].megallok.findIndex(
@@ -80,7 +83,6 @@ function AllomasKartya({ allomas, nev, irany }) {
 
   if (!allomas || !megallok) return null;
 
-  console.log("sussy", allomas);
   return (
     <Card className="d-flex flex-row text-start">
       <Card.Img

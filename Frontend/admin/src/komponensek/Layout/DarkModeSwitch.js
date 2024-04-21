@@ -3,10 +3,11 @@ import { FormCheck } from "react-bootstrap";
 import { DarkModeContext, Tema } from "../../context/Alap/DarkModeContext";
 import * as Icon from "react-bootstrap-icons";
 
+
 /**
- * DarkModeSwitch egy olyan komponens, ami világos és sötét mód között vált.
+ * @description DarkModeSwitch egy olyan komponens, ami világos és sötét mód között vált.
  * A DarkModeContext-ot használja a jelenlegi téma beállításához és lekéréséhez.
- *
+ * @module DarkModeSwitch
  * @component
  * 
  * @returns {JSX.Element} Egy switch, amely világos és sötét mód között vált.
@@ -16,8 +17,9 @@ function DarkModeSwitch() {
   const { setDarkMode, getText } = useContext(DarkModeContext);
 
   /**
+   * @memberof DarkModeSwitch
    * @type {React.Component} IconComponent
-   * Egy ikon, ami a kovetkező témát reprezentálja. Ez MoonFill a világos téma esetén és SunFill a sötét téma esetén.
+   * @description Egy ikon, ami a kovetkező témát reprezentálja. Ez MoonFill a világos téma esetén és SunFill a sötét téma esetén.
    */
   const IconComponent = getText() === Tema.LIGHT ? Icon.MoonFill : Icon.SunFill;
 

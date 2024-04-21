@@ -3,9 +3,14 @@ import { useState, useContext } from "react";
 import InputMezo from "../kozos/InputMezo";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
+
 /**
- * @param {Array} pool - Azok a megállók, amik még nem szerepelnek az adott vonalon.
- * @param {string} irany - Az irány, amelyik vonalhoz hozzá akarjuk adni az új megállót.
+ * @module UjAllomas
+ * @description Egy React komponens, amely lehetővé teszi egy új állomás hozzáadását egy adott vonalhoz.
+ * @component
+ * @param {Object} props - A komponens propsa.
+ * @param {Array} props.pool - Azok a megállók, amik még nem szerepelnek az adott vonalon.
+ * @param {string} props.irany - Az irány, amelyik vonalhoz hozzá akarjuk adni az új megállót.
  * @returns {React.Component} `UjAllomas` komponenst
  */
 function UjAllomas({ pool, irany }) {
@@ -13,15 +18,16 @@ function UjAllomas({ pool, irany }) {
     useContext(MegallokContext);
 
   /**
-   * Az új állomás adatai
+   * @memberof UjAllomas
+   * @description Az új állomás adatai
    * @type {Object} adatok - A jelenlegi állomás adatai.
    * @type {Function} setAdatok - Az állapot frissítésére szolgáló függvény.
    */
   const [adatok, setAdatok] = useState({ ...pool[0], ido: 1 });
 
   /**
-   * A lokális megállók mentését kezeli.
-   *
+   * @memberof UjAllomas
+   * @description A lokális megállók mentését kezeli.
    * @param {Event} event - Egy esemény objektum.
    * @param {Object} obj - Egy objektum, amit menteni akarunk.
    * @param {Function} callback - Egy callback függvény, ami a következő input mezőt állítja be.
@@ -59,12 +65,20 @@ function UjAllomas({ pool, irany }) {
   };
 
   /**
-   * A változásokért felelős függvény
-   * @param {Object} event - Egy esemény objektum.
-   * @param {Object} event.target.name - A változtatni kívánt objektum kulcsa az `adatok` objektumban.
-   * @param {Object} event.target.value - Az új érték, amit be kell állítani.
+   * @memberof UjAllomas
+   * @typedef {Object} Target
+   * @property {string} name - A változtatni kívánt objektum kulcsa az `adatok` objektumban.
+   * @property {any} value - Az új érték, amit be kell állítani.
    */
-  const handleChange = ({ target: { name, value } }) => {
+
+  /**
+   * @memberof UjAllomas
+   * @description A változásokért felelős függvény
+   * @param {Object} event - Egy esemény objektum.
+   * @param {Target} event.target - Az esemény objektum célja.
+   */
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
     setAdatok((values) => ({
       ...values,
       [name[0].toLowerCase() + name.slice(1)]: value,
@@ -72,7 +86,8 @@ function UjAllomas({ pool, irany }) {
   };
 
   /**
-   * A következő elem.
+   * @memberof UjAllomas
+   * @description A következő elem.
    * Ha az első elemet választotta ki, a fejhasználó, akkor annak a következő elemét adja vissza.
    * @returns {Object} A következő elem, ami automatikusan kiválasztódik
    */

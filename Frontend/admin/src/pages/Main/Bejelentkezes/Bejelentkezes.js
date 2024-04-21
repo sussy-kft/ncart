@@ -12,7 +12,7 @@ import { InfoPanelContext } from "../../../context/Alap/InfoPanelContext";
 
 /**
  * @module Bejelentkezes
- * A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
+ * @description A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
  * @returns {JSX.Element} A megjeleníteni kivánt `Bejelentkezes` komponenst.
  */
 function Bejelentkezes() {

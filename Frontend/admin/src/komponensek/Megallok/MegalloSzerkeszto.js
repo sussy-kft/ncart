@@ -11,14 +11,16 @@ import MentesOffcanvas from "./MentesOffcanvas";
 import _ from "lodash";
 
 /**
- * `MegalloSzerkeszto` egy React komponens, amely egy űrlapot renderel a "megallok" kezelésére.
+ * @module MegalloSzerkeszto
+ * @description `MegalloSzerkeszto` egy React komponens, amely egy űrlapot renderel a "megallok" kezelésére.
  * A komponens megvalósítja a drag-and-drop funkcionalitást a megállók átrendezéséhez, valamint a megállók megfordításához.
  * Továbbá rendelkezik egy szinkronizáló gombbal is, amely a megállók szinkronizálását teszi lehetővé.
  * Így ha a felhasználó megváltoztatja az egyik irányú megállókat, akkor a másik irányú megállók is megváltoznak.
  * Az adatokat egy felugró ablakban lehet menteni, vagy esetleg visszaállítani, az előző állapotra.
  *
  * @component
- * @param {Object} meta - Azokat az infókat tartalmazza, amihez szükséges egy új vonal létrehozásához.
+ * @param {Object} props - A komponens propsa.
+ * @param {Object} props.meta - Azokat az infókat tartalmazza, amihez szükséges egy új vonal létrehozásához.
  * Ez azért kell, ha esetleg a felhasználó új vonalat akar létrehozni, de még nincs se oda, se vissza vonala, akkor a meta objektum segítségével ezeket a vonalakat létre tudja hozni.
  *
  * @returns {React.Element} Egy űrlapot, amely a megállók kezelésére szolgál.
@@ -29,11 +31,11 @@ function MegalloSzerkeszto({ meta }) {
     useContext(MegallokContext);
 
   /**
-   * A `handleDragEnd` egy függvény, amely a drag-and-drop műveletet kezeli.
+   * @description A `handleDragEnd` egy függvény, amely a drag-and-drop műveletet kezeli.
    * Frissíti a megállók sorrendjét és ha kell akkor az elöző megállókat is.
    * Továbbá a `checked` (a szinkronizálás be van-e kapcsolva) állapotától függően tökrözi a megállókat fordított sorrendben.
    * Tehát ha a szinkronizálás be van kapcsolva, akkor a megállók sorrendje is megfordul..
-   *
+   * @memberof MegalloSzerkeszto
    * @param {Object} result Az eredmény objektum a react-beautiful-dnd onDragEnd eseményéből.
    * @param {Object} result.source Egy objektum, amely leírja a drag művelet forrását.
    * @param {string} result.source.droppableId A forrás droppable ID-je.

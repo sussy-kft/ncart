@@ -3,7 +3,7 @@ import * as Icon from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 /**
- * Egy LogoutIcon komponens, ami egy kijelentkezés ikont megjeleníti.
+ * @description Egy LogoutIcon komponens, ami egy kijelentkezés ikont megjeleníti.
  * Amikor az ikonra kattintanak, eltávolítja a "felhasznalo" értéket a sessionStorage-ből,
  * és a "token" értéket a localStorage-ből, majd átnavigál a "/login" útvonalra.
  *

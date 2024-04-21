@@ -5,18 +5,21 @@ import MegalloSzerkeszto from "../../../komponensek/Megallok/MegalloSzerkeszto";
 import { MegallokProvider } from "../../../context/Megallok/MegallokContext";
 
 /**
- * Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
+ * @descriptionFő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
  *
  * @component
  * @param {Object} props A komponens propsa.
- * @param {string} cim - Az oldal címe.
+ * @param {string} props.cim - Az oldal címe.
  * @returns {JSX.Element} A megjeélítendő komponens.
  */
 function MegalloOdlal({ cim }) {
 
   /**
-   * A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
+   * @memberof MegalloOdlal
+   * @description A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
    * Olyan információkat tartalmaz, mint a vonalSzám és a járműtípus. 
+   * @type {Object}
+   * @default null
    */
   const [meta, setMeta] = React.useState(null);
 

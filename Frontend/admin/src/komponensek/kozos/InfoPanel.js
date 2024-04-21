@@ -6,9 +6,9 @@ import Toast from 'react-bootstrap/Toast';
  * Ez arra alkalmas, hogy a felhasználó értesítéseket kapjon a weboldalon, hogyha valami történik a háttérben és visszajelzést szeretnénk neki küldeni.
  * Automatikusan eltűnik 5s után.
  *
- * 
- * @param {string} bg - A háttérszín a Toastnak. (A Bootstrap színeit használja)
- * @param {string} text - A szöveg, amit a Toastban megjelenít.
+ * @param {Object} props - A komponens propsa.
+ * @param {string} props.bg - A háttérszín a Toastnak. (A Bootstrap színeit használja)
+ * @param {string} props.text - A szöveg, amit a Toastban megjelenít.
  *
  * @returns {JSX.Element} Egy Toast komponenst.
  */

@@ -29,8 +29,8 @@ export const DarkModeContext = createContext();
 
 /**
  * @component
- * @param {Object} props - A komponens propsai.
- * @param {React.ReactNode} children - Gyerek komponenst, amit majd beágyazunk a `DarkModeContext`-be.
+ * @param {Object} props - A komponens propsa.
+ * @param {React.ReactNode} props.children - Gyerek komponenst, amit majd beágyazunk a `DarkModeContext`-be.
  * @returns {React.Element} A gyerek komponenst, ami a `DarkModeContext`-et és a `HelmetProvider`-t tartalmazza.
  * @memberof DarkModeContext
  */

@@ -7,7 +7,8 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
- * A `VonalSzuro` egy React komponens, ami egy csoport select inputot jelenít meg, hogy a felhasználó kiválaszthassa, hogy melyik vonalat akarja szerkeszteni.
+ * @module VonalSzuro
+ * @description A `VonalSzuro` egy React komponens, ami egy csoport select inputot jelenít meg, hogy a felhasználó kiválaszthassa, hogy melyik vonalat akarja szerkeszteni.
  * Az adatokat a megadott URL-ekről tölti be és a select inputokat a betöltött adatokkal tölti fel.
  *
  * @param {Array} pool - Egy objektum lista, ami az input mezőkhöz tartozó metaadatokat tartalmazza.
@@ -24,13 +25,21 @@ function VonalSzuro({ pool, setMeta }) {
   const [opciok, setOpciok] = useState(null);
 
   /**
-   * A select input mezők értékeinek változását kezeli.
-   *
-   * @param {Object} event - Egér esemény objektum.
-   * @param {string} event.target.name - Ez határozza meg az `adatok` objektum kulcsát.
-   * @param {string} event.target.value - Ez az érték lesz beállítva az `adatok` objektum kulcsához.
+   * @memberof VonalSzuro
+   * @typedef {Object} Target
+   * @property {string} name -  Ez határozza meg az `adatok` objektum kulcsát.
+   * @property {any} value - Ez az érték lesz beállítva az `adatok` objektum kulcsához.
    */
-  const handleChange = ({ target: { name, value } }) => {
+
+  /**
+   * 
+   * @description A select input mezők értékeinek változását kezeli.
+   * @memberof VonalSzuro
+   * @param {Object} event - Egér esemény objektum.
+   * @param {Target} event.target - Az esemény célja.
+   */
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
     setAdatok((elozoAdatok) => ({
       ...elozoAdatok,
       [name[0].toLowerCase() + name.slice(1)]: value,
@@ -38,7 +47,9 @@ function VonalSzuro({ pool, setMeta }) {
   };
 
   /**
-   * Ez a useEffect hook felelős az `adatok` állapot változásainak kezeléséért.
+   * @memberof VonalSzuro
+   * @name useEffect_setMindketto
+   * @description Ez a useEffect hook felelős az `adatok` állapot változásainak kezeléséért.
    * Kezdetben null értékkel hívja meg a `setMindketto` függvényt.
    * Ha az `adatok` nem null, akkor egy GET kérést indít a `vonalak/megallok/` végpontra, amelyhez hozzáfűzi az `adatok` kulcsait, "/" jellel összekötve.
    * Ha a GET kérés sikeres, akkor átadja a választ a `setMindketto`-nek.
@@ -63,7 +74,9 @@ function VonalSzuro({ pool, setMeta }) {
   }, [adatok]);
 
   /**
-   * Ez az useEffect hook felelős az adatok lekérdezéséért és az `opciok` állapot beállításáért.
+   * @memberof VonalSzuro
+   * @name useEffect_setOpciok
+   * @description Ez az useEffect hook felelős az adatok lekérdezéséért és az `opciok` állapot beállításáért.
    * Először végrehajtja az összes GET kérést, ami a `pool` tömbben lévő URL-nek a segítségével határozza meg a végpontot.
    * Ezután beállítja az `opciok` objektumot a lekérdezett adatok segítségével.
    * A `pool`-ban lévő URL-eket az `opciok` objektum kulcsaként használja, az érték pedig egy egyedi elemekből álló tömb.

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 /**
- * UdvozloOldal egy komponens, ami az üdvözlő oldalt jeleníti meg.
+ * @description UdvozloOldal egy komponens, ami az üdvözlő oldalt jeleníti meg.
  *
  * Egy rövid üdvözlő üzenetet jelenít meg, amelyben röviden bemutatja az adminisztrációs felület funkcióit,
  * és egy linket a dokumentációs oldalra.

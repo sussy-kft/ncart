@@ -2,7 +2,7 @@ import NoPageMedia from "../../../media/Metro_404.mp4";
 
 /**
  *
- * A NoPage komponens egy videót jelenít meg, amikor egy oldal nem található (404).
+ * @description A NoPage komponens egy videót jelenít meg, amikor egy oldal nem található (404).
  * A videó automatikusan elindul, ismétlődik és némítva van.
  * A videó szélessége kitölti a konténer teljes szélességét, és megőrzi 16:9-es képarányát.
  * A videó magassága kitölti a (minusz 56px a navbar miatt) megmaradó helyet.

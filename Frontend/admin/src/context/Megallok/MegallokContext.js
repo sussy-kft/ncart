@@ -12,7 +12,8 @@ export const MegallokContext = createContext();
  * Egy Provider komponens, ami kontextust biztosít a megállók állapotának kezelésére mindkét irányban.
  *
  * @component
- * @param {ReactNode} children - Egy gyerek komponens, amit be akarunk ágyazni.
+ * @param {Object} props - A komponens propsa.
+ * @param {ReactNode} props.children - Egy gyerek komponens, amit be akarunk ágyazni.
  * @memberof MegallokContext
  * @returns {ReactNode} Egy `MegallokContext.Provider` komponenst a kontextus értékeivel és metódusaival. 
  */

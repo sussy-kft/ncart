@@ -3,7 +3,8 @@ import { ToggleButton } from "react-bootstrap";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
- * `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.
+ * @module SzinkronizaloGomb
+ * @description `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.
  * A felhasználó beállíthatja, hogy be vagy ki legyen kapcsolva a szinkronizálás.
  * Ha a szinkronizálás be van kapcsolva, akkor az oda és vissza irányú megállók tükörképei lesznek egymásnak.
  * (Az első megálló az egyik irányban az utolsó megálló a másik irányban stb.)
@@ -16,7 +17,8 @@ function SzinkronizaloGomb() {
   const { megallok, checked, setChecked } = useContext(MegallokContext);
 
   /**
-   * Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
+   * @memberof SzinkronizaloGomb
+   * @description Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
    * Mivel a szinkronizálás akkor lehetséges, ha azonos számú megálló van mindkét irányban, és minden megálló ugyanaz a megálló a másik irányban, csak fordított sorrendben.
    * Ha a fetéltel teljesül, akkor a gomb kattintható, egyébként nem.
    * 

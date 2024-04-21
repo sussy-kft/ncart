@@ -7,10 +7,10 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import _ from "lodash";
 
 /**
- * `MentesOffcanvas` egy React komponens, amely egy offcanvas UI elemet jelenít meg.
+ * @description `MentesOffcanvas` egy React komponens, amely egy offcanvas UI elemet jelenít meg.
  * Ez a komponens a mentetlen változtatások állapotát kezeli és lehetőséget biztosít ezek elvetésére vagy mentésére.
  * @component
- *
+ * @module MentesOffcanvas
  * @returns {React.Element} Egy offcanvas UI elemet, amely akkor jelenik meg, ha vannak nem mentett változtatások.
  * Két gombot tartalmaz: egyet a változtatások elvetéséhez és egyet a változtatások mentéséhez.
  *
@@ -21,7 +21,8 @@ function MentesOffcanvas(){
   const { megallok, setMegallok, regiMegallok, setRegiMegallok, show, setShow, setChecked } = useContext(MegallokContext);
   
   /**
-   * `kuldes` egy aszinkron függvény, amely elküldi a `megallok` aktuális állapotát.
+   * @memberof MentesOffcanvas
+   * @description `kuldes` egy aszinkron függvény, amely elküldi a `megallok` aktuális állapotát.
    * A post művelet után beállítja a `regiMegallok` értékét a `megallok` aktuális állapotára, és elrejti az offcanvas UI-t.
    */
   const kuldes = async () => {
@@ -39,7 +40,8 @@ function MentesOffcanvas(){
   };
 
   /**
-   * `visszaallit` egy olyan függvény, amely visszaállítja a `megallok` állapotát a `regiMegallok` állapotára, és viszaállítja a szinronizáló gombot, majd elrejti az off-canvas UI-t.
+   * @memberof MentesOffcanvas
+   * @description `visszaallit` egy olyan függvény, amely visszaállítja a `megallok` állapotát a `regiMegallok` állapotára, és viszaállítja a szinronizáló gombot, majd elrejti az off-canvas UI-t.
    */
   const visszaallit = () => {
     setChecked(false);

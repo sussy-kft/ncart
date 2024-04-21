@@ -8,10 +8,6 @@ import Auth from "../../../HOC/Auth";
 import Documentacio from "./DocumentacioOldal";
 
 /**
- * @module Admin
- */
-
-/**
  * @memberof Admin
  * @inner
  * @typedef {Object} Utvonal
@@ -37,9 +33,8 @@ const utvonalak = [
 ];
 
 /**
- * @memberof Admin
- * @inner
- * Az Admin komponens feladata, hogy a további útvonalakak megjelenítését kezelje.
+ * @module Admin
+ * @description Az Admin komponens feladata, hogy a további útvonalakak megjelenítését kezelje.
  * @returns {React.Component} Az Admin komponenst.
  */
 function Admin() {
