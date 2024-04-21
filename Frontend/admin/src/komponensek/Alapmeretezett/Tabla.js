@@ -12,7 +12,8 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import Sor from "./Sor";
 
 /**
- * Egy React komponens, ami egy táblázatot jelenít meg adatokkal, amiket az URL-ből állapítja meg, hogy honnan kell lekérni.
+ * @module Tabla
+ * @description Egy React komponens, ami egy táblázatot jelenít meg adatokkal, amiket az URL-ből állapítja meg, hogy honnan kell lekérni.
  *
  * @returns {JSX.Element} Egy táblázatot ad vissza adatokkal, vagy egy képet, ami a hibás vagy betöltés állapotot jelzi.
  */
@@ -25,9 +26,9 @@ function Tabla() {
   const [adatok, setAdatok] = useState(null);
 
   /**
-   * Egy callback függvény, ami az adat egyedi útvonalát álapítja meg és megjeleníti a popupot.
+   * @description Egy callback függvény, ami az adat egyedi útvonalát álapítja meg és megjeleníti a popupot.
    * Az `useCallback`-et használja, hogy elkerülje a felesleges újra rendereléseket.
-   *
+   * @memberof Tabla
    * @param {Object.<string, *>} row - Az adott sor adatai.
    */
   const adatUtvonal = useCallback(
@@ -42,7 +43,9 @@ function Tabla() {
   );
 
   /**
-   * Egy hook, ami lekéri az új adatokat, amikor az `url` vagy az `axiosId` megváltozik.
+   * @memberof Tabla
+   * @name useEffect_setAdatok
+   * @description Egy hook, ami lekéri az új adatokat, amikor az `url` vagy az `axiosId` megváltozik.
    * Az `adatok` állapotot `null`-ra állítja, mielőtt új adatokat kérne le, hogy ne jelenjenek meg a régi adatok, miközben lekéri az új adatokat.
    */
   useEffect(() => {
@@ -69,11 +72,11 @@ function Tabla() {
       });
 
   /**
-   * Egy rekúrzív függvény, ami lőször rendezi az objektumokat a `columnIndex` alapján, majd táblázat fejlécét generálja az `elem` objektum kulcsai alapján.
+   * @description Egy rekúrzív függvény, ami lőször rendezi az objektumokat a `columnIndex` alapján, majd táblázat fejlécét generálja az `elem` objektum kulcsai alapján.
    * Az `useRef`-et és `useCallback`-et hookokat használ, hogy biztosítsa, hogy a függvény mindig a legfrissebb verzióját hívja meg.
    * Azért van szükség a `useCallback`-re, hogy elkerülje a függvény felesleges számolásokat, amikor a függvény függőségei (`findKey`, `kulsoAdatok`) nem változnak.
    * A `useRef`-et azért használja, hogy a függvény mindig a legfrissebb verzióját hívja meg, mivel a függvény rekurzív, előfordulhat, hogy közben a függőség frissül, emiatt az `useCallback` nem a megfelelő verziót hívná meg.
-   *
+   * @memberof Tabla
    * @param {Object.<string, *>} elem - Egy objektumot, aminek az összes adattagját meg akarunk jeleníteni a fejécben.
    * Továbbá alkalmas a mély objektumok feldolgozására is.
    * @returns {JSX.Element[] | null} Egy tömböt ad vissza a táblázat fejléc elemeivel.

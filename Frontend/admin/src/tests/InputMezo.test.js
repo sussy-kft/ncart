@@ -19,6 +19,20 @@ jest.mock("../komponensek/kozos/SelectMezo", () => jest.fn());
 import { typeConverter, maxConverter, minConverter } from "../komponensek/kozos/InputMezo";
 
 /**
+ * @module InputMezo.test
+ * @description Ez a fájl teszteket tartalmaz az InputMezo komponenshez.
+ * 
+ * A tesztek során mockoljuk a react, react-bootstrap és a saját komponenseinket, hogy izolált környezetben tudjuk őket tesztelni.
+ * 
+ * Az InputMezo komponens tesztjei során ellenőrizzük, hogy a typeConverter, maxConverter és minConverter függvények helyesen működnek-e.
+ * Ehhez a jest keretrendszer expect függvényét használjuk, hogy összehasonlítsuk a függvények visszatérési értékét az elvárt értékkel.
+ * 
+ * A typeConverter függvény tesztjei során ellenőrizzük, hogy a függvény helyesen konvertálja-e a típusokat.
+ * 
+ * A maxConverter és minConverter függvények tesztjei során ellenőrizzük, hogy a függvények helyesen konvertálják-e a maximum és minimum értékeket.
+ */
+
+/**
  * A typeConverter függvény tesztjei, hogy helyesen konvertálja-e a típusokat.
  */
 describe("typeConverter", () => {

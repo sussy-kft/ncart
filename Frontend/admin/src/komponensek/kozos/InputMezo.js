@@ -5,6 +5,7 @@ import { AxiosContext } from "../../context/Alap/AxiosContext";
 import SelectMezo from "./SelectMezo";
 
 /**
+ * @module InputMezo
  * InputMezo egy komponens, ami egy input form vezérlőt jelenít meg.
  * Az input form vezérlő az `input` segítségével állítja be a szüksges adatokat.
  * Egy flag-et is kezel, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
@@ -13,17 +14,18 @@ import SelectMezo from "./SelectMezo";
  * Vagy ha a `references` vagy a `isSelect` nem üres, akkor egy select form vezérlőt jelenít meg a {@link SelectMezo} segítségével.
  *
  * @component
- * @param {string} as - Egy komponens típusa, amibe majd beágyazza az input form vezérlőt.
- * @param {boolean} flag - Egy flag, amit a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
- * @param {Object} input - Az input mező metaadatai.
- * @param {boolean} isSelect - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {function} handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
- * @param {string} value - Az input vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani az input vezérlőn keresztül.
- * @param {Array} pool - Az input vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
- * @param {string} name - Az input vezérlő neve.
- * @param {boolean} idk - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {string} veryCoolValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
- * @param {boolean} checked - Egy flag, amit a select vezérlő értékének beállításához használ, hogy a checkbox be legyen-e pipálva vagy sem.
+ * @param {Object} props - A komponens propsa.
+ * @param {string} props.as - Egy komponens típusa, amibe majd beágyazza az input form vezérlőt.
+ * @param {boolean} props.flag - Egy flag, amit a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
+ * @param {Object} props.input - Az input mező metaadatai.
+ * @param {boolean} props.isSelect - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {function} props.handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
+ * @param {string} props.value - Az input vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani az input vezérlőn keresztül.
+ * @param {Array} props.pool - Az input vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
+ * @param {string} props.name - Az input vezérlő neve.
+ * @param {boolean} props.idk - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {string} props.veryCoolValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
+ * @param {boolean} props.checked - Egy flag, amit a select vezérlő értékének beállításához használ, hogy a checkbox be legyen-e pipálva vagy sem.
  *
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
  */
@@ -42,26 +44,31 @@ function InputMezo({
 }) {
   const { getAll } = useContext(AxiosContext);
   /**
-   * Egy useState hook, ami a select vezérlő opcióit kezeli.
+   * @memberof InputMezo
+   * @description Az adott input mező opciói.
    */
   const [opciok, setOpciok] = useState([]);
   /**
-   * Egy useState hook, ami flag-et kezel, hogy a handleChange függvényt csak egyszer hívják meg.
-   * useState hook to manage a flag that ensures the handleChange function is only called once.
+   * @memberof InputMezo
+   * @description Egy flag, ami azt jelzi, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
    */
   const [onceFlag, setOnceFlag] = useState(false);
 
   const As = as ?? "react.fragment";
 
   /**
-   * Egy UseEffect hook, ami a lekéri az opciókat a szerverről, ha a `references` mező nem üres.
+   * @memberof InputMezo
+   * @name useEffect_setOpciok
+   * @description Egy UseEffect hook, ami a lekéri az opciókat a szerverről, ha a `references` mező nem üres.
    */
   useEffect(() => {
     if (input?.references) getAll(input?.references, setOpciok);
   }, [input?.references]);
 
   /**
-   * Egy UseEffect hook, ami a egy alkalommal meghívja a handleChange függvényt, hogy legyen alapértelmezett értéke.
+   * @memberof InputMezo
+   * @name useEffect_autoSet
+   * @description Egy UseEffect hook, ami a egy alkalommal meghívja a handleChange függvényt, hogy legyen alapértelmezett értéke.
    */
   useEffect(() => {
     if (
@@ -163,7 +170,8 @@ function InputMezo({
 }
 
 /**
- * typeConverter egy olyan függvény, ami a backendről kapott típusokat átkonvertálja a megfelelő input típusra.
+ * @memberof InputMezo
+ * @description typeConverter egy olyan függvény, ami a backendről kapott típusokat átkonvertálja a megfelelő input típusra.
  *
  *
  * @function
@@ -193,7 +201,8 @@ export function typeConverter(type) {
 }
 
 /**
- * maxConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő maximum értéket.
+ * @memberof InputMezo
+ * @description maxConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő maximum értéket.
  *
  *
  * @function
@@ -220,7 +229,8 @@ export function maxConverter(type) {
 }
 
 /**
- * minConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő minimum értéket.
+ * @memberof InputMezo
+ * @description minConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő minimum értéket.
  *
  *
  * @function

@@ -1,22 +1,20 @@
 import { render } from '@testing-library/react';
 import { AxiosContext, AxiosProvider } from '../context/Alap/AxiosContext';
 import axios from 'axios';
-import { InfoPanelContext } from '../context/Alap/InfoPanelContext'; // Import the InfoPanelContext
+import { InfoPanelContext } from '../context/Alap/InfoPanelContext';
 import MockAdapter from 'axios-mock-adapter';
 
-// Don't mock axios
-var mock = new MockAdapter(axios);
-// Mock setup
+let mock = new MockAdapter(axios);
+
 mock.onGet('https://localhost:44339/test').reply(200, 'xd');
 mock.onPost('https://localhost:44339/test').reply(200, 'xd');
 mock.onPut('https://localhost:44339/test').reply(200, 'xd');
 mock.onPatch('https://localhost:44339/test').reply(200, 'xd');
 mock.onDelete('https://localhost:44339/test').reply(200, 'xd');
 
-
 /**
- * 
- * Ez a fájl teszteket tartalmaz az AxiosProvider és AxiosContext komponensekhez.
+ * @module AxiosContext.test
+ * @description Ez a fájl teszteket tartalmaz az AxiosProvider és AxiosContext komponensekhez.
  * 
  * Az axios csomagot nem mockoljuk, helyette a MockAdapter segítségével beállítjuk a válaszokat a különböző HTTP metódusokra.
  * 

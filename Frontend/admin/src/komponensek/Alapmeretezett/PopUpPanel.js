@@ -8,12 +8,14 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import text from "../../media/delete";
 
 /**
- * A PopUpPanel egy React komponens, ami a bootstrap {@link Modal} komponensét használja egy törlési megerősítő ablak megjelenítésére.
+ * @module PopUpPanel
+ * @description A PopUpPanel egy React komponens, ami a bootstrap {@link Modal} komponensét használja egy törlési megerősítő ablak megjelenítésére.
  * Az AxiosContextet használja, hogy az adatot a szerverről törölje és a MetaadatContextet a URL meghatározására, hogy melyik táblából kell letörölni az adatot.
  * 
- * @param {string} id - Az adott elem ID-ja, ez alapján tudja, hogy a szerver melyik elemet törölje.
- * @param {boolean} show - Ez jelzi, hogy a modal megjelenjen-e vagy sem.
- * @param {Function} handleClose - Egy callback függvény, ami meghívódik, amikor a modal bezáródik.
+ * @param {Object} props - A komponens propsa.
+ * @param {string} props.id - Az adott elem ID-ja, ez alapján tudja, hogy a szerver melyik elemet törölje.
+ * @param {boolean}  props.show - Ez jelzi, hogy a modal megjelenjen-e vagy sem.
+ * @param {Function}  props.handleClose - Egy callback függvény, ami meghívódik, amikor a modal bezáródik.
  * The function to be called when the modal is closed.
  * 
  * @returns {JSX.Element} Egy bootstrap modal komponenst, ami egy törlési megerősítő ablakot jelenít meg.
@@ -22,6 +24,10 @@ function PopUpPanel({ id, show, handleClose }) {
   const { destroy } = useContext(AxiosContext);
   const { url } = useContext(MetaadatContext);
 
+  /**
+   * @description A törlési folyamatot indítja el.
+   * @memberof PopUpPanel
+   */
   const handleDelete = () => {
     destroy(url, id);
     handleClose();

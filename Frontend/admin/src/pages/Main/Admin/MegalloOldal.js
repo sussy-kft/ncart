@@ -24,8 +24,8 @@ function MegalloOdlal({ cim }) {
   const [meta, setMeta] = React.useState(null);
 
   /**
-   * Metainfo, hogy a Vonalszűrőnek hogyan kell kezelnie az adatokat.
-   * 
+   * @description Metainfo, hogy a Vonalszűrőnek hogyan kell kezelnie az adatokat.
+   * @memberof MegalloOdlal
    * @property {string} url - Az URL, ahonnan az adatokat le kell kérni.
    * @property {string} key - Megmondja, hogy melyik kulcsnak kell az {@link InputMezo} name értékének lennie.
    * @property {string} value - Megmondja, hogy melyik kulcsnakk kell az {@link InputMezo} value értékének lennie.
