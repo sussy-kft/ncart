@@ -19,7 +19,7 @@ function DarkModeSwitch() {
   /**
    * @memberof DarkModeSwitch
    * @type {React.Component} IconComponent
-   * @description Egy ikon, ami a kovetkező témát reprezentálja. Ez MoonFill a világos téma esetén és SunFill a sötét téma esetén.
+   * @description Egy komponens ikon, ami a kovetkező témát reprezentálja. Ez MoonFill a világos téma esetén és SunFill a sötét téma esetén.
    */
   const IconComponent = getText() === Tema.LIGHT ? Icon.MoonFill : Icon.SunFill;
 

@@ -5,7 +5,7 @@ import MegalloSzerkeszto from "../../../komponensek/Megallok/MegalloSzerkeszto";
 import { MegallokProvider } from "../../../context/Megallok/MegallokContext";
 
 /**
- * @descriptionFő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
+ * @description Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
  *
  * @component
  * @param {Object} props A komponens propsa.

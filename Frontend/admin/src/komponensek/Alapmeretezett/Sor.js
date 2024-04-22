@@ -13,9 +13,9 @@ import _ from "lodash";
  * @param {Object} props - A komponens propsai.
  * @param {Object} props.row - Az adott sor adatai.
  * @param {Function} props.callback - Egy callback függvény, ami a törlés során hívódik meg.
- * @param {number} props.ix - Az adot sor indexe. Ez azért fontos, mert a React key alapján különbözteti meg a sorokat.
+ * @param {number} props.ix - Az adot sor indexe. Ez azért fontos, mert a React key ez alapján különbözteti meg a sorokat.
  *
- * @returns {React.Element} A sor komponenst.
+ * @returns {React.Element} Egy táblázat sorát adja vissza.
  *
  * @example
  * <Sor row={row} callback={callback} ix={ix} />
@@ -34,7 +34,7 @@ function Sor({ row, ix, callback }) {
    * @function
    * @param {Object} obj - Az objektum, amiben keresni kell.
    * @param {string} key - A kulcs, amit meg kell keresni.
-   * @param {string} [path=""] - Az útvonal, amit a rekurzió során felépít. Ezt a paraméterent nem kell megadni, csak a rekurziónak kell.
+   * @param {string} [path=""] - Az útvonal, amit a rekurzió során felépít. Ezt a paramétert nem kell megadni, csak a rekurziónak kell.
    *
    * @returns {string} Az útvonal, ahol a kulcs megtalálható.
    */
@@ -60,7 +60,7 @@ function Sor({ row, ix, callback }) {
   /**
    * A változásokért felelős függvény.
    * @memberof Sor
-   * @param {Object} event - Esemény objektum.
+   * @param {Event} event - Esemény objektum.
    * @param {Target} event.target - Az esemény célja. 
    * @function
    */
@@ -106,15 +106,15 @@ function Sor({ row, ix, callback }) {
   };
 
   /**
-   * @description Egy rekurzív függvény, ami az objektumban mélyen elhelyezkedő értékeket is megjeleníti.
+   * @description Egy rekurzív függvény, ami az adatokat megjeleníti cellákban. (nested objektmokkal is működik)
    * Először rendezi az objektumokat a `columnIndex` alapján, majd csak azután kezdi megjeleníteni az értékeket.
-   * Mivel a {@link row}-ban is lehet több beágyazott objektum, ezért megkeresi az összeset és azokat is megjeleníti egy cellában.
+   * Ellenőrzi, hogy az adott mező rejtett-e, ha igen, akkor nem jeleníti meg.
+   * Ha az adott mező referencia mezője egy lista, akkor egy checkbox listát jelenít meg.
    * @memberof Sor
    * @function
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
-   * @param {Function} cellaLista - Egy függvény, amit akkor hív meg, ha az adot `elem` egy lista.
+   * @param {Function} cellaLista - Egy függvény, amit akkor hív meg, ha az adott `elem` referenciája egy lista.
    * @param {Function} cellaTartalom - Egy függvény, amit alapértelmezetten hív meg.
-   *  Function to generate content cell data.
    *
    * @returns {Array} A legenerált cella lista.
    */
@@ -147,7 +147,7 @@ function Sor({ row, ix, callback }) {
    * @function
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
    *
-   * @returns {Array} A generált cell elemek listája.
+   * @returns {Array} A generált cella elemek listája.
    */
   const cellaElem = (elem) => {
     const cellaLista = (value, key, metainfo) =>
@@ -200,7 +200,7 @@ function Sor({ row, ix, callback }) {
    * @function
    * @memberof Sor
    * @description Egy függvény, ami a gombokat generálja.
-   * Mivel egy sornak két állapota van, ezért eldönti, hogy a felhasználó jelenleg szerkezti-e az adott sort.
+   * Mivel egy sornak két állapota van, ezért eldönti, hogy a felhasználó jelenleg szerkeszti-e az adott sort.
    * Az első állapot, hogy a felhasználó módosítja az adatokat, ekkor a gombok a küldés és a mégse gombok lesznek. Ekkor a küldés gomb a patch metódust hívja meg, vagy a mégse gomb visszaállítja az adatokat.
    * A második állapotban a felhasználó csak módosítani szeretné az adatokat, ekkor a módosítás és a törlés gombok lesznek. Ekkor a módosítás gomb a sorok szerkesztését engedélyezi, vagy a törlés gomb hívja meg a callback függvényt.
    * @returns {JSX.Element} A generált gombok.

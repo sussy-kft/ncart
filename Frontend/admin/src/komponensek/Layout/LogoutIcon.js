@@ -3,6 +3,7 @@ import * as Icon from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 /**
+ * @module LogoutIcon
  * @description Egy LogoutIcon komponens, ami egy kijelentkezés ikont megjeleníti.
  * Amikor az ikonra kattintanak, eltávolítja a "felhasznalo" értéket a sessionStorage-ből,
  * és a "token" értéket a localStorage-ből, majd átnavigál a "/login" útvonalra.
@@ -15,6 +16,13 @@ import { useNavigate } from "react-router-dom";
 function LogoutIcon() {
   const navigate = useNavigate();
 
+  /**
+   * @memberof LogoutIcon
+   * @type {Function}
+   * @description Az handleLogout egy függvény, ami a kijelentkezés folyamatát végzi el.
+   * Eltávolítja a "felhasznalo", "token" és a "lejaratiIdopont" értékét a localStorage-ből, majd átnavigál a "/login" útvonalra.
+   * @returns {void}
+   */
   const handleLogout = () => {
     window.localStorage.removeItem("lejaratiIdopont");
     window.localStorage.removeItem("felhasznalo");

@@ -14,7 +14,7 @@ import Sor from "./Sor";
 /**
  * @module Tabla
  * @description Egy React komponens, ami egy táblázatot jelenít meg adatokkal, amiket az URL-ből állapítja meg, hogy honnan kell lekérni.
- *
+ * @component
  * @returns {JSX.Element} Egy táblázatot ad vissza adatokkal, vagy egy képet, ami a hibás vagy betöltés állapotot jelzi.
  */
 function Tabla() {
@@ -26,7 +26,7 @@ function Tabla() {
   const [adatok, setAdatok] = useState(null);
 
   /**
-   * @description Egy callback függvény, ami az adat egyedi útvonalát álapítja meg és megjeleníti a popupot.
+   * @description Egy callback függvény, ami az adat egyedi útvonalát állapítja meg és megjeleníti a popupot.
    * Az `useCallback`-et használja, hogy elkerülje a felesleges újra rendereléseket.
    * @memberof Tabla
    * @param {Object.<string, *>} row - Az adott sor adatai.
