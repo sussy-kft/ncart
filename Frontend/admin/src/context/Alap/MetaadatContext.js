@@ -2,13 +2,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AxiosContext } from "./AxiosContext";
 
 /**
- * @module MetaadatContext
- */
-
-/**
  * @type {React.Context}
  * @description Egy context, ami a metaadatokat tartalmazza.
- * @memberof MetaadatContext
+ * @module MetaadatContext
  */
 export const MetaadatContext = createContext();
 
@@ -28,6 +24,7 @@ export const MetaadatProvider = ({ children }) => {
   /**
    * @description Lekérdezi az aktuális oldalhoz a `metaadatokat`.
    * Ha a `url` változik, akkor újra lekéri a `metaadatokat`.
+   * @name useEffect_setMetaadat
    * @memberof MetaadatContext
    */
   useEffect(() => {
@@ -39,6 +36,7 @@ export const MetaadatProvider = ({ children }) => {
    * @description A referencia adatokat állítja be újra, ha a metaadat változik.
    * Egyes adatok külső kulcsal rendelkezik, emiatt ezeket is le kell kérni.
    * Továbbá, ha a referencia egy beágyazott objektumban van, akkor azt is lekérdezi.
+   * @name useEffect_setReferenciak
    * @memberof MetaadatContext
    */
   useEffect(() => {
@@ -61,6 +59,7 @@ export const MetaadatProvider = ({ children }) => {
   }, [metaadat]);
 
   /**
+   * @function
    * @description Egy függvény, ami egy adott objektum listát kisimít, ha az adott kulcs egy tömb.
    * @memberof MetaadatContext
    * @param {Array.<Object>} array - Egy objektumokat tartalmazó tömb, amit ki szeretnénk simítani.
@@ -73,6 +72,7 @@ export const MetaadatProvider = ({ children }) => {
     );
 
   /**
+   * @function
    * @description Visszaadja a elsődleges kulcsokat.
    * @memberof MetaadatContext
    * @returns {Array} Az elsődleges kulcsok tömbje.
@@ -93,11 +93,13 @@ export const MetaadatProvider = ({ children }) => {
   };
 
   /**
+   * @function
    * @description Megkeresi a kulcsot a metaadatban.
    * @memberof MetaadatContext
    * @param {string} key - A megkeresendő kulcs.
-   * @param {Array} lista - A lista, amiben keresni kell. Alapértelmezetten a metaadat, de a rekurzió miatt más elemet is meghív a függvény.
-   * @returns {Object} A megtalált objektum, ha létezik, egyébként null.
+   * @param {Array} lista - A lista, amiben keresni kell. Alapértelmezetten a metaadat, de előfordulhat, 
+   * hogy egy beágyazott objektumban kell keresni, ezért rekuzívan megkeresi a kulcsot.
+   * @returns {(Object|null)} A megtalált metaadat objektum, ha létezik, egyébként null.
    */
   const findKey = (key, lista = metaadat) => {
     if (!lista) return null;
@@ -112,10 +114,13 @@ export const MetaadatProvider = ({ children }) => {
   };
 
   /**
-   * @description Egy olyan függvényt hoz létre, ami kulcsokkal meghívva visszaadja azokat a kulcsokat az `obj` objektumból, amelyek nem egyenlőek a megadott kulcsokkal.
+   * @function
+   * @description Egy olyan függvényt hoz létre, 
+   * ami kulcsokkal meghívva visszaadja azokat a kulcsokat az `obj` objektumból, 
+   * amelyek nincsenek a megadott kulcsok között.
    * @memberof MetaadatContext
    * @param {Object} obj - Az objektum, amelyből a kulcsokat szeretnénk visszakapni.
-   * @returns {Function} Egy olyan függvény, amely egy kulcsotokat vesz át paraméterként, és visszaadja azokat a kulcsokat az `obj` objektumból, amelyek nem egyenlőek a megadott kulcsokkal.
+   * @returns {Function} Egy függvény, ami a kulcsokat kiszűri.
    *
    * @example
    * const obj = { a: 1, b: 2, c: 3, d: 4};
@@ -128,6 +133,7 @@ export const MetaadatProvider = ({ children }) => {
   };
   
   /**
+   * @function
    * @description Egy függvény, ami a `localStorage`-ban tárolt `lejaratiIdopont` értékét és a jelenlegi időpontot használja a maradék idő kiszámításához.
    * @memberof MetaadatContext
    * @returns {number} Hogy mennyi idő van hátra.

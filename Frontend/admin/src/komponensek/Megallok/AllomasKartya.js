@@ -10,13 +10,14 @@ import _ from "lodash";
  * @module AllomasKartya
  * @description Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
  *
- * @param {Object} allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
- * @param {string} allomas.allomas - Az állomás ID-ja.
- * @param {number} allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
- * @param {string} nev - Az állomás neve.
- * @param {string} irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
+ * @param {Object} props - A komponens propsa.
+ * @param {Object} props.allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
+ * @param {string} props.allomas.allomas - Az állomás ID-ja.
+ * @param {number} props.allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
+ * @param {string} props.nev - Az állomás neve.
+ * @param {string} props.irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
  *
- * @returns {React.Element} A megjelenítendő állomás kártyát vagy `null`-t, ha az állomás objektum nem létezik.
+ * @returns {React.Element} Egy React Bootstrap Card komponenst, ami megjeleníti az állomás adatait.
  */
 function AllomasKartya({ allomas, nev, irany }) {
   const { megallok, setMegallok, checked, oppositeKey, megfordit, setShow } =
@@ -26,6 +27,7 @@ function AllomasKartya({ allomas, nev, irany }) {
    * @description A jelenlegi állomás időtartamát módosítja.
    * @memberof AllomasKartya
    * @param {Event} event - Egy esemény objektum.
+   * @function handleChange
    * @returns {void}
    */
   const handleChange = (event) => {
@@ -52,6 +54,7 @@ function AllomasKartya({ allomas, nev, irany }) {
   /**
    * @description A jelenlegi állomást törli a listából.
    * @memberof AllomasKartya
+   * @function torol
    * @returns {void}
    */
   const torol = () => {
@@ -81,8 +84,6 @@ function AllomasKartya({ allomas, nev, irany }) {
     }));
   };
 
-  if (!allomas || !megallok) return null;
-
   return (
     <Card className="d-flex flex-row text-start">
       <Card.Img
@@ -109,7 +110,7 @@ function AllomasKartya({ allomas, nev, irany }) {
             <div className="d-flex align-items-center">
               <span className="me-2">idő: </span>
               <InputMezo
-                veryCoolValue={allomas.hanyPerc}
+                defaultValue={allomas.hanyPerc}
                 input={{ columnName: "hanyPerc", dataType: "tinyint" }}
                 handleChange={(event) => handleChange(event)}
               />

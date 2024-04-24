@@ -10,9 +10,10 @@ import { MegallokContext } from "../../context/Megallok/MegallokContext";
  * @module VonalSzuro
  * @description A `VonalSzuro` egy React komponens, ami egy csoport select inputot jelenít meg, hogy a felhasználó kiválaszthassa, hogy melyik vonalat akarja szerkeszteni.
  * Az adatokat a megadott URL-ekről tölti be és a select inputokat a betöltött adatokkal tölti fel.
- *
- * @param {Array} pool - Egy objektum lista, ami az input mezőkhöz tartozó metaadatokat tartalmazza.
- * @param {Function} setMeta - Egy callback függvény, ami az oda/vissza vonal adatait állítja be.
+ * @component
+ * @param {Object} props - A komponens propsa.
+ * @param {Array} props.pool - Egy objektum lista, ami az input mezőkhöz tartozó metaadatokat tartalmazza.
+ * @param {Function} props.setMeta - Egy callback függvény, ami az oda/vissza vonal adatait állítja be.
  *
  * @returns {JSX.Element} Egy csoport select inputot, ami a vonalszámot és a járműtípust alapján lehet kiválasztani.
  */
@@ -35,7 +36,8 @@ function VonalSzuro({ pool, setMeta }) {
    * 
    * @description A select input mezők értékeinek változását kezeli.
    * @memberof VonalSzuro
-   * @param {Object} event - Egér esemény objektum.
+   * @function
+   * @param {Event} event - Az esemény objektum.
    * @param {Target} event.target - Az esemény célja.
    */
   const handleChange = ({ target }) => {
@@ -111,7 +113,7 @@ function VonalSzuro({ pool, setMeta }) {
           name={key}
           input={findKey(key)}
           value={value}
-          idk={true}
+          isSelectFirst={true}
           handleChange={handleChange}
           isSelect={true}
           pool={opciok[url]}

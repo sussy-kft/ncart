@@ -6,13 +6,13 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
  */
 
 /**
- * @typedef {Object} Tema
+ * @typedef {Object} TEMA
  * @property {string} DARK - A sötét témát reprezentálja.
  * @property {string} LIGHT - A világos témát reprezentálja.
  * @description Egy objektum, ami a lehetséges téma értékeket tartalmazza.
  * @memberof DarkModeContext
  */
-export const Tema = {
+export const TEMA = {
     DARK: 'dark',
     LIGHT: 'light'
 };
@@ -45,7 +45,7 @@ export const DarkModeProvider = ({ children }) => {
      * Ha bármelyik feltétel igaz, akkor a kezdeti állapot sötét módra van állítva, egyébként világos módra.
      * @memberof DarkModeContext
      */
-    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true" || window.matchMedia('(prefers-color-scheme: dark)').matches ? Tema.DARK : Tema.LIGHT);
+    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true" || window.matchMedia('(prefers-color-scheme: dark)').matches ? TEMA.DARK : TEMA.LIGHT);
 
     /**
      * @function getText

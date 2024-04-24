@@ -11,13 +11,14 @@ import { MegallokContext } from "../../context/Megallok/MegallokContext";
  *
  * @component
  *
- * @returns {React.Element} A toggle button that changes its appearance and functionality based on the state of the stops (`megallok`).
+ * @returns {React.Element} Egy kapcsoló gombot, amellyel a két vonal szinkronizálását lehet beállítani.
  */
 function SzinkronizaloGomb() {
   const { megallok, checked, setChecked } = useContext(MegallokContext);
 
   /**
    * @memberof SzinkronizaloGomb
+   * @function
    * @description Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
    * Mivel a szinkronizálás akkor lehetséges, ha azonos számú megálló van mindkét irányban, és minden megálló ugyanaz a megálló a másik irányban, csak fordított sorrendben.
    * Ha a fetéltel teljesül, akkor a gomb kattintható, egyébként nem.

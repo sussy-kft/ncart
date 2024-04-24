@@ -6,12 +6,13 @@ import _ from "lodash";
 
 /**
  * @module UjAllomas
- * @description Egy React komponens, amely lehetővé teszi egy új állomás hozzáadását egy adott vonalhoz.
+ * @description Egy React komponens, amely lehetővé teszi egy új állomás hozzáadását egy adott vonalhoz,
+ * hogy mi a következő állomás neve és mennyi idő alatt lehet eljutni oda.
  * @component
  * @param {Object} props - A komponens propsa.
  * @param {Array} props.pool - Azok a megállók, amik még nem szerepelnek az adott vonalon.
  * @param {string} props.irany - Az irány, amelyik vonalhoz hozzá akarjuk adni az új megállót.
- * @returns {React.Component} `UjAllomas` komponenst
+ * @returns {React.Component} Egy React Bootstrap Row komponenst, amelyben egy új állomás hozzáadásához szükséges input mezők vannak.
  */
 function UjAllomas({ pool, irany }) {
   const { megallok, setMegallok, checked, oppositeKey, megfordit } =
@@ -19,7 +20,7 @@ function UjAllomas({ pool, irany }) {
 
   /**
    * @memberof UjAllomas
-   * @description Az új állomás adatai
+   * @description Egy useState hook, amely az új állomás adatait kezeli.
    * @type {Object} adatok - A jelenlegi állomás adatai.
    * @type {Function} setAdatok - Az állapot frissítésére szolgáló függvény.
    */
@@ -27,7 +28,8 @@ function UjAllomas({ pool, irany }) {
 
   /**
    * @memberof UjAllomas
-   * @description A lokális megállók mentését kezeli.
+   * @function
+   * @description Lementi az új állomást. Ha a szinkronizálás be van kapcsolva, akkor a másik irányú vonalhoz is hozzáadja az új állomást.
    * @param {Event} event - Egy esemény objektum.
    * @param {Object} obj - Egy objektum, amit menteni akarunk.
    * @param {Function} callback - Egy callback függvény, ami a következő input mezőt állítja be.
@@ -72,9 +74,10 @@ function UjAllomas({ pool, irany }) {
    */
 
   /**
+   * @function
    * @memberof UjAllomas
    * @description A változásokért felelős függvény
-   * @param {Object} event - Egy esemény objektum.
+   * @param {Event} event - Egy esemény objektum.
    * @param {Target} event.target - Az esemény objektum célja.
    */
   const handleChange = ({ target }) => {
@@ -86,6 +89,7 @@ function UjAllomas({ pool, irany }) {
   };
 
   /**
+   * @function
    * @memberof UjAllomas
    * @description A következő elem.
    * Ha az első elemet választotta ki, a fejhasználó, akkor annak a következő elemét adja vissza.
@@ -104,7 +108,7 @@ function UjAllomas({ pool, irany }) {
         value="nev"
         pool={pool}
         isSelect={true}
-        idk={true}
+        isSelectFirst={true}
         handleChange={handleChange}
       />
       <InputMezo

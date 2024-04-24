@@ -5,16 +5,12 @@ import _ from "lodash";
 export const MegallokContext = createContext();
 
 /**
- * @module MegallokContext
- */
-
-/**
  * Egy Provider komponens, ami kontextust biztosít a megállók állapotának kezelésére mindkét irányban.
  *
  * @component
  * @param {Object} props - A komponens propsa.
  * @param {ReactNode} props.children - Egy gyerek komponens, amit be akarunk ágyazni.
- * @memberof MegallokContext
+ * @module MegallokContext
  * @returns {ReactNode} Egy `MegallokContext.Provider` komponenst a kontextus értékeivel és metódusaival. 
  */
 export const MegallokProvider = ({ children }) => {
@@ -27,6 +23,7 @@ export const MegallokProvider = ({ children }) => {
   const [show, setShow] = useState(false);
 
   /**
+   * @function
    * @description A `megallok` és a `regiMegallok` állapotokat is egyszerre beállítja.
    * @memberof MegallokContext
    * @param {Object} mindketto - Az új oda/vissza megállók állapota.
@@ -37,9 +34,10 @@ export const MegallokProvider = ({ children }) => {
   };
   
   /**
+   * @function
    * @description Átmásolja a megállókat a listában a másik megállóba és megfordítja őket.
    * @memberof MegallokContext
-   * @param {string} key - The key of the stop to copy and reverse.
+   * @param {string} key - A megállók kulcsa, amit át akarunk másolni fordítva.
    */
   const atmasol = (key) => {
     let tmp = _.cloneDeep(megallok[key].megallok);
@@ -56,6 +54,7 @@ export const MegallokProvider = ({ children }) => {
   };
 
   /**
+   * @function
    * @description Megfordítja a megállókat a listában.
    * @memberof MegallokContext
    * @param {Array} lista - Egy lista, amit meg akarunk fordítani.
@@ -75,12 +74,14 @@ export const MegallokProvider = ({ children }) => {
   };
 
   /**
+   * @function
    * @memberof MegallokContext
    * @description {@link MetaadatContext} segítségével létrehozza az ellenkező irányú kulcsot a megállókhoz.
    */
   const oppositeKey = createOppositeKey(megallok);
 
   /**
+   * @name useEffect_vanValtozas
    * @memberof MegallokContext
    * @description Ha a megállók állapota megváltozik a régi állapothoz képest, akkor megjeleníti a mentés gombot.
    */

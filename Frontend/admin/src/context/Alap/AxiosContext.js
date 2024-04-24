@@ -14,9 +14,10 @@ export const AxiosContext = createContext();
 
 /**
  * Az AxiosProvider komponens, ami az AxiosContext.Provider-t biztosítja.
+ * Ennek segítségével érhető el az AxiosContext által biztosított változók és metódusok.
  * @memberof AxiosContext
  * @param {Object} props - A komponens propsa
- * @param {React.Component} props.children - Gyerek komponenst
+ * @param {React.Component} props.children - Gyerek komponenst, ami használja az AxiosContext által biztosított változókat és metódusokat.
  * @returns {React.Element} A gyerek komponesnt `AxiosProvider`-rel beágyazva.
  */
 export const AxiosProvider = ({ children }) => {
@@ -27,8 +28,9 @@ export const AxiosProvider = ({ children }) => {
     const header = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } };
 
     /**
-     * A HTTP kérés kezeléseket kezeli.
+     * A HTTP kéréseket kezeli.
      * @async
+     * @function handleRequest
      * @memberof AxiosContext
      * @param {Object} params - A kérés paraméterei.
      * @param {string} params.method - HTTP metódus
@@ -52,7 +54,7 @@ export const AxiosProvider = ({ children }) => {
             return response.data;
         } catch (error) {
             if (method === 'patch') 
-                httpMetodusok.put(url, data);
+                HTTP_METODUSOK.put(url, data);
             else 
             {
                 if (error.code === "ERR_NETWORK") 
@@ -64,20 +66,17 @@ export const AxiosProvider = ({ children }) => {
     };
 
     /**
-     * Egy Objektum, ami tartalmazza a HTTP kérésekhez szükséges metódusokat.
+     * Egy Objektum, ami tartalmazza a HTTP kérésekhez szükséges metódusokat. (GET, POST, PUT, PATCH, DELETE)
      * @memberof AxiosContext
      * @type {Object}
+     * @param {Object} request - A kérés paraméterei
+     * @param {string} request.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
+     * @param {Function} request.callback - Callback függvény
+     * @param {Function} request.errorCallback - Error callback függvény
+     * @param {Object} request.item - Az adat, amit feldolgozni akarunk
+     * @param {string} request.id - Az id, amit változtatni akarunk
      */
-    const httpMetodusok = {
-        /**
-         * @memberof AxiosContext.httpMetodusok
-         * @param {Object} request - A kérés paraméterei
-         * @param {string} request.url - URL végpont (egyes végpontok a `/` jellel elválasztva azonostják a elsődleges kulcsokat, hogy az adott adatra hivatkozzanak)
-         * @param {Function} request.callback - Callback függvény
-         * @param {Function} request.errorCallback - Error callback függvény
-         * @param {Object} request.item - Az adat, amit feldolgozni akarunk
-         * @param {string} request.id - Az id, amit változtatni akarunk
-         */
+    const HTTP_METODUSOK = {
         getAll: (url, callback, errorCallback) => handleRequest({ method: 'get', url, callback, errorCallback }),
         destroy: (url, id) => handleRequest({ method: 'delete', url: url + "/" + id, successMessage: "A törlés sikeres volt!" }),
         post: (url, item, callback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback }),
@@ -86,7 +85,7 @@ export const AxiosProvider = ({ children }) => {
     };
 
     return (
-        <AxiosContext.Provider value={{ axiosId, errorState, ...httpMetodusok }}>
+        <AxiosContext.Provider value={{ axiosId, errorState, ...HTTP_METODUSOK }}>
             {children}
         </AxiosContext.Provider>
     );

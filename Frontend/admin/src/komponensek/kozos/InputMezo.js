@@ -6,8 +6,8 @@ import SelectMezo from "./SelectMezo";
 
 /**
  * @module InputMezo
- * InputMezo egy komponens, ami egy input form vezérlőt jelenít meg.
- * Az input form vezérlő az `input` segítségével állítja be a szüksges adatokat.
+ * @description InputMezo egy komponens, ami egy input form vezérlőt jelenít meg.
+ * Az input form vezérlő az `input` segítségével állítja be a szükséges adatokat.
  * Egy flag-et is kezel, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
  * Továbbá lekéri opcióit a szerverről (ha esetleg nem opciókat a `pool`-ból), kezeli a változásokat és beállítja az alapértelmezett értéket.
  * Ha a `dataType` egy tömb, akkor egy checkboxot jelenít meg.
@@ -23,8 +23,8 @@ import SelectMezo from "./SelectMezo";
  * @param {string} props.value - Az input vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani az input vezérlőn keresztül.
  * @param {Array} props.pool - Az input vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
  * @param {string} props.name - Az input vezérlő neve.
- * @param {boolean} props.idk - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {string} props.veryCoolValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
+ * @param {boolean} props.isSelectFirst - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {string} props.defaultValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
  * @param {boolean} props.checked - Egy flag, amit a select vezérlő értékének beállításához használ, hogy a checkbox be legyen-e pipálva vagy sem.
  *
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
@@ -38,19 +38,19 @@ function InputMezo({
   value,
   pool,
   name,
-  idk,
-  veryCoolValue,
+  isSelectFirst,
+  defaultValue,
   checked,
 }) {
   const { getAll } = useContext(AxiosContext);
   /**
    * @memberof InputMezo
-   * @description Az adott input mező opciói.
+   * @description Egy useState hook, ami az opciókat kezeli.
    */
   const [opciok, setOpciok] = useState([]);
   /**
    * @memberof InputMezo
-   * @description Egy flag, ami azt jelzi, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
+   * @description Egy useState hook, ami azt jelzi, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
    */
   const [onceFlag, setOnceFlag] = useState(false);
 
@@ -88,7 +88,7 @@ function InputMezo({
           //ha nem tetszik, akkor kérlek írj egy jobbat
 
           //ps. ezért megérte megvenni a copilotot, hogy ilyen commenteket írjon
-          value: idk
+          value: isSelectFirst
             ? (input?.references && opciok[0]?.id) ??
               (pool && pool[0]?.[name]) ??
               value ??
@@ -145,8 +145,8 @@ function InputMezo({
       value={value}
       pool={pool}
       name={name}
-      idk={idk}
-      veryCoolValue={veryCoolValue}
+      isSelectFirst={isSelectFirst}
+      defaultValue={defaultValue}
       checked={checked}
     />
   ) : (
@@ -156,7 +156,7 @@ function InputMezo({
         required={!input?.isNullable}
         name={(name || input?.columnName) ?? ""}
         defaultValue={value ?? ""}
-        {...(veryCoolValue ? { value: veryCoolValue ?? {} } : {})}
+        {...(defaultValue ? { value: defaultValue ?? {} } : {})}
         type={typeConverter(input?.dataType) ?? ""}
         maxLength={input?.characterMaximumLength ?? ""}
         minLength={input?.characterMinimumLength ?? ""}

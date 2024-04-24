@@ -19,8 +19,8 @@ import { typeConverter } from "./InputMezo"
  * @param {string} props.value - A select vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani a select vezérlőn keresztül.
  * @param {Array} props.pool - A select vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
  * @param {string} props.name - A select vezérlő neve.
- * @param {boolean} props.idk - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {string} props.veryCoolValue - A select control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
+ * @param {boolean} props.isSelectFirst - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {string} props.defaultValue - A select control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
  * 
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
  */
@@ -31,8 +31,8 @@ function SelectMezo({
   value,
   pool,
   name,
-  idk,
-  veryCoolValue: statikusValue,
+  isSelectFirst,
+  defaultValue: statikusValue,
 }) {
   const { getAll } = useContext(AxiosContext);
   /**
@@ -72,7 +72,7 @@ function SelectMezo({
       handleChange({
         target: {
           name: (name || input?.columnName) ?? "",
-          value: idk
+          value: isSelectFirst
             ? (input?.references && opciok[0]?.id) ??
               (pool && pool[0]?.[name]) ??
               value ??

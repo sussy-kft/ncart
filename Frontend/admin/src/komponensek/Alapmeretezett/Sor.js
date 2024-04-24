@@ -186,7 +186,7 @@ function Sor({ row, ix, callback }) {
         <InputMezo
           key={key}
           input={metainfo}
-          veryCoolValue={value}
+          defaultValue={value}
           value={value}
           handleChange={handleChange}
         />

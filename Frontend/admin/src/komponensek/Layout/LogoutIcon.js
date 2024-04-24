@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 /**
  * @module LogoutIcon
  * @description Egy LogoutIcon komponens, ami egy kijelentkezés ikont megjeleníti.
- * Amikor az ikonra kattintanak, eltávolítja a "felhasznalo" értéket a sessionStorage-ből,
- * és a "token" értéket a localStorage-ből, majd átnavigál a "/login" útvonalra.
+ * Amikor az ikonra kattintanak, eltávolítja a "felhasznalo", a "token" és a "lejaratiIdopont"
+ * értéket a localStorage-ből, majd átnavigál a "/login" útvonalra.
  *
  * @component
  * 
- * @returns {JSX.Element} A "Kijelentkezés" ikont tartalmazó elem.
+ * @returns {JSX.Element} Egy Bootstrap DoorOpenFill ikont.
  *
  */
 function LogoutIcon() {
@@ -19,6 +19,7 @@ function LogoutIcon() {
   /**
    * @memberof LogoutIcon
    * @type {Function}
+   * @function handleLogout
    * @description Az handleLogout egy függvény, ami a kijelentkezés folyamatát végzi el.
    * Eltávolítja a "felhasznalo", "token" és a "lejaratiIdopont" értékét a localStorage-ből, majd átnavigál a "/login" útvonalra.
    * @returns {void}

@@ -22,6 +22,7 @@ function MentesOffcanvas(){
   
   /**
    * @memberof MentesOffcanvas
+   * @function
    * @description `kuldes` egy aszinkron függvény, amely elküldi a `megallok` aktuális állapotát.
    * A post művelet után beállítja a `regiMegallok` értékét a `megallok` aktuális állapotára, és elrejti az offcanvas UI-t.
    */
@@ -41,7 +42,8 @@ function MentesOffcanvas(){
 
   /**
    * @memberof MentesOffcanvas
-   * @description `visszaallit` egy olyan függvény, amely visszaállítja a `megallok` állapotát a `regiMegallok` állapotára, és viszaállítja a szinronizáló gombot, majd elrejti az off-canvas UI-t.
+   * @function
+   * @description `visszaallit` egy olyan függvény, amely visszaállítja a `megallok` állapotát a `regiMegallok` állapotára, és visszaállítja a szinkronizáló gombot, majd elrejti az off-canvas UI-t.
    */
   const visszaallit = () => {
     setChecked(false);

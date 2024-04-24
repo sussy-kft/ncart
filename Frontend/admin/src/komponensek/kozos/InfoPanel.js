@@ -4,7 +4,7 @@ import Toast from 'react-bootstrap/Toast';
 /**
  * A `react-bootstrap` komponensével készített {@link Toast} komponens, ami egy üzenetet jelenít meg a felhasználónak.
  * Ez arra alkalmas, hogy a felhasználó értesítéseket kapjon a weboldalon, hogyha valami történik a háttérben és visszajelzést szeretnénk neki küldeni.
- * Automatikusan eltűnik 5s után.
+ * 5s után automatikusan eltűnik. 
  *
  * @param {Object} props - A komponens propsa.
  * @param {string} props.bg - A háttérszín a Toastnak. (A Bootstrap színeit használja)

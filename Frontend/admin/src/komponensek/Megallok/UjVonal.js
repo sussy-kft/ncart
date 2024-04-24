@@ -12,11 +12,12 @@ import { MegallokContext } from "../../context/Megallok/MegallokContext";
  * Ez a komponens nagyban segíti a felhasználókat, hogy könnyen hozzáadhassanak egy új vonalat a rendszerhez, így nem kell a `Vonalak` nevű oldalon létrehozni, ha esetleg nincs még oda/vissza vonal.
  *
  * @component
- * @param {Object} masikVonal - Egy objektum, amely információkat tartalmaz egy másik vonalról. Ez a POST kérésben segít, hogy az azonos információkat használja fel.
- * @param {Object} meta - Egy objektum, amely meta információkat tartalmaz, ha esetleg nincs még oda/vissza vonal.
- * @param {string} name - Az útvaonal íránya. ("oda" vagy "vissza" lehet)
+ * @param {Object} props - A komponens propsa.
+ * @param {Object} props.masikVonal - Egy objektum, amely információkat tartalmaz egy másik vonalról. Ez a POST kérésben segít, hogy az azonos információkat használja fel.
+ * @param {Object} props.meta - Egy objektum, amely meta információkat tartalmaz, ha esetleg nincs még oda/vissza vonal.
+ * @param {string} props.name - Az útvaonal íránya. ("oda" vagy "vissza" lehet)
  *
- * @returns {React.Element} A React element that represents a form for creating a new line.
+ * @returns {React.Element} Egy React elemet, amely egy űrlapot jelenít meg egy új vonal létrehozására.
  */
 function UjVonal({ masikVonal, meta, name }) {
   const { getAll, post } = useContext(AxiosContext);
@@ -24,6 +25,7 @@ function UjVonal({ masikVonal, meta, name }) {
   const { setRegiMegallok } = useContext(MegallokContext);
 
   /**
+   * @description Egy useState hook, amely az új vonal adatait kezeli.
    * @memberof UjVonal
    * @typedef {Object} adatok
    * @property {string} vonalSzam - A vonal ID-ja.
@@ -37,12 +39,13 @@ function UjVonal({ masikVonal, meta, name }) {
   const [opciok, setOpciok] = useState(null);
 
   /**
+   * @description Metainfo arról, hogy hogyan kell megjeleníteni az input mezőket.
    * @memberof UjVonal
-   * @typedef {Object[]} metainfo
+   * @typedef {Object[]} METAINFO
    * @property {string} cim - Az oldalon megjelenő cím az input mező előtt.
    * @property {string} name - Az ojektum kulcsa, amit a változásokkor módosítunk.
    */
-  const metainfo = [
+  const METAINFO = [
     {
       cim : "Kezdőállomás:",
       name: "kezdoAll"
@@ -55,7 +58,7 @@ function UjVonal({ masikVonal, meta, name }) {
 
   /**
    * @name useEffect_setOpciok
-   * @description Lekéri az összes állomást és beállítja az `opciok` állapotot.
+   * @description Egy useEffect hook, ami lekéri az összes állomást és beállítja az `opciok` állapotot.
    * @memberof UjVonal
    */
   useEffect(() => {
@@ -64,6 +67,7 @@ function UjVonal({ masikVonal, meta, name }) {
 
   /**
    * @description Az adatok változását kezelő függvény.
+   * @function
    * @memberof UjVonal
    * @param {string} customName - A kulcs, ami megmondja, hogy melyik adatot kell változtatni.
    * @param {Event} event - Esemény objektum.
@@ -74,6 +78,7 @@ function UjVonal({ masikVonal, meta, name }) {
 
   /**
    * @memberof UjVonal
+   * @function
    * @description Egy új vonal létrehozásához küld egy POST kérést.
    * Amikor a válasz megérkezik, újra beállítja a `megallok` és a `regiMegallok` állapotokat.
    */
@@ -87,7 +92,7 @@ function UjVonal({ masikVonal, meta, name }) {
   /**
    * @memberof UjVonal
    * @description Egy `div` elemet generál egy `InputMezo` és `Form.Label` komponensekkel.
-   *
+   * @function
    * @param {string} label - A `Form.Label` komponens szövege.
    * @param {string} customName - Amikor az `InputMezo` komponensben változik az érték, akkor ezzel a kulccsal állapítjuk meg, hogy melyik adatot kell módosítani az `adatok`-ban.
    * @returns {JSX.Element} Egy div elem, ami tartalmazza a `Form.Label` és az `InputMezo` komponenseket.
@@ -101,7 +106,7 @@ function UjVonal({ masikVonal, meta, name }) {
           value="nev"
           pool={opciok}
           isSelect={true}
-          idk={true}
+          isSelectFirst={true}
           handleChange={event => handleChange(customName, event)}
         />
       </div>
@@ -115,7 +120,7 @@ function UjVonal({ masikVonal, meta, name }) {
       <h3>Nincs még {name} vezető útvonal</h3>
       <br />
       <h4>Új {name} útvonal hozzáadása:</h4>
-      {metainfo.map(elem => generateInputMezo(elem.cim, elem.name))}
+      {METAINFO.map(elem => generateInputMezo(elem.cim, elem.name))}
       <Button
         className="mt-2"
         as={Col}

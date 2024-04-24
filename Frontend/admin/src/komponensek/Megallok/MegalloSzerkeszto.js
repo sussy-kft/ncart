@@ -15,8 +15,8 @@ import _ from "lodash";
  * @description `MegalloSzerkeszto` egy React komponens, amely egy űrlapot renderel a "megallok" kezelésére.
  * A komponens megvalósítja a drag-and-drop funkcionalitást a megállók átrendezéséhez, valamint a megállók megfordításához.
  * Továbbá rendelkezik egy szinkronizáló gombbal is, amely a megállók szinkronizálását teszi lehetővé.
- * Így ha a felhasználó megváltoztatja az egyik irányú megállókat, akkor a másik irányú megállók is megváltoznak.
- * Az adatokat egy felugró ablakban lehet menteni, vagy esetleg visszaállítani, az előző állapotra.
+ * Így, ha a felhasználó megváltoztatja az egyik irányú megállókat, akkor a másik irányú megállók is megváltoznak.
+ * Továbbá az adatokat egy felugró ablakban lehet menteni, vagy esetleg visszaállítani, az előző állapotra.
  *
  * @component
  * @param {Object} props - A komponens propsa.
@@ -31,9 +31,10 @@ function MegalloSzerkeszto({ meta }) {
     useContext(MegallokContext);
 
   /**
+   * @function
    * @description A `handleDragEnd` egy függvény, amely a drag-and-drop műveletet kezeli.
    * Frissíti a megállók sorrendjét és ha kell akkor az elöző megállókat is.
-   * Továbbá a `checked` (a szinkronizálás be van-e kapcsolva) állapotától függően tökrözi a megállókat fordított sorrendben.
+   * Továbbá a `checked` (a szinkronizálás be van-e kapcsolva) állapotától függően tükrözi a megállókat fordított sorrendben.
    * Tehát ha a szinkronizálás be van kapcsolva, akkor a megállók sorrendje is megfordul..
    * @memberof MegalloSzerkeszto
    * @param {Object} result Az eredmény objektum a react-beautiful-dnd onDragEnd eseményéből.
