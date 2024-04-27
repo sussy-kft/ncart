@@ -13,7 +13,7 @@ namespace Backend.Controllers
             return StatusCode(451); // lol, xd
         });
 
-        [HttpDelete("legkevesebb")]
+        [HttpPost("legkevesebb")]
         public IActionResult legkevesebb([FromBody] TervezesiFeltetelekDTO tervezesiFeltetelek) => CheckIfBadRequest(() =>
         {
             (Vonal[] vonalak, Megall[] megallok, Inditas[][] indulasok) = adatokLekerdezese(tervezesiFeltetelek);
