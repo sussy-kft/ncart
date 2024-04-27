@@ -8,16 +8,19 @@ import _ from "lodash";
 /**
  *
  * @component
- * @param {Object} row - Az adott sor adatai.
- * @param {Function} callback - Egy callback függvény, ami a törlés során hívódik meg.
- * @param {number} ix - Az adot sor indexe. Ez azért fontos, mert a React key alapján különbözteti meg a sorokat.
+ * @description Egy sor komponens, ami egy táblázatban jelenik meg.
+ * @module Sor
+ * @param {Object} props - A komponens propsai.
+ * @param {Object} props.row - Az adott sor adatai.
+ * @param {Function} props.callback - Egy callback függvény, ami a törlés során hívódik meg.
+ * @param {number} props.ix - Az adot sor indexe. Ez azért fontos, mert a React key ez alapján különbözteti meg a sorokat.
  *
- * @returns {React.Element} A sor komponenst.
+ * @returns {React.Element} Egy táblázat sorát adja vissza.
  *
  * @example
  * <Sor row={row} callback={callback} ix={ix} />
  */
-function Sor({row , ix, callback}) {
+function Sor({ row, ix, callback }) {
   const { patch } = useContext(AxiosContext);
   const { url, findKey, getPKs, kulsoAdatok } = useContext(MetaadatContext);
 
@@ -26,11 +29,12 @@ function Sor({row , ix, callback}) {
   const regiAdatok = _.cloneDeep(row);
 
   /**
-   * Egy rekurzív függvény, ami egy objektumban megkeresi a kulcsot.
-   *
+   * @description Egy rekurzív függvény, ami egy objektumban megkeresi a kulcsot.
+   * @memberof Sor
+   * @function
    * @param {Object} obj - Az objektum, amiben keresni kell.
    * @param {string} key - A kulcs, amit meg kell keresni.
-   * @param {string} [path=""] - Az útvonal, amit a rekurzió során felépít. Ezt a paraméterent nem kell megadni, csak a rekurziónak kell.
+   * @param {string} [path=""] - Az útvonal, amit a rekurzió során felépít. Ezt a paramétert nem kell megadni, csak a rekurziónak kell.
    *
    * @returns {string} Az útvonal, ahol a kulcs megtalálható.
    */
@@ -45,15 +49,23 @@ function Sor({row , ix, callback}) {
   };
 
   /**
-   * Handle change event from input fields.
-   *
-   * @param {Object} event - Esemény objektum.
-   * @param {string} event.target.name - Az input mező neve.
-   * @param {string} event.target.type - Az input mező típusa.
-   * @param {boolean} event.target.checked - A checkbox értéke, hogy be van-e pipálva.
-   * @param {string} event.target.value - Az input mező értéke.
+   * @typedef {Object} Target
+   * @memberof Sor
+   * @property {string} name - Az input mező neve.
+   * @property {string} type - Az input mező típusa.
+   * @property {boolean} checked -  A checkbox értéke, hogy be van-e pipálva.
+   * @property {string} value - Az input mező értéke.
    */
-  const handleChange = ({target: { name, type, checked, value }} ) => {
+
+  /**
+   * A változásokért felelős függvény.
+   * @memberof Sor
+   * @param {Event} event - Esemény objektum.
+   * @param {Target} event.target - Az esemény célja.
+   * @function
+   */
+  const handleChange = ({ target }) => {
+    const { name, type, checked, value } = target;
     let obj = _.cloneDeep(adatok);
 
     if (type === "checkbox") {
@@ -71,6 +83,9 @@ function Sor({row , ix, callback}) {
   };
 
   /**
+   * @description Az elsődleges kulcsokat adja vissza, "/" jellel összekötve.
+   * @memberof Sor
+   * @function
    * @returns {string} Úgy adja vissza az elsődleges kulcsokat, hogy a végponthoz hozzáadja a megfelelő értékeket.
    */
   const getPKadat = () => {
@@ -80,7 +95,10 @@ function Sor({row , ix, callback}) {
   };
 
   /**
-   * Visszaállítja az adatokat a kezdeti értékekre.
+   *
+   * @function
+   * @description Visszaállítja az adatokat a kezdeti értékekre.
+   * @memberof Sor
    */
   const reset = () => {
     setAdatok(regiAdatok);
@@ -88,41 +106,49 @@ function Sor({row , ix, callback}) {
   };
 
   /**
-   * Egy rekurzív függvény, ami az objektumban mélyen elhelyezkedő értékeket is megjeleníti.
-   * Mivel a {@link row}-ban is lehet több beágyazott objektum, ezért megkeresi az összeset és azokat is megjeleníti egy cellában.
-   *
+   * @description Egy rekurzív függvény, ami az adatokat megjeleníti cellákban. (nested objektmokkal is működik)
+   * Először rendezi az objektumokat a `columnIndex` alapján, majd csak azután kezdi megjeleníteni az értékeket.
+   * Ellenőrzi, hogy az adott mező rejtett-e, ha igen, akkor nem jeleníti meg.
+   * Ha az adott mező referencia mezője egy lista, akkor egy checkbox listát jelenít meg.
+   * @memberof Sor
+   * @function
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
-   * @param {Function} cellaLista - Egy függvény, amit akkor hív meg, ha az adot `elem` egy lista.
+   * @param {Function} cellaLista - Egy függvény, amit akkor hív meg, ha az adott `elem` referenciája egy lista.
    * @param {Function} cellaTartalom - Egy függvény, amit alapértelmezetten hív meg.
-   *  Function to generate content cell data.
    *
    * @returns {Array} A legenerált cella lista.
    */
   const CellaGeneralo = (elem, cellaLista, cellaTartalom) =>
-    Object.entries(elem).flatMap(([key, value]) => {
-      const metainfo = findKey(key);
-      if (metainfo?.isHidden) return [];
-      if (metainfo?.references?.split("/").length > 1)
-        return cellaLista(value, key, metainfo);
-      if (getPKs().includes(key))
-        return (
-          <td>
-            <p>{value}</p>
-          </td>
-        );
-      if (typeof value === "object")
-        return CellaGeneralo(value, cellaLista, cellaTartalom);
-      return cellaTartalom(key, value, metainfo);
-    });
+    Object.entries(elem)
+      .sort(([keyA], [keyB]) => {
+        const metaA = findKey(keyA) ?? { columnIndex: 0 };
+        const metaB = findKey(keyB) ?? { columnIndex: 0 };
+        return metaA.columnIndex - metaB.columnIndex;
+      })
+      .flatMap(([key, value]) => {
+        const metainfo = findKey(key);
+        if (metainfo?.isHidden) return [];
+        if (metainfo?.references?.split("/").length > 1)
+          return cellaLista(value, key, metainfo);
+        if (getPKs().includes(key))
+          return (
+            <td>
+              <p>{value}</p>
+            </td>
+          );
+        if (typeof value === "object")
+          return CellaGeneralo(value, cellaLista, cellaTartalom);
+        return cellaTartalom(key, value, metainfo);
+      });
 
   /**
-   * Egy függvény, ahhoz az állapothoz, hogy a felhasználó csak olvassa az adatokat.
-   * Function to generate cell elements.
+   * @description Egy függvény, ahhoz az állapothoz, hogy a felhasználó csak olvassa az adatokat.
+   * @memberof Sor
+   * @function
+   * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
    *
-   * @param {Object} elem - The element to generate cell data for.
-   *
-   * @returns {Array} The generated cell elements.
-   */  
+   * @returns {Array} A generált cella elemek listája.
+   */
   const cellaElem = (elem) => {
     const cellaLista = (value, key, metainfo) =>
       kulsoAdatok[metainfo.references].map((opcio) => (
@@ -133,10 +159,11 @@ function Sor({row , ix, callback}) {
   };
 
   /**
-   * Egy függvény, ahhoz az állapothoz, hogy a felhasználó módosítja-e az adatokat, generál input cellákat.
+   * @description Egy függvény, ahhoz az állapothoz, hogy a felhasználó módosítja-e az adatokat, generál input cellákat.
    *
+   * @function
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
-   *
+   * @memberof Sor
    * @returns {Array} A generált input cellák.
    */
   const inputCella = (elem) => {
@@ -159,7 +186,7 @@ function Sor({row , ix, callback}) {
         <InputMezo
           key={key}
           input={metainfo}
-          veryCoolValue={value}
+          defaultValue={value}
           value={value}
           handleChange={handleChange}
         />
@@ -170,8 +197,10 @@ function Sor({row , ix, callback}) {
   };
 
   /**
-   * Egy függvény, ami a gombokat generálja.
-   * Mivel egy sornak két állapota van, ezért eldönti, hogy a felhasználó jelenleg szerkezti-e az adott sort.
+   * @function
+   * @memberof Sor
+   * @description Egy függvény, ami a gombokat generálja.
+   * Mivel egy sornak két állapota van, ezért eldönti, hogy a felhasználó jelenleg szerkeszti-e az adott sort.
    * Az első állapot, hogy a felhasználó módosítja az adatokat, ekkor a gombok a küldés és a mégse gombok lesznek. Ekkor a küldés gomb a patch metódust hívja meg, vagy a mégse gomb visszaállítja az adatokat.
    * A második állapotban a felhasználó csak módosítani szeretné az adatokat, ekkor a módosítás és a törlés gombok lesznek. Ekkor a módosítás gomb a sorok szerkesztését engedélyezi, vagy a törlés gomb hívja meg a callback függvényt.
    * @returns {JSX.Element} A generált gombok.
@@ -196,14 +225,15 @@ function Sor({row , ix, callback}) {
             dangerText: "Törlés",
           },
         };
-
     return (
       <>
-        <td>
-          <Button variant={variant} onClick={onClick}>
-            {text}
-          </Button>
-        </td>
+        {getPKs().length !== Object.keys(row).length && (
+          <td>
+            <Button variant={variant} onClick={onClick}>
+              {text}
+            </Button>
+          </td>
+        )}
         <td>
           <Button key="danger" variant="danger" onClick={dangerOnClick}>
             {dangerText}

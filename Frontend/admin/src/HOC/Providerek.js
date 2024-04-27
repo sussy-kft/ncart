@@ -14,6 +14,9 @@ import { InfoPanelProvider } from "../context/Alap/InfoPanelContext";
  * 
  * ඞ {@link MetaadatProvider}
  * 
+ * @component
+ * @param {Object} props - A komponens propsa.
+ * @param {React.ReactNode} props.children - A gyerek komponens, ami megkapja a felsorolt providereket.
  * @returns {React.Component} A gyerek komponenst, ami providerekkel van beágyazva.
  */
 function Providerek({children}){

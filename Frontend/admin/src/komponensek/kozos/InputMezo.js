@@ -5,29 +5,33 @@ import { AxiosContext } from "../../context/Alap/AxiosContext";
 import SelectMezo from "./SelectMezo";
 
 /**
- * InputMezo egy komponens, ami egy input form vezérlőt jelenít meg.
- * Az input form vezérlő az `input` segítségével állítja be a szüksges adatokat.
+ * @module InputMezo
+ * @description InputMezo egy komponens, ami egy input form vezérlőt jelenít meg.
+ * Az input form vezérlő az `input` segítségével állítja be a szükséges adatokat.
  * Egy flag-et is kezel, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
  * Továbbá lekéri opcióit a szerverről (ha esetleg nem opciókat a `pool`-ból), kezeli a változásokat és beállítja az alapértelmezett értéket.
  * Ha a `dataType` egy tömb, akkor egy checkboxot jelenít meg.
  * Vagy ha a `references` vagy a `isSelect` nem üres, akkor egy select form vezérlőt jelenít meg a {@link SelectMezo} segítségével.
  *
  * @component
- * @param {string} as - Egy komponens típusa, amibe majd beágyazza az input form vezérlőt.
- * @param {boolean} flag - Egy flag, amit a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
- * @param {Object} input - Az input mező metaadatai.
- * @param {boolean} isSelect - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {function} handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
- * @param {string} value - Az input vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani az input vezérlőn keresztül.
- * @param {Array} pool - Az input vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
- * @param {string} name - Az input vezérlő neve.
- * @param {boolean} idk - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
- * @param {string} veryCoolValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
- * @param {boolean} checked - Egy flag, amit a select vezérlő értékének beállításához használ, hogy a checkbox be legyen-e pipálva vagy sem.
+ * @param {Object} props - A komponens propsa.
+ * @param {string} props.className - Az input vezérlő osztályneve.
+ * @param {string} props.as - Egy komponens típusa, amibe majd beágyazza az input form vezérlőt.
+ * @param {boolean} props.flag - Egy flag, amit a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
+ * @param {Object} props.input - Az input mező metaadatai.
+ * @param {boolean} props.isSelect - Egy flag, amit a select vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {function} props.handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
+ * @param {string} props.value - Az input vezérlő alapértelmezett értéke. Ezt az értéket lehet módisítani az input vezérlőn keresztül.
+ * @param {Array} props.pool - Az input vezérlő opcióinak listája. A listában lévő elemekből választhat a felhasználó.
+ * @param {string} props.name - Az input vezérlő neve.
+ * @param {boolean} props.isSelectFirst - Egy flag, amit az input vezérlő értékének beállításához használ, hogy az első elemet válassza ki vagy a kapott értéket.
+ * @param {string} props.defaultValue - Az input control értékének beállításához használt érték. Ezt az értéket nem lehet módosítani a select vezérlőn keresztül.
+ * @param {boolean} props.checked - Egy flag, amit a select vezérlő értékének beállításához használ, hogy a checkbox be legyen-e pipálva vagy sem.
  *
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
  */
 function InputMezo({
+  className,
   as = "react.fragment",
   flag = true,
   input,
@@ -36,32 +40,37 @@ function InputMezo({
   value,
   pool,
   name,
-  idk,
-  veryCoolValue,
+  isSelectFirst,
+  defaultValue,
   checked,
 }) {
   const { getAll } = useContext(AxiosContext);
   /**
-   * Egy useState hook, ami a select vezérlő opcióit kezeli.
+   * @memberof InputMezo
+   * @description Egy useState hook, ami az opciókat kezeli.
    */
   const [opciok, setOpciok] = useState([]);
   /**
-   * Egy useState hook, ami flag-et kezel, hogy a handleChange függvényt csak egyszer hívják meg.
-   * useState hook to manage a flag that ensures the handleChange function is only called once.
+   * @memberof InputMezo
+   * @description Egy useState hook, ami azt jelzi, hogy a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
    */
   const [onceFlag, setOnceFlag] = useState(false);
 
   const As = as ?? "react.fragment";
 
   /**
-   * Egy UseEffect hook, ami a lekéri az opciókat a szerverről, ha a `references` mező nem üres.
+   * @memberof InputMezo
+   * @name useEffect_setOpciok
+   * @description Egy UseEffect hook, ami a lekéri az opciókat a szerverről, ha a `references` mező nem üres.
    */
   useEffect(() => {
     if (input?.references) getAll(input?.references, setOpciok);
   }, [input?.references]);
 
   /**
-   * Egy UseEffect hook, ami a egy alkalommal meghívja a handleChange függvényt, hogy legyen alapértelmezett értéke.
+   * @memberof InputMezo
+   * @name useEffect_autoSet
+   * @description Egy UseEffect hook, ami a egy alkalommal meghívja a handleChange függvényt, hogy legyen alapértelmezett értéke.
    */
   useEffect(() => {
     if (
@@ -81,7 +90,7 @@ function InputMezo({
           //ha nem tetszik, akkor kérlek írj egy jobbat
 
           //ps. ezért megérte megvenni a copilotot, hogy ilyen commenteket írjon
-          value: idk
+          value: isSelectFirst
             ? (input?.references && opciok[0]?.id) ??
               (pool && pool[0]?.[name]) ??
               value ??
@@ -116,7 +125,7 @@ function InputMezo({
   return input?.dataType.substring(input?.dataType.length - 2) == "[]" ? (
     (pool ?? opciok).map((opcio, index) => {
       return (
-        <As>
+        <As className={className}>
           <Form.Check
             name={input?.columnName}
             key={index}
@@ -131,6 +140,7 @@ function InputMezo({
     })
   ) : input?.references || isSelect ? (
     <SelectMezo
+      className={className}
       as={as}
       flag={flag}
       input={input}
@@ -138,18 +148,18 @@ function InputMezo({
       value={value}
       pool={pool}
       name={name}
-      idk={idk}
-      veryCoolValue={veryCoolValue}
+      isSelectFirst={isSelectFirst}
+      defaultValue={defaultValue}
       checked={checked}
     />
   ) : (
-    <As>
+    <As className={className}>
       <Form.Control
         as={"input"}
         required={!input?.isNullable}
         name={(name || input?.columnName) ?? ""}
         defaultValue={value ?? ""}
-        {...(veryCoolValue ? { value: veryCoolValue ?? {} } : {})}
+        {...(defaultValue ? { value: defaultValue ?? {} } : {})}
         type={typeConverter(input?.dataType) ?? ""}
         maxLength={input?.characterMaximumLength ?? ""}
         minLength={input?.characterMinimumLength ?? ""}
@@ -163,7 +173,8 @@ function InputMezo({
 }
 
 /**
- * typeConverter egy olyan függvény, ami a backendről kapott típusokat átkonvertálja a megfelelő input típusra.
+ * @memberof InputMezo
+ * @description typeConverter egy olyan függvény, ami a backendről kapott típusokat átkonvertálja a megfelelő input típusra.
  *
  *
  * @function
@@ -172,7 +183,7 @@ function InputMezo({
  * @example
  * const inputType = typeConverter('nvarchar'); // returns 'text'
  */
-function typeConverter(type) {
+export function typeConverter(type) {
   switch (type) {
     case "nvarchar":
       return "text";
@@ -193,7 +204,8 @@ function typeConverter(type) {
 }
 
 /**
- * maxConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő maximum értéket.
+ * @memberof InputMezo
+ * @description maxConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő maximum értéket.
  *
  *
  * @function
@@ -202,7 +214,7 @@ function typeConverter(type) {
  * @example
  * const minValue = minConverter('int'); // returns 2147483647
  */
-function maxConverter(type) {
+export function maxConverter(type) {
   switch (type) {
     case "float":
       return 3.4028235e38;
@@ -220,7 +232,8 @@ function maxConverter(type) {
 }
 
 /**
- * minConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő minimum értéket.
+ * @memberof InputMezo
+ * @description minConverter egy olyan függvény, ami a backend korlátjához igazodva beállítja a megfelelő minimum értéket.
  *
  *
  * @function
@@ -229,7 +242,7 @@ function maxConverter(type) {
  * @example
  * const minValue = minConverter('int'); // returns -2147483648
  */
-function minConverter(type) {
+export function minConverter(type) {
   switch (type) {
     case "float":
       return -3.4028235e38;

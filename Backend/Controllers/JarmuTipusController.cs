@@ -8,7 +8,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("jarmutipusok"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class JarmuTipusController(AppDbContext context, IConfiguration config) : TablaController<int, JarmuTipus, JarmuTipusDTO>(context, config)
+    public partial class JarmuTipusController(AppDbContext context) : TableController<int, JarmuTipus, JarmuTipusDTO>(context)
     {
         protected override string tableName => nameof(AppDbContext.JarmuTipusok);
 

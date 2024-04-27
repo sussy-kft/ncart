@@ -1,80 +1,93 @@
-import React from "react";
-import {Form} from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Form } from "react-bootstrap";
 import InputMezo from "../../../komponensek/kozos/InputMezo";
 import Button from "react-bootstrap/Button";
 import {AxiosContext} from "../../../context/Alap/AxiosContext";
 import "./Bejelentkezes.css";
-import {useNavigate} from "react-router-dom";
-import {DarkModeContext} from "../../../context/Alap/DarkModeContext";
-import {InfoPanelContext} from "../../../context/Alap/InfoPanelContext";
+import { useNavigate } from "react-router-dom";
+import { DarkModeContext } from "../../../context/Alap/DarkModeContext";
+import { InfoPanelContext } from "../../../context/Alap/InfoPanelContext";
 import videoBackground from "../../../media/map.mp4";
 
+
 /**
- * A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
+ * @module Bejelentkezes
+ * @description A Bejelentkezes komponens felelős a bejelentkezési űrlap megjelenítéséért és a bejelentkezési folyamat kezeléséért.
  * @returns {JSX.Element} A megjeleníteni kivánt `Bejelentkezes` komponenst.
  */
 function Bejelentkezes() {
-    const {getText} = React.useContext(DarkModeContext);
-    const {post} = React.useContext(AxiosContext);
-    const {resetInfoPanel} = React.useContext(InfoPanelContext);
+  const { getText } = React.useContext(DarkModeContext);
+  const { post, getAll } = React.useContext(AxiosContext);
+  const { resetInfoPanel } = React.useContext(InfoPanelContext);
 
-    const navigate = useNavigate();
-    const inputs = [
-        {columnName: "email", dataType: "email"},
-        {
-            columnName: "password",
-            dataType: "password",
-            characterMinimumLength: 8,
-        },
-    ];
+  const navigate = useNavigate();
+  const inputs = [
+    { columnName: "email", dataType: "email" },
+    { columnName: "password", dataType: "password", characterMinimumLength: 8 },
+  ];
 
-    const [validated, setValidated] = React.useState(false);
-    const [adatok, setAdatok] = React.useState({});
+  useEffect(() => {
+    const asd = async () => {
+      const  a = await getAll("test").then((valasz) => valasz);
+      console.log(a);
+    };
+    asd();
+  }, [getAll]);
 
-    /**
-     * Egy függvény, ami generál form input mezőket az inputs listából.
-     * @returns {Form.Group[]} Egy tömböt, ami a generált form input mezőket tartalmazza.
-     */
-    const inputGenerator = () => {
+  const [validated, setValidated] = React.useState(false);
+  const [adatok, setAdatok] = React.useState({});
+  
+  /**
+   * @function
+   * @memberof Bejelentkezes
+   * @description Egy függvény, ami generál form input mezőket az inputs listából.
+   * @returns {Form.Group[]} Egy tömböt, ami a generált form input mezőket tartalmazza.
+   */
+  const inputGenerator = () => {
+    return (
+      inputs?.map((input) => {
         return (
-            inputs?.map((input) => {
-                return (
-                    <Form.Group className="mb-3" key={input.columnName}>
-                        <Form.Label>{input.columnName + ": "}</Form.Label>
-                        <InputMezo input={input} handleChange={handleChange} />
-                        <Form.Control.Feedback type="invalid" />
-                    </Form.Group>
-                );
-            }) || []
+          <Form.Group className="mb-3" key={input.columnName}>
+            <Form.Label>{input.columnName + ": "}</Form.Label>
+            <InputMezo input={input} handleChange={handleChange} />
+            <Form.Control.Feedback type="invalid" />
+          </Form.Group>
         );
-    };
+      }) || []
+    );
+  };
 
-    /**
-     * Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a token-t, amit a localStorage-ba menti.
-     * Továbbá a felhasználó email címét a sessionStorage-be menti, átirányítja az admin oldalra és törli az összes info panelt.
-     * @param {Event} event - A form küldési eseménye.
-     */
-    const handleSumbit = (event) => {
-        event.preventDefault();
-        setValidated(true);
-        post("kezelok/login", adatok, (valasz) => {
-            resetInfoPanel();
-            window.sessionStorage.setItem("felhasznalo", adatok.email);
-            localStorage.setItem("token", valasz.token);
-            navigate("/admin");
-        });
-    };
+  /**
+   * @function
+   * @memberof Bejelentkezes
+   * @description Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a tokent és a lejárati időpontot, amit a localStorage-ba menti.
+   * Továbbá a felhasználó email címét is a `localStorage`-ba menti, átirányítja az admin oldalra és törli az összes info panelt.
+   * @param {Event} event - A form küldési eseménye.
+   */
+  const handleSumbit = (event) => {
+    event.preventDefault();
+    setValidated(true);
+    post("kezelok/login", adatok, (valasz) => {
+      resetInfoPanel()
+      localStorage.setItem("felhasznalo", adatok.email);
+      localStorage.setItem("token", valasz.token);
+      localStorage.setItem("lejaratiIdopont", valasz.lejaratiIdopont);
+      navigate("/admin");
+    });
+  };
 
-    /**
-     * Egy függvény, ami a form input mezőinek változását kezeli.
-     * @param {Event} event - A megváltozott input mező eseménye.
-     */
-    const handleChange = (event) => {
-        setAdatok((values) => ({
-            ...values,
-            [event.target.name]: event.target.value,
-        }));
-    };
+  /**
+   * @function
+   * @memberof Bejelentkezes
+   * @description Egy függvény, ami a form input mezőinek változását kezeli.
+   * @param {Event} event - A megváltozott input mező eseménye.
+   */
+  const handleChange = (event) => {
+    setAdatok((values) => ({
+      ...values,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
     return (
         <div className="video-background">

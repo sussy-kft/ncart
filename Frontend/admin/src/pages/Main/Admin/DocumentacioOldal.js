@@ -1,8 +1,8 @@
 import React from "react";
 
 /**
- * Egy React komponens, ami egy iframe-et jelenít meg.
- * Az iframe a "/dokumentacio/out/index.html" helyen található HTML dokumentumot jeleníti meg.
+ * @description Egy React komponens, ami egy iframe-et jelenít meg.
+ * Az iframe a "/docs/index.html" helyen található HTML dokumentumot jeleníti meg.
  *
  * @component
  * @returns {React.Element} Az `iframe`-et adja vissza, amely a dokumentációs oldalt jeleníti meg.
@@ -10,7 +10,7 @@ import React from "react";
 function Documentacio() {
   return (
     <iframe
-      src="/dokumentacio/out/index.html"
+      src="/docs/index.html"
       title="Dokumentáció"
       width="100%"
       style={{

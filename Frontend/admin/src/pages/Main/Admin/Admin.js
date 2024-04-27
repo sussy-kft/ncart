@@ -8,6 +8,8 @@ import Auth from "../../../HOC/Auth";
 import Documentacio from "./DocumentacioOldal";
 
 /**
+ * @memberof Admin
+ * @inner
  * @typedef {Object} Utvonal
  * @property {string} key - Egy egyedi kulcs a komponensekhez. Egyben ez mutatja az útvonalat is.
  * @property {string} cim - Az oldalon megjelenő cím.
@@ -15,8 +17,11 @@ import Documentacio from "./DocumentacioOldal";
  */
 
 /**
- * Az Admin oldal útvonalait tartalmazó tömb.
- * @type {Utvonal[]} 
+ * @memberof Admin
+ * @inner
+ * @name utvonalak
+ * @type {Utvonal[]}
+ * @description Az Admin oldal útvonalait tartalmazó tömb.
  */
 const utvonalak = [
   { key: "kezelok", cim: "Kezelők" },
@@ -28,7 +33,8 @@ const utvonalak = [
 ];
 
 /**
- * Az Admin komponens feladata, hogy a további útvonalakak megjelenítését kezelje.
+ * @module Admin
+ * @description Az Admin komponens feladata, hogy a további útvonalakak megjelenítését kezelje.
  * @returns {React.Component} Az Admin komponenst.
  */
 function Admin() {

@@ -7,29 +7,42 @@ import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
 
 /**
- * Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
+ * @module AllomasKartya
+ * @description Egy React komponens, ami egy kártyát jelenít meg egy állomás adataival.
  *
- * @param {Object} allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
- * @param {string} allomas.allomas - Az állomás ID-ja.
- * @param {number} allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
- * @param {string} nev - Az állomás neve.
- * @param {string} irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
+ * @param {Object} props - A komponens propsa.
+ * @param {Object} props.allomas - Az állomás objektum, ami tartalmazza az állomás adatait.
+ * @param {string} props.allomas.allomas - Az állomás ID-ja.
+ * @param {number} props.allomas.hanyPerc - Hogy hány percig tart eljutni a következő állomásra.
+ * @param {string} props.nev - Az állomás neve.
+ * @param {string} props.irany - Egy kulcs, hogy melyik irányhoz tartozik az állomás.
  *
- * @returns {React.Element} A megjelenítendő állomás kártyát vagy `null`-t, ha az állomás objektum nem létezik.
+ * @returns {React.Element} Egy React Bootstrap Card komponenst, ami megjeleníti az állomás adatait.
  */
 function AllomasKartya({ allomas, nev, irany }) {
   const { megallok, setMegallok, checked, oppositeKey, megfordit, setShow } =
     useContext(MegallokContext);
 
   /**
-   * A jelenlegi állomás időtartamát módosítja.
-   *
+   * @description A jelenlegi állomás időtartamát módosítja.
+   * @memberof AllomasKartya
    * @param {Event} event - Egy esemény objektum.
+   * @function handleChange
+   * @returns {void}
    */
   const handleChange = (event) => {
+    const { value, min, max } = event.target;
+    if (
+      value==="" ||
+      Number(value) % 1 !== 0 ||
+      (min && Number(value) < Number(min)) ||
+      (max && Number(value) > Number(max))
+    )
+      return;
+
+    console.log(value, min, max);
     setShow(true);
     const tmp = _.cloneDeep(megallok[irany].megallok);
-    const { value } = event.target;
     tmp.find((val) => val.allomas === allomas.allomas).hanyPerc = value * 1;
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
@@ -48,8 +61,10 @@ function AllomasKartya({ allomas, nev, irany }) {
   };
 
   /**
-   * A jelenlegi állomást törli a listából.
-   *
+   * @description A jelenlegi állomást törli a listából.
+   * @memberof AllomasKartya
+   * @function torol
+   * @returns {void}
    */
   const torol = () => {
     let index = megallok[irany].megallok.findIndex(
@@ -78,9 +93,6 @@ function AllomasKartya({ allomas, nev, irany }) {
     }));
   };
 
-  if (!allomas || !megallok) return null;
-
-  console.log("sussy", allomas);
   return (
     <Card className="d-flex flex-row text-start">
       <Card.Img
@@ -93,28 +105,35 @@ function AllomasKartya({ allomas, nev, irany }) {
           maxWidth: "100px",
           minHeight: "100px",
           minWidth: "100px",
+          zIndex: "1",
+          margin:"auto"
         }}
       />
+      <div style={{backgroundColor:"#ed1c24", width:"15px", height:"100%", position:"absolute", left: "42px", zIndex:"0"}}/>
       <Card.Body className="flex-fill text-left ps-0">
         <Card.Title>
           {nev} (állomásID: {allomas.allomas})
         </Card.Title>
         <Card.Text>
           <div
-            className="d-flex justify-content-between align-items-center"
+            className="row justify-content-between align-items-center"
             style={{ width: "100%" }}
           >
-            <div className="d-flex align-items-center">
+            <div className="col-12 col-lg-6 d-flex align-items-center">
               <span className="me-2">idő: </span>
               <InputMezo
-                veryCoolValue={allomas.hanyPerc}
+                defaultValue={allomas.hanyPerc}
                 input={{ columnName: "hanyPerc", dataType: "tinyint" }}
                 handleChange={(event) => handleChange(event)}
               />
               <br />
             </div>
             {megallok[irany].megallok.length > 1 && (
-              <Button variant="danger" onClick={() => torol(allomas)}>
+              <Button
+                className="col-12 col-lg-6 mt-3 mt-lg-0"
+                variant="danger"
+                onClick={() => torol(allomas)}
+              >
                 Állomás törlése
               </Button>
             )}

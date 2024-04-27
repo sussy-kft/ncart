@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Backend.Controllers;
+using System.Security.Cryptography;
 
 namespace Backend
 {
@@ -12,6 +13,29 @@ namespace Backend
     {
         static void Main(string[] args)
         {
+            
+            string expectedHash;
+            string actualHash;
+
+            using (FileStream stream = File.OpenRead("key/productKey.png"))
+            {
+                SHA256Managed sha = new SHA256Managed();
+                byte[] hash = sha.ComputeHash(stream);
+                actualHash = BitConverter.ToString(hash).Replace("-", String.Empty);
+            }
+
+            using (FileStream stream = new FileStream("Properties/xd", FileMode.Open, FileAccess.Read))
+            {
+                byte[] bytes = new byte[stream.Length];
+                stream.Read(bytes, 0, (int)stream.Length);
+                expectedHash = Convert.ToBase64String(bytes);
+            }
+
+            if (expectedHash != actualHash)
+            {
+                throw new SecurityTokenInvalidAudienceException("Nem megfelelo a termekkulcs!");
+            }
+
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.Services.AddScoped<AppDbContext, AppDbContext>();
             builder.Services.AddCors(options => {

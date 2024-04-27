@@ -25,7 +25,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "fart": "nodemon --watch ../user server.js"
+    "fart": "nodemon --watch ../user server.js",
+    "docsOld": "jsdoc -c ./src/.jsdoc.conf.json -d ./public/docs",
+    "docs": "documentation build src/**/*.js -f html -o public/docs"
   },
   "eslintConfig": {
     "extends": [
@@ -46,7 +48,19 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "axios-mock-adapter": "^1.22.0",
+    "babel-jest": "^29.7.0",
+    "jest-mock-axios": "^4.7.3",
     "nodemon": "^3.1.0",
-    "react-router-dom": "^6.22.0"
+    "react-router-dom": "^6.22.0",
+    "taffydb": "^2.7.3",
+    "tui-jsdoc-template": "^1.2.2"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!axios|lodash).+\\.js$"
+    ]
   }
 }

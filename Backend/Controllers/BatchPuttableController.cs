@@ -3,7 +3,7 @@ using Backend.ModelDTOBases;
 
 namespace Backend.Controllers
 {
-    public abstract class BatchPuttableController<TPrimaryKey, TDbFormat, TJsonFormat, TBatchFormat>(AppDbContext context, IConfiguration config) : TablaController<TPrimaryKey, TDbFormat, TJsonFormat>(context, config)
+    public abstract class BatchPuttableController<TPrimaryKey, TDbFormat, TJsonFormat, TBatchFormat>(AppDbContext context) : TableController<TPrimaryKey, TDbFormat, TJsonFormat>(context)
         where TDbFormat : class, IConvertible<TJsonFormat>
         where TJsonFormat : class, IConvertible<TDbFormat>
         where TBatchFormat : class, IConvertible<IEnumerable<TDbFormat>>

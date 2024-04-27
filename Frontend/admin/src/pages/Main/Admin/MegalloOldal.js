@@ -5,23 +5,27 @@ import MegalloSzerkeszto from "../../../komponensek/Megallok/MegalloSzerkeszto";
 import { MegallokProvider } from "../../../context/Megallok/MegallokContext";
 
 /**
- * Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
+ * @description Fő komponens a megallókhoz, ami a {@link VonalSzuro} és a {@link MegalloSzerkeszto} tartalmazza.
  *
  * @component
- * @param {string} cim - Az oldal címe.
+ * @param {Object} props A komponens propsa.
+ * @param {string} props.cim - Az oldal címe.
  * @returns {JSX.Element} A megjeélítendő komponens.
  */
 function MegalloOdlal({ cim }) {
 
   /**
-   * A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
+   * @memberof MegalloOdlal
+   * @description A meta egy segédobjektum, ami akkor kell ha esetlegesen még nem létezik az oda és a visza.
    * Olyan információkat tartalmaz, mint a vonalSzám és a járműtípus. 
+   * @type {Object}
+   * @default null
    */
   const [meta, setMeta] = React.useState(null);
 
   /**
-   * Metainfo, hogy a Vonalszűrőnek hogyan kell kezelnie az adatokat.
-   * 
+   * @description Metainfo, hogy a Vonalszűrőnek hogyan kell kezelnie az adatokat.
+   * @memberof MegalloOdlal
    * @property {string} url - Az URL, ahonnan az adatokat le kell kérni.
    * @property {string} key - Megmondja, hogy melyik kulcsnak kell az {@link InputMezo} name értékének lennie.
    * @property {string} value - Megmondja, hogy melyik kulcsnakk kell az {@link InputMezo} value értékének lennie.

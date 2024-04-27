@@ -3,20 +3,23 @@ import { ToggleButton } from "react-bootstrap";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 
 /**
- * `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.
+ * @module SzinkronizaloGomb
+ * @description `SzinkronizaloGomb` egy React komponens, amely egy kapcsoló gombot jelenít meg a szinkronizáláshoz.
  * A felhasználó beállíthatja, hogy be vagy ki legyen kapcsolva a szinkronizálás.
  * Ha a szinkronizálás be van kapcsolva, akkor az oda és vissza irányú megállók tükörképei lesznek egymásnak.
  * (Az első megálló az egyik irányban az utolsó megálló a másik irányban stb.)
  *
  * @component
  *
- * @returns {React.Element} A toggle button that changes its appearance and functionality based on the state of the stops (`megallok`).
+ * @returns {React.Element} Egy kapcsoló gombot, amellyel a két vonal szinkronizálását lehet beállítani.
  */
 function SzinkronizaloGomb() {
   const { megallok, checked, setChecked } = useContext(MegallokContext);
 
   /**
-   * Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
+   * @memberof SzinkronizaloGomb
+   * @function
+   * @description Megvizsgálja, hogy lehet-e szinkronizálni a megállókat.
    * Mivel a szinkronizálás akkor lehetséges, ha azonos számú megálló van mindkét irányban, és minden megálló ugyanaz a megálló a másik irányban, csak fordított sorrendben.
    * Ha a fetéltel teljesül, akkor a gomb kattintható, egyébként nem.
    * 
@@ -42,6 +45,7 @@ function SzinkronizaloGomb() {
   return (
     <ToggleButton
       id="toggle-check"
+      style={{ marginBottom: "60px" }}
       className={`mt-3 ${megallok.vissza ? "" : "d-none"}`}
       type="checkbox"
       variant={checked ? "success" : "warning"}
@@ -61,7 +65,7 @@ function SzinkronizaloGomb() {
       }}
       {...{ disabled: !szinkronizalhato() }}
     >
-      Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
+      Szinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
     </ToggleButton>
   );
 }

@@ -8,7 +8,7 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("vonalak"), Authorize(Policy = nameof(KezeloController.Engedelyek.JaratokSzerkesztese))]
-    public partial class VonalController(AppDbContext context, IConfiguration config) : TablaController<int, Vonal, VonalDTO>(context, config)
+    public partial class VonalController(AppDbContext context) : TableController<int, Vonal, VonalDTO>(context)
     {
         protected override string tableName => nameof(AppDbContext.Vonalak);
 

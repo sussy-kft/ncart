@@ -14,8 +14,10 @@ using Backend.Models;
 namespace Backend.Controllers
 {
     [Route("kezelok"), Authorize(Policy = nameof(Engedelyek.SzerkesztokFelvetele))]
-    public partial class KezeloController(AppDbContext context, IConfiguration config) : TablaController<int, Kezelo, KezeloDTO>(context, config)
+    public partial class KezeloController(AppDbContext context, IConfiguration config) : TableController<int, Kezelo, KezeloDTO>(context)
     {
+        protected IConfiguration config { get; } = config;
+
         protected override string tableName => nameof(AppDbContext.Kezelok);
 
         protected override DbSet<Kezelo> dbSet => context.Kezelok;

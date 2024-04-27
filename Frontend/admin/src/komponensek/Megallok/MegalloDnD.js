@@ -8,8 +8,8 @@ import UjAllomas from "./UjAllomas";
 import _ from "lodash";
 
 /**
- * `MegalloDnD` egy olyan komponens, ami lehetővé teszi a megállók szerkesztését egy drag and drop felületen.
- *
+ * @description `MegalloDnD` egy olyan komponens, ami lehetővé teszi a megállók szerkesztését egy drag and drop felületen.
+ * @module MegalloDnD
  * @component
  * @param {string} name - A vonal neve. (oda vagy vissza)
  *
@@ -21,8 +21,9 @@ function MegalloDnD( { name } ) {
   const { megallok, oppositeKey, atmasol} = useContext(MegallokContext);
 
   /**
-   * A `filterPool` egy függvény, ami kiszűri azokat a megállókat, amelyek még nem szerepelnek a vonalban.
-   * 
+   * @description A `filterPool` egy függvény, ami kiszűri azokat a megállókat, amelyek még nem szerepelnek a vonalban.
+   * @memberof MegalloDnD
+   * @function
    * @param {string} key - A vonal kulcsa, hogy oda vagy vissza vonalról van-e szó.
    * @returns {Array|null} A szűrt megállók tömbje, vagy null, ha nincsenek már más megállók.
    */
@@ -40,11 +41,12 @@ function MegalloDnD( { name } ) {
   };
 
   /**
-   *
+   * @description A `renderDraggable` egy függvény, ami egy Draggable komponenst jeleníti meg.
    * @param {Object} allomas - Az az egy megálló, amit meg kell jeleníteni.
    * @param {number} index - Egy index, ami segít megkülönböztetni a megállókat.
    * @returns {JSX.Element} Egy Draggable komponenst.
    * @function
+   * @memberof MegalloDnD
    */
   const renderDraggable = (allomas, index) => (
     <Draggable key={`${name}-${allomas.allomas}-${index}`} draggableId={`${name}-${allomas.allomas}-${index}`} index={index}>
