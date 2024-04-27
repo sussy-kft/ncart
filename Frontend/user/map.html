@@ -25,26 +25,16 @@
                 </div>
                 <div id="menuRight">
                     <div id="start"><a href="index.html">KEZDŐLAP</a></div>
-                    <div id="plan">UTAZÁS TERVEZÉS</div>
+                    <div id="plan">UTAZÁSTERVEZÉS</div>
                 </div>
                 <div id="hamburger">
-                    <a
-                        href="javascript:void(0);"
-                        class="icon"
-                        onclick="myFunction()"
-                    >
+                    <a href="javascript:void(0);" class="icon">
                         <i class="bi bi-list"></i>
                     </a>
                 </div>
             </nav>
             <article>
-                <button id="togglePanelButton" onclick="togglePanel()">
-                    <i
-                        id="panelToggleButtonIcon"
-                        class="bi bi-chevron-left"
-                    ></i>
-                </button>
-                <div id="panel" style="left:0px">
+                <div id="panel" style="left: 0px">
                     <label for="fname"
                         ><i class="bi bi-compass-fill"></i
                     ></label>
@@ -56,8 +46,8 @@
                     />
                     <datalist id="megalloNevek"> </datalist>
                     <label for="fname"
-                        ><i class="bi bi-three-dots-vertical"></i></label
-                    >
+                        ><i class="bi bi-three-dots-vertical"></i
+                    ></label>
 
                     <label for="fname"
                         ><i class="bi bi-geo-alt-fill"></i
@@ -102,40 +92,15 @@
                     />
                     <label for="vehicle1">NCET</label><br />
                     <label for="vonalKivetelek">Vonalak:</label><br />
-                    <input
-                        type="checkbox"
-                        id="line1"
-                        name="line1"
-                        value="M1"
-                    />
+                    <input type="checkbox" id="line1" name="line1" value="M1" />
                     <label for="line1">M1</label><br />
-                    <input
-                        type="checkbox"
-                        id="line2"
-                        name="line2"
-                        value="M2"
-                    />
+                    <input type="checkbox" id="line2" name="line2" value="M2" />
                     <label for="line2">M2</label><br />
-                    <input
-                        type="checkbox"
-                        id="line3"
-                        name="line3"
-                        value="B1"
-                    />
+                    <input type="checkbox" id="line3" name="line3" value="B1" />
                     <label for="line3">B1</label><br />
-                    <input
-                        type="checkbox"
-                        id="line4"
-                        name="line4"
-                        value="E1"
-                    />
+                    <input type="checkbox" id="line4" name="line4" value="E1" />
                     <label for="line4">E1</label><br />
-                    <input
-                        type="checkbox"
-                        id="line5"
-                        name="line5"
-                        value="E2"
-                    />
+                    <input type="checkbox" id="line5" name="line5" value="E2" />
                     <label for="line5">E2</label><br />
                     <input
                         type="submit"
@@ -152,11 +117,21 @@
                                 <th>mikor</th>
                             </tr>
                         </table>
-                    </div>
+                    </div><br>
+                    <button id="togglePanelButton">
+                        <i
+                            id="panelToggleButtonIcon"
+                        ></i>
+                    </button>
                 </div>
                 <div id="map">
-                    <svg id="vonalrajz" height="2000" width="2666" viewBox="0 0 2000 2666.67" xmlns="http://www.w3.org/2000/svg">
-                    </svg>
+                    <svg
+                        id="vonalrajz"
+                        height="2000"
+                        width="2666"
+                        viewBox="0 0 2000 2666.67"
+                        xmlns="http://www.w3.org/2000/svg"
+                    ></svg>
                     <img draggable="false" src="images/map1.png" alt="" />
                 </div>
             </article>

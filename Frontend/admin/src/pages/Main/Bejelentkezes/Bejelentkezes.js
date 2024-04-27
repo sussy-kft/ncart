@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import InputMezo from "../../../komponensek/kozos/InputMezo";
 import Button from "react-bootstrap/Button";
-import { AxiosContext } from "../../../context/Alap/AxiosContext";
+import {AxiosContext} from "../../../context/Alap/AxiosContext";
 import "./Bejelentkezes.css";
 import { useNavigate } from "react-router-dom";
 import { DarkModeContext } from "../../../context/Alap/DarkModeContext";
 import { InfoPanelContext } from "../../../context/Alap/InfoPanelContext";
-
+import videoBackground from "../../../media/map.mp4";
 
 
 /**
@@ -89,33 +89,40 @@ function Bejelentkezes() {
     }));
   };
 
-  return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: "100vh" }}
-    >
-      <Form
-        noValidate
-        validated={validated}
-        id="bejelentkezes"
-        style={{
-          backgroundColor: getText() === "dark" ? "#1f2938" : "#f3f4f6",
-          color: getText() === "dark" ? "white" : "black",
-        }}
-        onSubmit={(event) => handleSumbit(event)}
-      >
-        {inputGenerator()}
-        <div className="d-flex justify-content-end mt-5">
-          <Button
-            type="submit"
-            variant={getText() === "dark" ? "light" : "dark"}
-          >
-            Bejelentkezés
-          </Button>
+    return (
+        <div className="video-background">
+            <video autoPlay loop muted className="fullscreen-bg__video">
+                <source src={videoBackground} type="video/mp4" />
+            </video>
+            <div
+                className="d-flex justify-content-center align-items-center"
+                style={{height: "100vh", position: "relative"}}
+            >
+                <Form
+                    noValidate
+                    validated={validated}
+                    id="bejelentkezes"
+                    style={{
+                        backgroundColor: "transparent", // Átlátszó háttér
+                        color: getText() === "dark" ? "white" : "black",
+                        position: "relative", // Hogy a form a videó felett legyen
+                        zIndex: 1, // Hogy a form a videó felett legyen
+                    }}
+                    onSubmit={(event) => handleSumbit(event)}
+                >
+                    {inputGenerator()}
+                    <div className="d-flex justify-content-end mt-5">
+                        <Button
+                            type="submit"
+                            variant={getText() === "dark" ? "light" : "dark"}
+                        >
+                            Bejelentkezés
+                        </Button>
+                    </div>
+                </Form>
+            </div>
         </div>
-      </Form>
-    </div>
-  );
+    );
 }
 
 export default Bejelentkezes;

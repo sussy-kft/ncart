@@ -1,58 +1,53 @@
-function myFunction() {
-    var x = $("#myTopnav");
-    if (x.attr("class") === "topnav") {
-        x.addClass("responsive");
-    } else {
-        x.removeClass("responsive");
-        x.addClass("topnav");
-    }
-}
-
-function togglePanel() {
-    var panel = document.getElementById("panel");
-    var toggleButtonIcon = document.getElementById("panelToggleButtonIcon");
-
-    if (panel.style.left === "0px") {
-        panel.style.left = "-540px"; // Elrejtés balra
-        toggleButtonIcon.className = "bi bi-chevron-right"; // Nyíl jobbra
-    } else {
-        panel.style.left = "0px"; // Megjelenítés
-        toggleButtonIcon.className = "bi bi-chevron-left"; // Nyíl balra
-    }
-}
-
 $(document).ready(function () {
-    var x = 0;
-    var y = 94.4;
-    var img = $("#map");
-    var isDragging = false;
+    let x = 0;
+    let y = 94.4;
+    let img = $("#map");
+    let isDragging = false;
 
-    // This will run when the mouse button is pressed within the map container
+    // Function to handle panel toggle
+    function togglePanel() {
+        let panel = $("#panel");
+        let toggleButton = $("#togglePanelButton");
+        let toggleButtonIcon = $("#panelToggleButtonIcon");
+
+        if (panel.css("transform") === "matrix(1, 0, 0, 1, 0, 0)") {
+            panel.css("transform", "translateY(-350px)"); // Módosítás: Felfelé elrejtés
+            panel.css("top", "90"); // Módosítás: tetejére helyezés
+            toggleButtonIcon.attr("class", "bi bi-chevron-down"); // Change icon to right arrow
+        } else {
+            panel.css("transform", "translateY(0)"); // Módosítás: Felfelé megjelenítés
+            panel.css("top", null); // Módosítás: alaphelyzet visszaállítása
+            toggleButton.css("transform", "translateY(0)"); // Módosítás: gomb megjelenítése
+            toggleButtonIcon.attr("class", "bi bi-chevron-up"); // Change icon to left arrow
+        }
+    }
+
+    // Mouse down event for map dragging
     img.on("mousedown", function (event) {
         isDragging = true;
-        var offset = img.offset();
+        let offset = img.offset();
         x = event.clientX - offset.left;
         y = event.clientY - offset.top;
     });
 
-    // This will run when the mouse button is released anywhere in the document
+    // Mouse up event for ending dragging
     $(document).on("mouseup", function (event) {
         if (isDragging) {
             isDragging = false;
         }
     });
 
-    // This will run when the mouse is moved
+    // Mouse move event for dragging
     $(document).on("mousemove", function (event) {
         if (isDragging) {
-            var newX = event.clientX - x;
-            var newY = event.clientY - y;
+            let newX = event.clientX - x;
+            let newY = event.clientY - y;
 
-            // Limiting the movement within the bounds of the map container
-            var parentWidth = img.parent().width();
-            var parentHeight = img.parent().height();
-            var imgWidth = img.width();
-            var imgHeight = img.height();
+            // Limiting movement within bounds of map container
+            let parentWidth = img.parent().width();
+            let parentHeight = img.parent().height();
+            let imgWidth = img.width();
+            let imgHeight = img.height();
 
             if (newX > 0) {
                 newX = 0;
@@ -64,13 +59,29 @@ $(document).ready(function () {
             } else if (newY < parentHeight - imgHeight + innerHeight) {
                 newY = parentHeight - imgHeight + innerHeight;
             }
-            console.log(parentHeight - imgHeight);
+
             img.css({left: newX + "px", top: newY + "px"});
         }
 
-        // Preventing navigation when dragging near the bottom edge of the map
+        // Preventing navigation when dragging near bottom edge of map
         if (event.clientY > window.innerHeight - 50) {
             event.preventDefault();
         }
     });
+
+    // Hamburger menu click event
+    $("#hamburger").on("click", function () {
+        let x = $("#myTopnav");
+        let y = $("#panel")
+        x.toggleClass("responsive");
+        y.toggleClass("responsive");
+    });
+
+    // Panel toggle button click event
+    $("#togglePanelButton").on("click", function () {
+        togglePanel();
+    });
+
+    // Adjust toggle button position initially
+    togglePanel();
 });
