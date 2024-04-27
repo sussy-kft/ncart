@@ -49,7 +49,12 @@ export const AxiosProvider = ({ children }) => {
                 setAxiosId(Math.random());
                 successMessage && addInfoPanel(<InfoPanel bg={"success"} text={successMessage} />);
             }
-            console.log(response.data);
+            if (typeof response.data === 'object' && response.data !== null) {
+                const oldProto = Object.getPrototypeOf(response.data);
+                const newProto = Object.create(oldProto);
+                newProto.url = url;
+                Object.setPrototypeOf(response.data, newProto);
+            }
             callback && callback(response.data);
             return response.data;
         } catch (error) {

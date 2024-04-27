@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import { AxiosContext } from "../../context/Alap/AxiosContext";
 import Form from "react-bootstrap/Form";
@@ -8,7 +8,6 @@ import { MetaadatContext } from "../../context/Alap/MetaadatContext";
 import InputMezo from "../kozos/InputMezo";
 import { Container } from "react-bootstrap";
 
-
 /**
  * @module FormMezo
  * @component
@@ -16,20 +15,21 @@ import { Container } from "react-bootstrap";
  * A form mezők dinamikusan generálódnak a `metaadat` kontextus alapján, emiatt, ha egy másik form mezőt akarunk, elég, ha csak a `metaadat`-ot cseréljük le.
  * A form a `MetaadatContext` `url` segítségével küldjük el a szervernek POST kérésben az adatokat.
  *
- * @returns {JSX.Element} Egy {@link Form} ({@link Container}-be beágyazva) komponenst ad vissza. 
+ * @returns {JSX.Element} Egy {@link Form} ({@link Container}-be beágyazva) komponenst ad vissza.
  */
 function FormMezo() {
   const { post } = useContext(AxiosContext);
   const { metaadat, url } = useContext(MetaadatContext);
 
+  const urlRef = useRef(url);
   /**
    * @memberof FormMezo
    * @description Egy useState hook, ami a form mezők validálását jelző állapot.
-   * 
+   *
    */
   const [validated, setValidated] = useState(false);
   const [adatok, setAdatok] = useState({});
-
+  const [mezok, setMezok] = useState([]);
   /**
    * @typedef {Object} Target
    * @memberof FormMezo
@@ -46,7 +46,7 @@ function FormMezo() {
    * @param {Object} event - Egy esemény objektum.
    * @param {Target} event.target - Az esemény célja.
    */
-  const handleChange = ({ target }) =>{
+  const handleChange = ({ target }) => {
     const { name, type, checked, value } = target;
     setAdatok((values) => ({
       ...values,
@@ -57,7 +57,7 @@ function FormMezo() {
             : (values[name] ?? []).filter((elem) => elem !== value)
           : value,
     }));
-  }
+  };
 
   /**
    * @memberof FormMezo
@@ -69,9 +69,9 @@ function FormMezo() {
    */
   const generateInput = (lista) =>
     lista?.flatMap((input) =>
-      Array.isArray(input.dataType) ? 
+      Array.isArray(input.dataType) ? (
         generateInput(input.dataType)
-        : (
+      ) : (
         <Form.Group key={input.columnName} as={Col} md="4">
           <Form.Label>{`${input.columnName}: `}</Form.Label>
           <InputMezo input={input} handleChange={handleChange} />
@@ -114,13 +114,25 @@ function FormMezo() {
       {}
     );
 
+  useEffect(() => {
+    urlRef.current = url;
+  }, [url]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (urlRef.current + "/metadata" == metaadat?.url)
+        setMezok(generateInput(metaadat));
+    }
+    fetchData();
+  }, [urlRef.current, metaadat]);
+
   if (!metaadat) return <h1>Betöltés...</h1>;
 
   return (
     <Container>
       <Form noValidate validated={validated} onSubmit={kuldes}>
         <h2 className="mt-3">Új adat hozzáadása:</h2>
-        <Row className="mb-2 mt-3">{generateInput(metaadat)}</Row>
+        <Row className="mb-2 mt-3">{mezok}</Row>
         <Button className="mb-4" type="submit">
           Küldés
         </Button>

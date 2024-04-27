@@ -26,14 +26,6 @@ function Bejelentkezes() {
     { columnName: "password", dataType: "password", characterMinimumLength: 8 },
   ];
 
-  useEffect(() => {
-    const asd = async () => {
-      const  a = await getAll("test").then((valasz) => valasz);
-      console.log(a);
-    };
-    asd();
-  }, [getAll]);
-
   const [validated, setValidated] = React.useState(false);
   const [adatok, setAdatok] = React.useState({});
   

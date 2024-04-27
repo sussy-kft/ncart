@@ -23,9 +23,7 @@ function SzerkesztoOldal({ child = <AlapKomponens />, cim }) {
   const location = useLocation();
 
   useEffect(() => {
-    setTimeout(() => {
-      setUrl(location.pathname.split("admin/")[1]);
-    }, 1000);
+    setUrl(location.pathname.split("admin/")[1]);
   }, [location.pathname]);
 
   return (

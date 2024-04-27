@@ -25,6 +25,8 @@ function Tabla() {
   const [id, setId] = useState(null);
   const [adatok, setAdatok] = useState(null);
 
+  const urlRef = useRef(url);
+
   /**
    * @description Egy callback függvény, ami az adat egyedi útvonalát állapítja meg és megjeleníti a popupot.
    * Az `useCallback`-et használja, hogy elkerülje a felesleges újra rendereléseket.
@@ -49,9 +51,17 @@ function Tabla() {
    * Az `adatok` állapotot `null`-ra állítja, mielőtt új adatokat kérne le, hogy ne jelenjenek meg a régi adatok, miközben lekéri az új adatokat.
    */
   useEffect(() => {
-    setAdatok(null);
-    if (url) getAll(url, setAdatok);
-  }, [url, axiosId]);
+    async function fetchData() {
+      setAdatok(null);
+      const adatok = await getAll(urlRef.current);
+      if (urlRef.current == adatok?.url) setAdatok(adatok);
+    }
+    fetchData();
+  }, [urlRef.current, axiosId]);
+
+  useEffect(() => {
+    urlRef.current = url;
+  }, [url]);
 
   const fejlecElemRef = useRef();
   fejlecElemRef.current = (elem) =>
@@ -63,7 +73,7 @@ function Tabla() {
       })
       .map(([key, value]) => {
         if (Array.isArray(elem[key]))
-          return kulsoAdatok[findKey(key).references].map((opcio, index) => {
+          return kulsoAdatok[findKey(key)?.references].map((opcio, index) => {
             return <th key={index}>{opcio}</th>;
           });
         if (findKey(key)?.isHidden) return null;
@@ -83,7 +93,7 @@ function Tabla() {
    */
   const fejlecElem = useCallback(fejlecElemRef.current, [findKey, kulsoAdatok]);
 
-  if (!adatok || !getPKs() || !kulsoAdatok)
+  if (!adatok || !getPKs() || !kulsoAdatok || !url)
     return errorState ? (
       <img src="https://http.cat/503" alt="Error 503" />
     ) : (
