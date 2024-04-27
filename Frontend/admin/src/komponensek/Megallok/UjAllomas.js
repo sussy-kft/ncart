@@ -3,6 +3,8 @@ import { useState, useContext } from "react";
 import InputMezo from "../kozos/InputMezo";
 import { MegallokContext } from "../../context/Megallok/MegallokContext";
 import _ from "lodash";
+import { InfoPanelContext } from "../../context/Alap/InfoPanelContext";
+import InfoPanel from "../kozos/InfoPanel";
 
 /**
  * @module UjAllomas
@@ -17,6 +19,7 @@ import _ from "lodash";
 function UjAllomas({ pool, irany }) {
   const { megallok, setMegallok, checked, oppositeKey, megfordit } =
     useContext(MegallokContext);
+  const { addInfoPanel } = useContext(InfoPanelContext);
 
   /**
    * @memberof UjAllomas
@@ -37,9 +40,13 @@ function UjAllomas({ pool, irany }) {
    */
   const handleSave = (event, obj, callback, kovElem) => {
     event.preventDefault();
+    if (!obj.ido){
+      addInfoPanel(<InfoPanel bg="danger" text="Nem megfelelő időtartam! Az idő 0 és 255 közötti egész szám lehet!"/>);
+      return;
+    }
     let tmp = {};
-    tmp["allomas"] = obj["id"] * 1;
-    tmp["hanyPerc"] = obj["ido"] * 1;
+    tmp["allomas"] = obj["id"]
+    tmp["hanyPerc"] = obj["ido"]
     tmp["elozoMegallo"] =
       megallok[irany].megallok[megallok[irany].megallok.length - 1].allomas;
     tmp["vonal"] = megallok[irany].megallok[0].vonal;
@@ -81,10 +88,16 @@ function UjAllomas({ pool, irany }) {
    * @param {Target} event.target - Az esemény objektum célja.
    */
   const handleChange = ({ target }) => {
-    const { name, value } = target;
+    const { name, value, min, max } = target;
+    if (
+      Number(value) % 1 !== 0 ||
+      (min && Number(value) < Number(min)) ||
+      (max && Number(value) > Number(max))
+    )
+      return
     setAdatok((values) => ({
       ...values,
-      [name[0].toLowerCase() + name.slice(1)]: value,
+      [name[0].toLowerCase() + name.slice(1)]: (value * 1),
     }));
   };
 
@@ -101,8 +114,13 @@ function UjAllomas({ pool, irany }) {
   if (!pool || pool.length === 0) return null;
 
   return (
-    <Row className="mb-3 mt-3">
-      <InputMezo
+    <Row
+      className="mb-3 mt-3 ps-lg-2 pe-lg-3 align-items-end"
+      style={{ paddingLeft: "12px", paddingRight: "12px" }}
+    >
+      <div className="col-12 col-lg-4 p-0 ps-lg-1 pe-lg-2 mb-lg-0 mb-2" style={{textAlign:'left'}}>
+      <span className="ms-1">Állomás:</span>
+        <InputMezo
         as={Col}
         name="id"
         value="nev"
@@ -111,22 +129,30 @@ function UjAllomas({ pool, irany }) {
         isSelectFirst={true}
         handleChange={handleChange}
       />
-      <InputMezo
-        as={Col}
-        input={{ columnName: "ido", dataType: "tinyint" }}
-        value="1"
-        handleChange={handleChange}
-      />
-      <Button
-        as={Col}
-        variant="success"
-        onClick={(event) =>
-          handleSave(event, adatok, handleChange, getKovSor())
-        }
-        style={{ marginRight: "12px" }}
-      >
-        Új állomás
-      </Button>
+      </div>
+      <div className="col-12 col-lg-4 p-0 ps-lg-1 pe-lg-2 mb-lg-0 mb-2" style={{textAlign:'left'}}>
+      <span className="ms-1">Idő (perc):</span>
+        <InputMezo
+        
+          as={Col}
+          input={{ columnName: "ido", dataType: "tinyint" }}
+          defaultValue={adatok.ido}
+          handleChange={handleChange}
+        />
+      </div>
+
+      <div className="col-12 col-lg-4 ps-0 ps-lg-2 pe-0 mb-lg-0 mb-2">
+        <Button
+          style={{ width: "100%" }}
+          as={Col}
+          variant="success"
+          onClick={(event) =>
+            handleSave(event, adatok, handleChange, getKovSor())
+          }
+        >
+          Új állomás
+        </Button>
+      </div>
     </Row>
   );
 }

@@ -45,6 +45,7 @@ function SzinkronizaloGomb() {
   return (
     <ToggleButton
       id="toggle-check"
+      style={{ marginBottom: "60px" }}
       className={`mt-3 ${megallok.vissza ? "" : "d-none"}`}
       type="checkbox"
       variant={checked ? "success" : "warning"}
@@ -64,7 +65,7 @@ function SzinkronizaloGomb() {
       }}
       {...{ disabled: !szinkronizalhato() }}
     >
-      Sinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
+      Szinkronizálás {checked ? "kikapcsolása" : "bekopcsolása"}
     </ToggleButton>
   );
 }

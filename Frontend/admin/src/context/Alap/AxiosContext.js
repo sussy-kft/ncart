@@ -59,8 +59,9 @@ export const AxiosProvider = ({ children }) => {
             {
                 if (error.code === "ERR_NETWORK") 
                     setErrorState(true);
-                errorCallback && errorCallback(error);
-                addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
+                errorCallback 
+                    ? errorCallback(error)
+                    : addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
             }
         }
     };

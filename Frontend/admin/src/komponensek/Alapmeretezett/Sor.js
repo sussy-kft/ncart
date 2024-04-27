@@ -61,7 +61,7 @@ function Sor({ row, ix, callback }) {
    * A változásokért felelős függvény.
    * @memberof Sor
    * @param {Event} event - Esemény objektum.
-   * @param {Target} event.target - Az esemény célja. 
+   * @param {Target} event.target - Az esemény célja.
    * @function
    */
   const handleChange = ({ target }) => {
@@ -95,7 +95,7 @@ function Sor({ row, ix, callback }) {
   };
 
   /**
-   * 
+   *
    * @function
    * @description Visszaállítja az adatokat a kezdeti értékekre.
    * @memberof Sor
@@ -160,7 +160,7 @@ function Sor({ row, ix, callback }) {
 
   /**
    * @description Egy függvény, ahhoz az állapothoz, hogy a felhasználó módosítja-e az adatokat, generál input cellákat.
-   * 
+   *
    * @function
    * @param {Object} elem - Az elem, amiből cella adatot kell generálni.
    * @memberof Sor
@@ -225,14 +225,15 @@ function Sor({ row, ix, callback }) {
             dangerText: "Törlés",
           },
         };
-
     return (
       <>
-        <td>
-          <Button variant={variant} onClick={onClick}>
-            {text}
-          </Button>
-        </td>
+        {getPKs().length !== Object.keys(row).length && (
+          <td>
+            <Button variant={variant} onClick={onClick}>
+              {text}
+            </Button>
+          </td>
+        )}
         <td>
           <Button key="danger" variant="danger" onClick={dangerOnClick}>
             {dangerText}

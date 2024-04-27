@@ -92,7 +92,7 @@ function MegalloSzerkeszto({ meta }) {
 
   const renderMegallok = () =>
     Object.entries(megallok).map(([key, value]) => (
-      <Col>
+      <Col md={6} className="mt-4">
         {value ? (
           <MegalloDnD name={key} value={value} />
         ) : (

@@ -15,6 +15,7 @@ import SelectMezo from "./SelectMezo";
  *
  * @component
  * @param {Object} props - A komponens propsa.
+ * @param {string} props.className - Az input vezérlő osztályneve.
  * @param {string} props.as - Egy komponens típusa, amibe majd beágyazza az input form vezérlőt.
  * @param {boolean} props.flag - Egy flag, amit a handleChange függvényt csak egyszer hívják meg, így az adatok alapértelmezetten be lesz állítva.
  * @param {Object} props.input - Az input mező metaadatai.
@@ -30,6 +31,7 @@ import SelectMezo from "./SelectMezo";
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
  */
 function InputMezo({
+  className,
   as = "react.fragment",
   flag = true,
   input,
@@ -123,7 +125,7 @@ function InputMezo({
   return input?.dataType.substring(input?.dataType.length - 2) == "[]" ? (
     (pool ?? opciok).map((opcio, index) => {
       return (
-        <As>
+        <As className={className}>
           <Form.Check
             name={input?.columnName}
             key={index}
@@ -138,6 +140,7 @@ function InputMezo({
     })
   ) : input?.references || isSelect ? (
     <SelectMezo
+      className={className}
       as={as}
       flag={flag}
       input={input}
@@ -150,7 +153,7 @@ function InputMezo({
       checked={checked}
     />
   ) : (
-    <As>
+    <As className={className}>
       <Form.Control
         as={"input"}
         required={!input?.isNullable}

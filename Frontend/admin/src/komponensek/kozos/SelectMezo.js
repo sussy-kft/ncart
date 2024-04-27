@@ -13,6 +13,7 @@ import { typeConverter } from "./InputMezo"
  * 
  * @component
  * @param {Object} props - A komponens propsa.
+ * @param {string} props.className - Az select vezérlő osztályneve.
  * @param {string} props.as - Egy komponens típusa, amibe majd beágyazza a select form vezérlőt.
  * @param {Object} props.input - Az input mező metaadatai.
  * @param {function} props.handleChange - Egy callback függvény, ami a select vezérlő változásait kezeli.
@@ -25,6 +26,7 @@ import { typeConverter } from "./InputMezo"
  * @returns {React.Element} Egy Input mezőt ad vissza, ami az `as`-ban megadott komponensbe van beágyazva.
  */
 function SelectMezo({
+  className,
   as = "react.fragment",
   input,
   handleChange,
@@ -91,7 +93,7 @@ function SelectMezo({
   if (!input && !value && !opciok[0]) return null;
 
   return (
-    <As>
+    <As className={className}>
       <Form.Control
         as="select"
         required={!input?.isNullable}

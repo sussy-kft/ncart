@@ -53,7 +53,7 @@ function MentesOffcanvas(){
 
   return (
         <Offcanvas
-        style={{ height: "70px" }}
+        style={{ height: "auto" }}
         show={show}
         onHide={() => setShow(false)}
         placement="bottom"

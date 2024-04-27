@@ -31,9 +31,18 @@ function AllomasKartya({ allomas, nev, irany }) {
    * @returns {void}
    */
   const handleChange = (event) => {
+    const { value, min, max } = event.target;
+    if (
+      value==="" ||
+      Number(value) % 1 !== 0 ||
+      (min && Number(value) < Number(min)) ||
+      (max && Number(value) > Number(max))
+    )
+      return;
+
+    console.log(value, min, max);
     setShow(true);
     const tmp = _.cloneDeep(megallok[irany].megallok);
-    const { value } = event.target;
     tmp.find((val) => val.allomas === allomas.allomas).hanyPerc = value * 1;
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
@@ -96,18 +105,21 @@ function AllomasKartya({ allomas, nev, irany }) {
           maxWidth: "100px",
           minHeight: "100px",
           minWidth: "100px",
+          zIndex: "1",
+          margin:"auto"
         }}
       />
+      <div style={{backgroundColor:"#ed1c24", width:"15px", height:"100%", position:"absolute", left: "42px", zIndex:"0"}}/>
       <Card.Body className="flex-fill text-left ps-0">
         <Card.Title>
           {nev} (állomásID: {allomas.allomas})
         </Card.Title>
         <Card.Text>
           <div
-            className="d-flex justify-content-between align-items-center"
+            className="row justify-content-between align-items-center"
             style={{ width: "100%" }}
           >
-            <div className="d-flex align-items-center">
+            <div className="col-12 col-lg-6 d-flex align-items-center">
               <span className="me-2">idő: </span>
               <InputMezo
                 defaultValue={allomas.hanyPerc}
@@ -117,7 +129,11 @@ function AllomasKartya({ allomas, nev, irany }) {
               <br />
             </div>
             {megallok[irany].megallok.length > 1 && (
-              <Button variant="danger" onClick={() => torol(allomas)}>
+              <Button
+                className="col-12 col-lg-6 mt-3 mt-lg-0"
+                variant="danger"
+                onClick={() => torol(allomas)}
+              >
                 Állomás törlése
               </Button>
             )}

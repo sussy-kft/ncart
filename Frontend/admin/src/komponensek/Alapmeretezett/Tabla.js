@@ -94,7 +94,7 @@ function Tabla() {
     <h5>Még nincs rekord az adatbázisban.</h5>
   ) : (
     <>
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             {fejlecElem(adatok[0])}
