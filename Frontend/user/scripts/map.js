@@ -111,23 +111,21 @@ async function showTimetable() {
 $(document).on('change', '#selectLine', function() {
     axios.get(baseUrl + "/inditasok/"+ $(this).val()).then((response) => {
         //console.log(response.data)
-    }).catch((error) => {
-        //console.log(error)
-        let tesztadat = [{vonal: 3, nap : 2, indulasiIdo: 120}, {vonal: 3, nap : 2, indulasiIdo: 150}, {vonal: 3, nap : 2, indulasiIdo: 180}]
+        //let tesztadat = [{vonal: 3, nap : 2, indulasiIdo: 120}, {vonal: 3, nap : 2, indulasiIdo: 150}, {vonal: 3, nap : 2, indulasiIdo: 180}]
         let valasz = `<tr>
         <th>Vonal</th>
         <th>Nap</th>
         <th>Indulás</th>
     </tr>`
-        tesztadat.forEach((entry) => {
+        response.data.forEach((entry) => {
            valasz += `<tr>
               <td>${entry.vonal}</td>    
                 <td>${entry.nap}</td>
-                <td>${percekToOraPerc(entry.indulasiIdo)}</td>
+                <td>${percekToOraPerc(entry.inditasIdeje)}</td>
             </tr>`
         });
         $("#timetable").html(valasz)
-    });
+    })
 });
 
 function generateRandomColorPair() {

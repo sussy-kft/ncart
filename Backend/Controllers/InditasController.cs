@@ -60,7 +60,7 @@ namespace Backend.Controllers
 
     public partial class InditasController
     {
-        [HttpGet("{vonal}")]
+        [HttpGet("{vonal}"), AllowAnonymous]
         public IEnumerable<InditasDTO> Get([FromRoute] int vonal) => ConvertAllToDTO(GetByVonal(vonal));
 
         [HttpGet("{vonal}/{nap}")]
