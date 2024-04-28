@@ -68,6 +68,7 @@ export const AxiosProvider = ({ children }) => {
                     ? errorCallback(error)
                     : addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
             }
+            return error;
         }
     };
 
@@ -85,7 +86,7 @@ export const AxiosProvider = ({ children }) => {
     const HTTP_METODUSOK = {
         getAll: (url, callback, errorCallback) => handleRequest({ method: 'get', url, callback, errorCallback }),
         destroy: (url, id) => handleRequest({ method: 'delete', url: url + "/" + id, successMessage: "A törlés sikeres volt!" }),
-        post: (url, item, callback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback }),
+        post: (url, item, callback, errorCallback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback, errorCallback }),
         patch: (url, id, item) => handleRequest({ method: 'patch', url: url + "/" + id, data: item, successMessage: "A frissítés sikeres volt!" }),
         put: (url, item) => handleRequest({ method: 'put', url, data: item, successMessage: "A frissítés sikeres volt!" })
     };
