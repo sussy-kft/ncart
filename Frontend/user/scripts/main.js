@@ -1,6 +1,7 @@
 $(document).ready(function () {
     let x = 0;
-    let y = 94.4;
+    let y = 148;
+    let zoom = 1;
     let img = $("#map");
     let isDragging = false;
 
@@ -26,8 +27,8 @@ $(document).ready(function () {
     img.on("mousedown", function (event) {
         isDragging = true;
         let offset = img.offset();
-        x = event.clientX - offset.left;
-        y = event.clientY - offset.top;
+        x = event.clientX - offset.left + (img.width()- img.width()*zoom)/2;
+        y = event.clientY - offset.top + (img.height()- img.height()*zoom)/2;;
     });
 
     // Mouse up event for ending dragging
@@ -42,6 +43,7 @@ $(document).ready(function () {
         if (isDragging) {
             let newX = event.clientX - x;
             let newY = event.clientY - y;
+            // console.log(event.clientX);
 
             // Limiting movement within bounds of map container
             let parentWidth = img.parent().width();
@@ -49,17 +51,16 @@ $(document).ready(function () {
             let imgWidth = img.width();
             let imgHeight = img.height();
 
-            if (newX > 0) {
-                newX = 0;
-            } else if (newX < parentWidth - imgWidth) {
-                newX = parentWidth - imgWidth;
+            if (newX > 0 - (img.width()- img.width()*zoom)/2) {
+                newX = 0 - (img.width()- img.width()*zoom)/2;
+            } else if (newX < parentWidth - imgWidth + (img.width()- img.width()*zoom)/2) {
+                newX = parentWidth - imgWidth + (img.width()- img.width()*zoom)/2;
             }
-            if (newY > 94.4) {
-                newY = 94.4;
-            } else if (newY < parentHeight - imgHeight + innerHeight) {
-                newY = parentHeight - imgHeight + innerHeight;
+            if (newY > 148 - (img.height()- img.height()*zoom)/2) {
+                newY = 148 - (img.height()- img.height()*zoom)/2;
+            } else if (newY < parentHeight - imgHeight + innerHeight + (img.height()- img.height()*zoom)/2) {
+                newY = parentHeight - imgHeight + innerHeight + (img.height()- img.height()*zoom)/2;
             }
-
             img.css({left: newX + "px", top: newY + "px"});
         }
 
@@ -67,6 +68,47 @@ $(document).ready(function () {
         if (event.clientY > window.innerHeight - 50) {
             event.preventDefault();
         }
+    });
+
+    img.on('wheel', function(e) {
+        e.preventDefault();
+    
+        // change zoom level based on wheel direction
+        if(e.originalEvent.deltaY < 0) {
+            // zoom in
+            zoom += 0.1;
+        } else {
+            // zoom out
+            zoom -= 0.1;
+        }
+    
+        // limit zoom level between 1 and 3
+        zoom = Math.min(Math.max(1, zoom), 3);
+
+        let newX = (e.clientX - x);
+        let newY = (e.clientY - y);
+        // console.log(event.clientX);
+
+        // Limiting movement within bounds of map container
+        let parentWidth = img.parent().width();
+        let parentHeight = img.parent().height();
+        let imgWidth = img.width();
+        let imgHeight = img.height();
+
+        if (newX > 0 - (img.width()- img.width()*zoom)/2) {
+            newX = 0 - (img.width()- img.width()*zoom)/2;
+        } else if (newX < parentWidth - imgWidth + (img.width()- img.width()*zoom)/2) {
+            newX = parentWidth - imgWidth + (img.width()- img.width()*zoom)/2;
+        }
+        if (newY > 148 - (img.height()- img.height()*zoom)/2) {
+            newY = 148 - (img.height()- img.height()*zoom)/2;
+        } else if (newY < parentHeight - imgHeight + innerHeight + (img.height()- img.height()*zoom)/2) {
+            newY = parentHeight - imgHeight + innerHeight + (img.height()- img.height()*zoom)/2;
+        }
+        img.css({left: newX + "px", top: newY + "px"});
+
+        // apply zoom level to image
+        img.css('transform', `scale(${zoom})`);
     });
 
     // Hamburger menu click event
