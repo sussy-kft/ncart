@@ -30,7 +30,9 @@ function SzerkesztoOldal({ child = <AlapKomponens />, cim }) {
     <>
       {React.cloneElement(child, { cim })}
       <ToastContainer position="top-end" className="position-fixed">
-        {InfoPanels}
+        {InfoPanels.map((panel, ix) => (
+          <div key={ix}>{panel}</div>
+        ))}
       </ToastContainer>
     </>
   );

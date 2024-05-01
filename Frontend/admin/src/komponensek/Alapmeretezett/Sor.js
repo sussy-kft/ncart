@@ -132,7 +132,7 @@ function Sor({ row, ix, callback }) {
           return cellaLista(value, key, metainfo);
         if (getPKs().includes(key))
           return (
-            <td>
+            <td key={key}>
               <p>{value}</p>
             </td>
           );
@@ -228,13 +228,13 @@ function Sor({ row, ix, callback }) {
     return (
       <>
         {getPKs().length !== Object.keys(row).length && (
-          <td>
+          <td key="editButton">
             <Button variant={variant} onClick={onClick}>
               {text}
             </Button>
           </td>
         )}
-        <td>
+        <td key="deleteButton">
           <Button key="danger" variant="danger" onClick={dangerOnClick}>
             {dangerText}
           </Button>

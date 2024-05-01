@@ -114,7 +114,7 @@ function AllomasKartya({ allomas, nev, irany }) {
         <Card.Title>
           {nev} (állomásID: {allomas.allomas})
         </Card.Title>
-        <Card.Text>
+        <div>
           <div
             className="row justify-content-between align-items-center"
             style={{ width: "100%" }}
@@ -138,7 +138,7 @@ function AllomasKartya({ allomas, nev, irany }) {
               </Button>
             )}
           </div>
-        </Card.Text>
+        </div>
       </Card.Body>
     </Card>
   );

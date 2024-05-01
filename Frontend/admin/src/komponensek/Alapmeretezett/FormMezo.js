@@ -116,6 +116,7 @@ function FormMezo() {
 
   useEffect(() => {
     urlRef.current = url;
+    setValidated(false);
   }, [url]);
 
   useEffect(() => {

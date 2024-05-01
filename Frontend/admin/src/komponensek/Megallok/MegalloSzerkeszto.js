@@ -92,7 +92,7 @@ function MegalloSzerkeszto({ meta }) {
 
   const renderMegallok = () =>
     Object.entries(megallok).map(([key, value]) => (
-      <Col md={6} className="mt-4">
+      <Col md={6} className="mt-4" key={key}>
         {value ? (
           <MegalloDnD name={key} value={value} />
         ) : (
@@ -115,7 +115,7 @@ function MegalloSzerkeszto({ meta }) {
       {/*kys */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Row>{renderMegallok()}</Row>
-        <SzinkronizaloGomb/>
+        <SzinkronizaloGomb />
       </DragDropContext>
       <MentesOffcanvas />
     </Form>

@@ -47,14 +47,14 @@ function UjVonal({ masikVonal, meta, name }) {
    */
   const METAINFO = [
     {
-      cim : "Kezdőállomás:",
-      name: "kezdoAll"
+      cim: "Kezdőállomás:",
+      name: "kezdoAll",
     },
     {
       cim: "Végállomás:",
-      name: "vegall"
-    }
-  ]
+      name: "vegall",
+    },
+  ];
 
   /**
    * @name useEffect_setOpciok
@@ -95,11 +95,18 @@ function UjVonal({ masikVonal, meta, name }) {
    * @function
    * @param {string} label - A `Form.Label` komponens szövege.
    * @param {string} customName - Amikor az `InputMezo` komponensben változik az érték, akkor ezzel a kulccsal állapítjuk meg, hogy melyik adatot kell módosítani az `adatok`-ban.
+   * @param {number} ix - Az index, amely segít az egyedi kulcsok létrehozásában.
    * @returns {JSX.Element} Egy div elem, ami tartalmazza a `Form.Label` és az `InputMezo` komponenseket.
    */
-  const generateInputMezo = (label, customName) => (
-    <div className="row mb-2">
-      <Form.Label className="col-12 col-md-auto" style={{textAlign: 'left', width: "130px"}} as={Col}>{label}</Form.Label>
+  const generateInputMezo = (label, customName, ix) => (
+    <div key={ix} className="row mb-2">
+      <Form.Label
+        className="col-12 col-md-auto"
+        style={{ textAlign: "left", width: "130px" }}
+        as={Col}
+      >
+        {label}
+      </Form.Label>
       <div className="col-12 col-md">
         <InputMezo
           name="id"
@@ -107,7 +114,7 @@ function UjVonal({ masikVonal, meta, name }) {
           pool={opciok}
           isSelect={true}
           isSelectFirst={true}
-          handleChange={event => handleChange(customName, event)}
+          handleChange={(event) => handleChange(customName, event)}
         />
       </div>
     </div>
@@ -120,13 +127,8 @@ function UjVonal({ masikVonal, meta, name }) {
       <h3>Nincs még {name} vezető útvonal</h3>
       <br />
       <h4>Új {name} útvonal hozzáadása:</h4>
-      {METAINFO.map(elem => generateInputMezo(elem.cim, elem.name))}
-      <Button
-        className="mt-2"
-        as={Col}
-        variant="success"
-        onClick={kuldes}
-      >
+      {METAINFO.map((elem, ix) => generateInputMezo(elem.cim, elem.name, ix))}
+      <Button className="mt-2" as={Col} variant="success" onClick={kuldes}>
         Új {name} útvonal
       </Button>
     </div>
