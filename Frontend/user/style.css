@@ -48,7 +48,9 @@ a {
 }
 
 #menuRight div a:hover {
-    border-bottom: 4px solid rgb(255, 231, 33);
+    text-decoration: underline;
+    text-decoration-color: rgb(255, 231, 33);
+    text-decoration-thickness: 4px;
 }
 
 #start {

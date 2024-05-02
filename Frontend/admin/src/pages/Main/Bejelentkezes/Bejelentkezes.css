@@ -1,0 +1,35 @@
+.video-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 0; /* Hogy a videó a legalsó réteg legyen */
+}
+
+.fullscreen-bg__video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+}
+
+#bejelentkezes {
+    position: relative; /* Hogy a form ne takarja a videót */
+    z-index: 1; /* Hogy a form a videó fölött legyen */
+    background-color: rgb(35, 39, 47) !important; /* Új háttérszín */
+    width: 600px;
+    text-align: left;
+    padding: 30px 30px 20px;
+    border-radius: 16px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+#bejelentkezes input {
+    width: 100%;
+}

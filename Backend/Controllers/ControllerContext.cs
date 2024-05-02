@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Backend.Controllers
+﻿namespace Backend.Controllers
 {
-    [ApiController]
-    public abstract class ControllerContext(AppDbContext context, IConfiguration config) : ControllerBase()
+    public abstract class ControllerContext(AppDbContext context) : JsonRecieverController()
     {
         protected AppDbContext context { get; } = context;
-        protected IConfiguration config { get; } = config;
     }
 }
