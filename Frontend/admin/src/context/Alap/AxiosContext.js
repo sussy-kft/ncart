@@ -43,6 +43,7 @@ export const AxiosProvider = ({ children }) => {
      */
     const handleRequest = async ({ method, url, data = null, successMessage = null, callback = null, errorCallback = null }) => {
         try {
+            if (!url) return;
             const response = await axios[method](baseUrl + url, method === 'delete' ? { data: data, ...header } : data, header);
             setErrorState(false);
             if (method !== 'get') {
