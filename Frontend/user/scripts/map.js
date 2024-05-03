@@ -287,7 +287,13 @@ function tervezes() {
 
                     // Címsor hozzáadása
                     let headerRow = document.createElement("tr");
-                    let headerCells = ["vonal", "honnan", "hova", "mikor"];
+                    let headerCells = [
+                        "VONAL",
+                        "KEZDŐPONT",
+                        "UTICÉL",
+                        "INDUL",
+                        "UTAZÁSI IDŐ",
+                    ];
                     headerCells.forEach(function (header) {
                         let cell = document.createElement("th");
                         cell.textContent = header;
@@ -385,23 +391,69 @@ function displayDataInTableRow(entry, row) {
 
     // KezdoMegallo
     let kezdoMegalloCell = document.createElement("td");
-    let kezdoMegalloId = entry.megallok[0];
+    let kezdoMegalloId = entry.megallok[0].allomas; // Kezdő állomás az első elem
     let kezdoMegalloNev = getNameById(kezdoMegalloId); // Megkapjuk az állomás nevét
     kezdoMegalloCell.textContent = kezdoMegalloNev; // Beállítjuk a cella tartalmát a nevre
     row.appendChild(kezdoMegalloCell); // Adjuk hozzá a cellát a táblázathoz
 
     // VegsoMegallo
     let vegsoMegalloCell = document.createElement("td");
-    let vegsoMegalloId = entry.megallok[entry.megallok.length - 1]; // Utolsó megálló
+    let vegsoMegalloId = entry.megallok[entry.megallok.length - 1].allomas; // Utolsó állomás
     let vegsoMegalloNev = getNameById(vegsoMegalloId);
     vegsoMegalloCell.textContent = vegsoMegalloNev; // Beállítjuk a cella tartalmát a nevre
     row.appendChild(vegsoMegalloCell);
 
-    // Nap
-    let napCell = document.createElement("td");
+    // Nap és idő
+    let mikorCell = document.createElement("td");
     let mikor = entry.nap + " " + percekToOraPerc(entry.indulasiIdo);
-    napCell.textContent = mikor;
-    row.appendChild(napCell);
+    mikorCell.textContent = mikor;
+    row.appendChild(mikorCell);
+
+    // Összesített idő megjelenítése
+    let osszesitettIdoCell = document.createElement("td");
+    let osszesitettIdo = osszesitettIdoPercek(entry.megallok); // Összesített idő kiszámítása
+    osszesitettIdoCell.textContent = osszesitettIdo + "p"; // Megjelenítés perc formátumban
+    row.appendChild(osszesitettIdoCell);
+
+    // Eseménykezelő hozzáadása a sorhoz
+    row.addEventListener("click", function () {
+        // Ellenőrizzük, hogy a sor alatt már van-e megállók sor
+        let stopRow = row.nextElementSibling;
+        if (stopRow && stopRow.classList.contains("stops")) {
+            // Megállók sor elrejtése, ha már létezik
+            stopRow.remove();
+        } else {
+            // Ha nincs megállók sor, akkor létrehozzuk és megjelenítjük
+            let stops = entry.megallok.map((megallo) =>
+                getNameById(megallo.allomas)
+            );
+            let stopRow = document.createElement("tr");
+            stopRow.classList.add("stops");
+            let stopCell = document.createElement("td");
+            stopCell.colSpan = 4; // Egy oszlopban legyen az összes megálló
+            stopCell.textContent = stops.join(" ➔ ");
+            stopRow.appendChild(stopCell);
+            row.parentNode.insertBefore(stopRow, row.nextSibling);
+        }
+    });
+}
+
+// Összesített idő kiszámítása percekben
+function osszesitettIdoPercek(megallok) {
+    let osszeg = 0;
+    megallok.forEach(function (megallo) {
+        osszeg += megallo.hanyPerc;
+    });
+    return osszeg;
+}
+
+// Összesített idő kiszámítása percekben
+function osszesitettIdoPercek(megallok) {
+    let osszeg = 0;
+    megallok.forEach(function (megallo) {
+        osszeg += megallo.hanyPerc;
+    });
+    return osszeg;
 }
 
 function percekToOraPerc(percek) {
@@ -416,5 +468,4 @@ function percekToOraPerc(percek) {
 getAllAllomas();
 getJarmuvek();
 getVonalak();
-
 showLines();

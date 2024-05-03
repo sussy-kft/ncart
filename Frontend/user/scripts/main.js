@@ -11,7 +11,7 @@ $(document).ready(function () {
         let toggleButtonIcon = $("#panelToggleButtonIcon");
 
         if (panel.css("transform") === "matrix(1, 0, 0, 1, 0, 0)") {
-            panel.css("transform", "translateY(-350px)"); // Módosítás: Felfelé elrejtés
+            panel.css("transform", "translateY(-555px)"); // Módosítás: Felfelé elrejtés
             panel.css("top", "90"); // Módosítás: tetejére helyezés
             toggleButtonIcon.attr("class", "bi bi-chevron-down"); // Change icon to right arrow
         } else {
