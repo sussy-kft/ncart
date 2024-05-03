@@ -46,7 +46,7 @@ namespace Backend.Controllers
         ;
     }
 
-    public partial class AllomasController : IPatchableIdentityPkTablaController<AllomasController.AllomasPatch>
+    public partial class AllomasController : IPatchableIdentityPkTableController<AllomasController.AllomasPatch>
     {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] AllomasPatch ujAllomas) => PerformPatch(

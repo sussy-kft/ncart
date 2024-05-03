@@ -23,7 +23,7 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
     }
 
-    public partial class JarmuTipusController : IPatchableIdentityPkTablaController<JarmuTipusController.JarmuTipusPatch>
+    public partial class JarmuTipusController : IPatchableIdentityPkTableController<JarmuTipusController.JarmuTipusPatch>
     {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] JarmuTipusPatch ujJarmuTipus) => PerformPatch(
