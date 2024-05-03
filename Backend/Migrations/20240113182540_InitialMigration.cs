@@ -1,6 +1,5 @@
 ﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System.Collections.Specialized;
 
 #nullable disable
 
@@ -159,27 +158,31 @@ namespace Backend.Migrations
                         SELECT COUNT(*)
                         FROM Vonalak
                         WHERE {nameof(Vonal.VonalSzam)} = @{nameof(Vonal.VonalSzam)}
-                    ) >= 2
+                    ) > 2
                         SET @ret = 0
                     RETURN @ret
                 END
             ");
-            migrationBuilder.Sql($@"
-                ALTER TABLE Vonalak
-                ADD CONSTRAINT CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2
-                CHECK (dbo.Max2Vonal({nameof(Vonal.VonalSzam)}) = 1)
-            ");
+            migrationBuilder.AddCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2",
+                table: "Vonalak",
+                sql: $"dbo.Max2Vonal({nameof(Vonal.VonalSzam)}) = 1"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Inditasok");
-            migrationBuilder.DropTable(name: "Kezelok");
-            migrationBuilder.DropTable(name: "Megallok");
-            migrationBuilder.DropTable(name: "Vonalak");
-            migrationBuilder.DropTable(name: "Allomasok");
-            migrationBuilder.DropTable(name: "JarmuTipusok");
+            migrationBuilder.DropTable("Inditasok");
+            migrationBuilder.DropTable("Kezelok");
+            migrationBuilder.DropTable("Megallok");
+            migrationBuilder.DropTable("Vonalak");
+            migrationBuilder.DropTable("Allomasok");
+            migrationBuilder.DropTable("JarmuTipusok");
+            migrationBuilder.DropCheckConstraint(
+                name: $"CK_Vonalak_{nameof(Vonal.VonalSzam)}_Max2",
+                table: "Vonalak"
+            );
             migrationBuilder.Sql("DROP FUNCTION dbo.Max2Vonal");
         }
     }

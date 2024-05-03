@@ -126,7 +126,22 @@ namespace Backend.Migrations
 
                     b.HasIndex("Allomas");
 
-                    b.ToTable("Megallok");
+                    b.HasIndex("ElozoMegallo");
+
+                    b.ToTable("Megallok", t =>
+                        {
+                            t.HasTrigger("Kezdo_All_Megvaltozott");
+
+                            t.HasTrigger("Megallo_Beszur");
+
+                            t.HasTrigger("Megallo_Torol");
+
+                            t.HasTrigger("Vonal_Bovitve");
+
+                            t.HasTrigger("Vonal_Roviditve");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("Backend.Models.Vonal", b =>
@@ -159,7 +174,16 @@ namespace Backend.Migrations
 
                     b.HasIndex("Vegall");
 
-                    b.ToTable("Vonalak");
+                    b.ToTable("Vonalak", t =>
+                        {
+                            t.HasTrigger("Uj_Vonal_Vegallomas");
+
+                            t.HasTrigger("Vonalak_Cascade");
+
+                            t.HasCheckConstraint("CK_Vonalak_KezdoAll_Es_Vegall_Nem_Egegyeznek", "KezdoAll <> Vegall");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("Backend.Models.Inditas", b =>
@@ -178,16 +202,24 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.Allomas", "_Allomas")
                         .WithMany("_Megallok")
                         .HasForeignKey("Allomas")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Allomas", "_ElozoMegallo")
+                        .WithMany("_ElozoMegallok")
+                        .HasForeignKey("ElozoMegallo")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Vonal", "_Vonal")
                         .WithMany("_Megallok")
                         .HasForeignKey("Vonal")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("_Allomas");
+
+                    b.Navigation("_ElozoMegallo");
 
                     b.Navigation("_Vonal");
                 });
@@ -197,19 +229,19 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.JarmuTipus", "_JarmuTipus")
                         .WithMany("_Vonalak")
                         .HasForeignKey("JarmuTipus")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Allomas", "_KezdoAll")
                         .WithMany("_VonalakKezdoAll")
                         .HasForeignKey("KezdoAll")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Allomas", "_Vegall")
                         .WithMany("_VonalakVegall")
                         .HasForeignKey("Vegall")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("_JarmuTipus");
@@ -221,6 +253,8 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Allomas", b =>
                 {
+                    b.Navigation("_ElozoMegallok");
+
                     b.Navigation("_Megallok");
 
                     b.Navigation("_VonalakKezdoAll");

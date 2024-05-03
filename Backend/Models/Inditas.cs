@@ -1,16 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using Backend.ModelDTOBases;
+using Backend.DTOs;
 
 namespace Backend.Models
 {
     [PrimaryKey(nameof(Vonal), nameof(Nap), nameof(InditasIdeje))]
-    public class Inditas
+    public class Inditas : InditasBase, IConvertible<InditasDTO>
     {
-        [Required] public int Vonal { get; set; }
-        [Required] public byte Nap { get; set; }
-        [Required] public short InditasIdeje { get; set; }
+        public int Vonal { get; set; }
+        public byte Nap { get; set; }
+        public short InditasIdeje { get; set; }
 
         [ForeignKey(nameof(Vonal))] public Vonal _Vonal { get; set; }
+
+        public InditasDTO ConvertType() => new InditasDTO {
+            Vonal = Vonal,
+            Nap = Nap,
+            InditasIdeje = InditasIdeje
+        };
     }
 }
