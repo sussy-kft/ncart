@@ -57,7 +57,7 @@ namespace Backend.Controllers
                 foreach (Megall item in lehetsegesMegallok)
                 {
                     Csomopont csomopont = new(csomopontok[ix], item);
-                    if (!csomopont.ismetlodke(csomopont.megallo))
+                    if (!csomopont.ismetlodike(csomopont.megallo))
                         csomopontok.Add(csomopont);
 
                     if (bV.Contains(csomopont.megallo.Vonal))
@@ -191,9 +191,9 @@ namespace Backend.Controllers
             return [.. elozoCsomopont?.utvonal() ?? [], megallo];
         }
 
-        public bool ismetlodke(Megall megallo)
+        public bool ismetlodike(Megall megallo)
         {
-            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodke(megallo) ?? false);
+            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodike(megallo) ?? false); 
         }
     }
 
