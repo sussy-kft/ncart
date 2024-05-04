@@ -34,109 +34,125 @@
                 </div>
             </nav>
             <article>
-                <div>
-                    <div id="panel" style="left: 0px; display: grid; grid-template-columns: 1fr 1fr;">
+                <div id="panel">
+                    <div id="utvonalBeallit">
+                        <h1>Útvonaltervezés</h1>
                         <div>
-                            <label for="fname"
-                            ><i class="bi bi-compass-fill"></i
-                        ></label>
-                        <input
-                            type="text"
-                            id="honnanMegallo"
-                            name="megallok"
-                            list="megalloNevek"
-                        />
-                        <datalist id="megalloNevek"> </datalist>
-                        <label for="fname"
-                            ><i class="bi bi-three-dots-vertical"></i
-                        ></label>
-    
-                        <label for="fname"
-                            ><i class="bi bi-geo-alt-fill"></i
-                        ></label>
-                        <input
-                            type="text"
-                            id="hovaMegallo"
-                            name="megallok"
-                            list="megalloNevek"
-                        />
-                        <datalist id="megalloNevek">
-                            <option value="megallo1"></option>
-                            <option value="megallo2"></option>
-                        </datalist>
-                        <br />
-                        <label for="date"
-                            ><i class="bi bi-calendar-event-fill"></i
-                        ></label>
-                        <input type="date" id="date" name="birthday" />
-                        <label for="appt"><i class="bi bi-clock-fill"></i></label>
-                        <input type="time" id="appt" name="appt" /><br />
-                        <label for="jarmuKivetelek">Járműtípusok:</label><br />
+                            <label for="fname">
+                                <i class="bi bi-compass-fill"></i>
+                            </label>
+                            <input
+                                type="text"
+                                id="honnanMegallo"
+                                name="megallok"
+                                list="megalloNevek"
+                            />
+                            <datalist id="megalloNevek"></datalist>
+                        </div>
+                        <label for="fname">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </label>
+                        <div>
+                            <label for="fname">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </label>
+                            <input
+                                type="text"
+                                id="hovaMegallo"
+                                name="megallok"
+                                list="megalloNevek"
+                            />
+                            <datalist id="megalloNevek"></datalist>
+                        </div>
+                        <div>
+                            <label for="date">
+                                <i class="bi bi-calendar-event-fill"></i>
+                            </label>
+                            <input type="date" id="date" name="birthday" />
+                        </div>
+                        <div>
+                            <label for="appt">
+                                <i class="bi bi-clock-fill"></i>
+                            </label>
+                            <input type="time" id="appt" name="appt" />
+                        </div>
+                    </div>
+                    <h1>Jarmű beállítás</h1>
+                    <div id="jarmuBeallit">
                         <input
                             type="checkbox"
                             id="vehicle1"
                             name="vehicle1"
                             value="Metro"
                         />
-                        <label for="vehicle3">NCART</label><br />
+                        <label for="vehicle1" class="beallitas">NCART</label>
                         <input
                             type="checkbox"
                             id="vehicle2"
                             name="vehicle2"
                             value="Bus"
                         />
-                        <label for="vehicle2">NCBT</label><br />
+                        <label for="vehicle2" class="beallitas">NCBT</label>
                         <input
                             type="checkbox"
                             id="vehicle3"
                             name="vehicle3"
                             value="Trolley"
                         />
-                        <label for="vehicle1">NCET</label><br />
-                        <label for="vonalKivetelek">Vonalak:</label><br />
-                        <input type="checkbox" id="line1" name="line1" value="M1" />
-                        <label for="line1">M1</label><br />
-                        <input type="checkbox" id="line2" name="line2" value="M2" />
-                        <label for="line2">M2</label><br />
-                        <input type="checkbox" id="line3" name="line3" value="B1" />
-                        <label for="line3">B1</label><br />
-                        <input type="checkbox" id="line4" name="line4" value="E1" />
-                        <label for="line4">E1</label><br />
-                        <input type="checkbox" id="line5" name="line5" value="E2" />
-                        <label for="line5">E2</label><br />
+                        <label for="vehicle3" class="beallitas">NCET</label>
+                    </div>
+                    <h1>Vonal beállítás</h1>
+                    <div id="vonalBeallit">
+                        <input
+                            type="checkbox"
+                            id="line1"
+                            name="line1"
+                            value="M1"
+                        />
+                        <label for="line1" class="beallitas"> M1 </label>
+                        <input
+                            type="checkbox"
+                            id="line2"
+                            name="line2"
+                            value="M2"
+                        />
+                        <label for="line2" class="beallitas"> M2 </label>
+                        <input
+                            type="checkbox"
+                            id="line3"
+                            name="line3"
+                            value="B1"
+                        />
+                        <label for="line3" class="beallitas"> B1 </label>
+                        <input
+                            type="checkbox"
+                            id="line4"
+                            name="line4"
+                            value="E1"
+                        />
+                        <label for="line4" class="beallitas"> E1 </label>
+                        <input
+                            type="checkbox"
+                            id="line5"
+                            name="line5"
+                            value="E2"
+                        />
+                        <label for="line5" class="beallitas"> E2 </label>
+                    </div>
+                    <div id="tervezes">
                         <input
                             type="submit"
                             value="Tervezés"
                             id="tervezesGomb"
                             onclick="tervezes()"
                         />
-                        <div id="jarat" style="display: none">
-                            <table>
-                                <tr>
-                                    <th>vonal</th>
-                                    <th>honnan</th>
-                                    <th>hova</th>
-                                    <th>mikor</th>
-                                </tr>
-                            </table>
-                        </div><br>
-                        <button id="togglePanelButton">
-                            <i
-                                id="panelToggleButtonIcon"
-                            ></i>
-                        </button>
-                        </div>
-                        <div id="menetrend">
-                            <select id="selectLine" onchange="showTimetable()"></select>
-                            <table id="timetable">
-                                <tr>
-                                    <th>Vonal</th>
-                                    <th>Nap</th>
-                                    <th>Indulás</th>
-                                </tr>
-                            </table>
-                        </div>
                     </div>
+                    <div id="jarat" style="display: none">
+                        <table></table>
+                    </div>
+                    <button id="togglePanelButton">
+                        <i id="panelToggleButtonIcon"></i>
+                    </button>
                 </div>
                 <div id="map">
                     <svg

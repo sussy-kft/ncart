@@ -101,10 +101,6 @@ a {
     color: rgb(255, 231, 33);
 }
 
-input {
-    color: black;
-}
-
 #jarat {
     width: 100%;
 }
@@ -192,4 +188,80 @@ td {
     text-decoration: underline;
     text-decoration-color: rgb(255, 231, 33);
     text-decoration-thickness: 4px;
+}
+
+.bi {
+    font-size: 30px;
+}
+
+input {
+    font-size: 20px;
+    font-weight: bold;
+    background-color: transparent;
+    border: 4px solid rgb(255, 231, 33);
+    padding: 5px;
+    width: 250px;
+    text-align: center;
+}
+table {
+    font-weight: bold;
+}
+#tervezesGomb:hover {
+    cursor: pointer;
+    background-color: rgba(255, 233, 33, 0.5);
+}
+
+input[type="checkbox"] {
+    display: none; /* Elrejtjük az alapértelmezett checkboxot */
+}
+
+input[type="checkbox"]:checked + label.beallitas {
+    border: 2px solid rgba(255, 233, 33, 0.5);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: normal;
+}
+
+label.beallitas {
+    text-align: center;
+    border: 4px solid rgb(255, 231, 33);
+    display: block;
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+    width: 100px;
+}
+
+label {
+    font-weight: bold;
+}
+
+label.beallitas:hover {
+    background-color: rgba(255, 233, 33, 0.5);
+}
+
+#jarmuBeallit {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+#vonalBeallit {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#utvonalBeallit {
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 20px;
+}
+
+i {
+    text-align: center;
+}
+
+#tervezes {
+    margin-top: 20px;
 }

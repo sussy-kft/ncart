@@ -83,12 +83,12 @@ namespace Backend.Controllers
             List<Megall> utvonal = csomopont.utvonal();
             if (utvonal.Count > 1 && utvonal[0] == utvonal[1])
                 utvonal.RemoveAt(0);
-            if(!tervezesiFeltetelek.indulas_e)
+            if (!tervezesiFeltetelek.indulas_e)
                 utvonal.Reverse();
             List<ValaszVonal> valasz = [];
             Megall? tmp = null;
-            
-            int jelenNap= 0;
+
+            int jelenNap = 0;
 
             for (int ix = utvonal.Count > 1 && utvonal[0].Vonal == utvonal[1].Vonal ? 1 : 0; ix < utvonal.Count; ix++)
             {
@@ -97,7 +97,7 @@ namespace Backend.Controllers
 
                 tmp = tmp is null
                     ? utvonal[0]
-                    : megallok.Where(x => (tervezesiFeltetelek.indulas_e? x.ElozoMegallo == tmp.Allomas: x.Allomas == tmp.ElozoMegallo) && x.Vonal == jelenMegallo.Vonal).First();
+                    : megallok.Where(x => (tervezesiFeltetelek.indulas_e ? x.ElozoMegallo == tmp.Allomas : x.Allomas == tmp.ElozoMegallo) && x.Vonal == jelenMegallo.Vonal).First();
 
                 short ido = jelenMegallo.HanyPerc;
                 if (valasz.Count > 1 && valasz[^1].vonal == jelenMegallo.Vonal)
@@ -152,14 +152,14 @@ namespace Backend.Controllers
 
         private static IEnumerable<Inditas> getLehetsegesIndulasok(TervezesiFeltetelekDTO tervezesiFeltetelek, List<ValaszVonal> valasz, ValaszVonal valaszVonal, int jx, Inditas[] idopontok)
         {
-            return tervezesiFeltetelek.indulas_e 
+            return tervezesiFeltetelek.indulas_e
                 ? idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje > (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().ido + valasz.Last().indulasiIdo - 1440 * jx))
                 : idopontok.Where(x => x.Vonal == valaszVonal.vonal && x.InditasIdeje < (valasz.Count < 1 ? tervezesiFeltetelek.mikor : valasz.Last().indulasiIdo - valaszVonal.ido - 1440 * jx));
         }
 
         private (Vonal[] vonalok, Megall[] megallok, Inditas[][] indulasok) adatokLekerdezese(TervezesiFeltetelekDTO tervezesiFeltetelek)
         {
-            
+
             Vonal[] vonalak =
             [
                 .. context.Vonalak.Where(x => !tervezesiFeltetelek.vonalKivetel.Contains(x.VonalSzam)
@@ -178,9 +178,9 @@ namespace Backend.Controllers
             return inditasok;
         }
     }
-    
-     
-     
+
+
+
     class Csomopont(Csomopont? csomopont, Megall megallo)
     {
         public Csomopont? elozoCsomopont { get; set; } = csomopont;
@@ -188,15 +188,15 @@ namespace Backend.Controllers
 
         public List<Megall> utvonal()
         {
-            return [..elozoCsomopont?.utvonal()??[] ,megallo];
+            return [.. elozoCsomopont?.utvonal() ?? [], megallo];
         }
 
         public bool ismetlodke(Megall megallo)
         {
-            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodke(megallo) ?? false); 
+            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodke(megallo) ?? false);
         }
     }
-    
+
     class ValaszVonal(int vonal)
     {
         public int vonal { get; set; } = vonal;
@@ -204,7 +204,7 @@ namespace Backend.Controllers
         public short ido { get; set; } = 0;
         public string nap { get; set; } = DateTime.MinValue.ToString();
         public short indulasiIdo { get; set; } = 0;
-    
+
         public DateOnly getDateOnlyNap()
         {
             return DateOnly.Parse(nap);
