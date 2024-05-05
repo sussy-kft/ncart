@@ -27,7 +27,7 @@ namespace Backend.Controllers
         public override ActionResult Delete([FromRoute] int id) => PerformDelete(id);
     }
 
-    public partial class VonalController : IPatchableIdentityPkTablaController<VonalController.VonalPatch>
+    public partial class VonalController : IPatchableIdentityPkTableController<VonalController.VonalPatch>
     {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] VonalPatch ujVonal) => PerformPatch(
