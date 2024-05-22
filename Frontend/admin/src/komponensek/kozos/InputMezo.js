@@ -32,7 +32,7 @@ import SelectMezo from "./SelectMezo";
  */
 function InputMezo({
   className,
-  as = "react.fragment",
+  as = "div",
   flag = true,
   input,
   isSelect,
@@ -80,7 +80,6 @@ function InputMezo({
         !onceFlag &&
         (value || opciok[0]?.id || (pool && pool[0]?.[name])))
     ) {
-      console.log("kys");
       handleChange({
         target: {
           name: (name || input?.columnName) ?? "",
@@ -125,9 +124,9 @@ function InputMezo({
   return input?.dataType.substring(input?.dataType.length - 2) == "[]" ? (
     (pool ?? opciok).map((opcio, index) => {
       return (
-        <As className={className}>
+        <As key={index} className={className}>
           <Form.Check
-            name={input?.columnName}
+            name={input?.columnName}      
             key={index}
             value={opcio}
             type={"checkbox"}
@@ -158,8 +157,9 @@ function InputMezo({
         as={"input"}
         required={!input?.isNullable}
         name={(name || input?.columnName) ?? ""}
-        defaultValue={value ?? ""}
-        {...(defaultValue ? { value: defaultValue ?? {} } : {})}
+        // defaultValue={value ?? ""}
+        // {...(defaultValue ? { value: defaultValue ?? {} } : {})}
+        {...(defaultValue ? { value: defaultValue ?? {} } : { defaultValue: value ?? "" })}
         type={typeConverter(input?.dataType) ?? ""}
         maxLength={input?.characterMaximumLength ?? ""}
         minLength={input?.characterMinimumLength ?? ""}

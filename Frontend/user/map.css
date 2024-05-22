@@ -83,6 +83,8 @@ a {
     transform: translateY(-100%); /* Módosítás: panel felfelé elrejtése */
     z-index: 0; /* állítsd kisebbre, hogy a navigációs sáv mögé kerüljön */
     transition: transform 0.3s ease; /* Animáció hozzáadása a transform tulajdonsághoz */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 #togglePanelButton {

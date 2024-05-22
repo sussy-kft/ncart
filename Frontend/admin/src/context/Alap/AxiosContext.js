@@ -43,13 +43,19 @@ export const AxiosProvider = ({ children }) => {
      */
     const handleRequest = async ({ method, url, data = null, successMessage = null, callback = null, errorCallback = null }) => {
         try {
+            if (!url) return;
             const response = await axios[method](baseUrl + url, method === 'delete' ? { data: data, ...header } : data, header);
             setErrorState(false);
             if (method !== 'get') {
                 setAxiosId(Math.random());
                 successMessage && addInfoPanel(<InfoPanel bg={"success"} text={successMessage} />);
             }
-            console.log(response.data);
+            if (typeof response.data === 'object' && response.data !== null) {
+                const oldProto = Object.getPrototypeOf(response.data);
+                const newProto = Object.create(oldProto);
+                newProto.url = url;
+                Object.setPrototypeOf(response.data, newProto);
+            }
             callback && callback(response.data);
             return response.data;
         } catch (error) {
@@ -63,6 +69,7 @@ export const AxiosProvider = ({ children }) => {
                     ? errorCallback(error)
                     : addInfoPanel(<InfoPanel bg={"danger"} text={error.message} />);
             }
+            return error;
         }
     };
 
@@ -80,7 +87,7 @@ export const AxiosProvider = ({ children }) => {
     const HTTP_METODUSOK = {
         getAll: (url, callback, errorCallback) => handleRequest({ method: 'get', url, callback, errorCallback }),
         destroy: (url, id) => handleRequest({ method: 'delete', url: url + "/" + id, successMessage: "A törlés sikeres volt!" }),
-        post: (url, item, callback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback }),
+        post: (url, item, callback, errorCallback) => handleRequest({ method: 'post', url, data: item, successMessage: "Az új adat rögzítése sikeres volt!", callback, errorCallback }),
         patch: (url, id, item) => handleRequest({ method: 'patch', url: url + "/" + id, data: item, successMessage: "A frissítés sikeres volt!" }),
         put: (url, item) => handleRequest({ method: 'put', url, data: item, successMessage: "A frissítés sikeres volt!" })
     };

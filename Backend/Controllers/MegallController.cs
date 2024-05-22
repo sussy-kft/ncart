@@ -111,7 +111,7 @@ namespace Backend.Controllers
         }
     }
 
-    public partial class MegallController : IPatchableTablaController<MegallController.PK, MegallController.MegallPatch>
+    public partial class MegallController : IPatchableTableController<MegallController.PK, MegallController.MegallPatch>
     {
         [HttpPatch("{vonal}/{allomas}")]
         public ActionResult Patch([FromRoute] PK pk, [FromBody] MegallPatch ujMegall) => PerformPatch(

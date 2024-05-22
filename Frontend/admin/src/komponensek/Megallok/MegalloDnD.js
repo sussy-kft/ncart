@@ -15,10 +15,11 @@ import _ from "lodash";
  *
  * @returns {JSX.Element} Egy Drag and Drop komponenst, ahol a megállók szerkeszthetőek.
  */
-function MegalloDnD( { name } ) {
-
+function MegalloDnD({ name }) {
   const { kulsoAdatok } = useContext(MetaadatContext);
-  const { megallok, oppositeKey, atmasol} = useContext(MegallokContext);
+  const { megallok, oppositeKey, atmasol } = useContext(MegallokContext);
+
+  const allomasId = megallok[name].megallok[0]?.elozoMegallo;
 
   /**
    * @description A `filterPool` egy függvény, ami kiszűri azokat a megállókat, amelyek még nem szerepelnek a vonalban.
@@ -49,29 +50,40 @@ function MegalloDnD( { name } ) {
    * @memberof MegalloDnD
    */
   const renderDraggable = (allomas, index) => (
-    <Draggable key={`${name}-${allomas.allomas}-${index}`} draggableId={`${name}-${allomas.allomas}-${index}`} index={index}>
+    <Draggable
+      key={`${name}-${allomas.allomas}-${index}`}
+      draggableId={`${name}-${allomas.allomas}-${index}`}
+      index={index}
+    >
       {(provided) => (
-        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
           <AllomasKartya
             allomas={allomas}
-            nev={kulsoAdatok.Allomasok.find((val) => val.id === allomas.allomas)?.nev}
+            nev={
+              kulsoAdatok.Allomasok.find((val) => val.id === allomas.allomas)
+                ?.nev
+            }
             irany={name}
           />
         </div>
       )}
     </Draggable>
   );
-
-  if(!kulsoAdatok?.Allomasok) return null;
-
+  if (!kulsoAdatok?.Allomasok || !allomasId) return null;
   return (
     <>
-      <h3>{`vonal: ${megallok[name].vonal.id}`}</h3>
-      <h4>Kezdőállomás: {megallok[name].megallok[0].elozoMegallo}</h4>
+      <h3 className="mb-4">{`vonal: ${megallok[name].vonal.id}`}</h3>
       <Droppable droppableId={name} type={name}>
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            {megallok[name].megallok.map(renderDraggable)}
+            {renderDraggable({ allomas: allomasId }, 0)}
+            {megallok[name].megallok.map((allomas, index) =>
+              renderDraggable(allomas, index + 1)
+            )}
             {provided.placeholder}
           </div>
         )}
@@ -79,7 +91,9 @@ function MegalloDnD( { name } ) {
       <UjAllomas irany={name} pool={filterPool(name)} />
       {megallok[oppositeKey(name)] && (
         <Row className="m-0 ">
-          <Button  variant="primary" onClick={() => atmasol(name)}>Adatok átmásolása</Button>
+          <Button variant="primary" onClick={() => atmasol(name)}>
+            Adatok átmásolása
+          </Button>
         </Row>
       )}
     </>

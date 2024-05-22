@@ -98,8 +98,7 @@ function SelectMezo({
         as="select"
         required={!input?.isNullable}
         name={(name || input?.columnName) ?? ""}
-        defaultValue={value ?? ""}
-        {...(statikusValue ? { value: statikusValue ?? {} } : {})}
+        {...(statikusValue ? { value: statikusValue } : {defaultValue: value})}
         onChange={handleChange}
       >
         {input?.references

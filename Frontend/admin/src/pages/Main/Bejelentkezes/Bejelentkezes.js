@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Form } from "react-bootstrap";
 import InputMezo from "../../../komponensek/kozos/InputMezo";
 import Button from "react-bootstrap/Button";
@@ -16,26 +16,18 @@ import videoBackground from "../../../media/map.mp4";
  * @returns {JSX.Element} A megjeleníteni kivánt `Bejelentkezes` komponenst.
  */
 function Bejelentkezes() {
-  const { getText } = React.useContext(DarkModeContext);
-  const { post, getAll } = React.useContext(AxiosContext);
-  const { resetInfoPanel } = React.useContext(InfoPanelContext);
+  const { getText } = useContext(DarkModeContext);
+  const { post } = useContext(AxiosContext);
+  const { resetInfoPanel } = useContext(InfoPanelContext);
 
   const navigate = useNavigate();
   const inputs = [
     { columnName: "email", dataType: "email" },
-    { columnName: "password", dataType: "password", characterMinimumLength: 8 },
+    { columnName: "password", dataType: "password" },
   ];
 
-  useEffect(() => {
-    const asd = async () => {
-      const  a = await getAll("test").then((valasz) => valasz);
-      console.log(a);
-    };
-    asd();
-  }, [getAll]);
-
-  const [validated, setValidated] = React.useState(false);
-  const [adatok, setAdatok] = React.useState({});
+  const [adatok, setAdatok] = useState({});
+  const [shake, setShake] = useState("");
   
   /**
    * @function
@@ -50,7 +42,6 @@ function Bejelentkezes() {
           <Form.Group className="mb-3" key={input.columnName}>
             <Form.Label>{input.columnName + ": "}</Form.Label>
             <InputMezo input={input} handleChange={handleChange} />
-            <Form.Control.Feedback type="invalid" />
           </Form.Group>
         );
       }) || []
@@ -62,17 +53,23 @@ function Bejelentkezes() {
    * @memberof Bejelentkezes
    * @description Egy függvény, ami a form adatait elküldi a backendnek, ami visszaküldi a tokent és a lejárati időpontot, amit a localStorage-ba menti.
    * Továbbá a felhasználó email címét is a `localStorage`-ba menti, átirányítja az admin oldalra és törli az összes info panelt.
+   * Ha esetleg valami miat nem sikerül a bejelentkezés, akkor a formot megrázza, hogy jelezze a hibát.
    * @param {Event} event - A form küldési eseménye.
    */
   const handleSumbit = (event) => {
     event.preventDefault();
-    setValidated(true);
     post("kezelok/login", adatok, (valasz) => {
       resetInfoPanel()
       localStorage.setItem("felhasznalo", adatok.email);
       localStorage.setItem("token", valasz.token);
       localStorage.setItem("lejaratiIdopont", valasz.lejaratiIdopont);
       navigate("/admin");
+    },
+    () => {
+      setShake("shake")
+      setTimeout(() => {
+        setShake("")
+      }, 500);
     });
   };
 
@@ -99,8 +96,7 @@ function Bejelentkezes() {
                 style={{height: "100vh", position: "relative"}}
             >
                 <Form
-                    noValidate
-                    validated={validated}
+                    className={shake}
                     id="bejelentkezes"
                     style={{
                         backgroundColor: "transparent", // Átlátszó háttér

@@ -33,17 +33,19 @@ function AllomasKartya({ allomas, nev, irany }) {
   const handleChange = (event) => {
     const { value, min, max } = event.target;
     if (
-      value==="" ||
+      value === "" ||
       Number(value) % 1 !== 0 ||
       (min && Number(value) < Number(min)) ||
       (max && Number(value) > Number(max))
     )
       return;
 
-    console.log(value, min, max);
     setShow(true);
     const tmp = _.cloneDeep(megallok[irany].megallok);
-    tmp.find((val) => val.allomas === allomas.allomas).hanyPerc = value * 1;
+    (
+      tmp.find((val) => val.allomas === allomas.allomas) ??
+      megallok[irany].megallok.elozoMegallo
+    ).hanyPerc = value * 1;
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [irany]: {
@@ -70,12 +72,19 @@ function AllomasKartya({ allomas, nev, irany }) {
     let index = megallok[irany].megallok.findIndex(
       (value) => JSON.stringify(value) === JSON.stringify(allomas)
     );
+
     if (index > 0 && index < megallok[irany].megallok.length - 1)
       megallok[irany].megallok[index + 1].elozoMegallo =
         megallok[irany].megallok[index - 1].allomas;
+
     const tmp = megallok[irany].megallok.filter(
       (value) => JSON.stringify(value) !== JSON.stringify(allomas)
     );
+
+    if (index === -1) tmp.shift();
+    if (index === 0)
+      tmp[0].elozoMegallo = megallok[irany].megallok[0].elozoMegallo;
+
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
       [irany]: {
@@ -106,26 +115,39 @@ function AllomasKartya({ allomas, nev, irany }) {
           minHeight: "100px",
           minWidth: "100px",
           zIndex: "1",
-          margin:"auto"
+          margin: "auto",
         }}
       />
-      <div style={{backgroundColor:"#ed1c24", width:"15px", height:"100%", position:"absolute", left: "42px", zIndex:"0"}}/>
+      <div
+        style={{
+          backgroundColor: "#ed1c24",
+          width: "15px",
+          height: "100%",
+          position: "absolute",
+          left: "42px",
+          zIndex: "0",
+        }}
+      />
       <Card.Body className="flex-fill text-left ps-0">
         <Card.Title>
-          {nev} (állomásID: {allomas.allomas})
+          {nev} (állomásID: {allomas.allomas ?? allomas})
         </Card.Title>
-        <Card.Text>
+        <div>
           <div
             className="row justify-content-between align-items-center"
             style={{ width: "100%" }}
           >
             <div className="col-12 col-lg-6 d-flex align-items-center">
-              <span className="me-2">idő: </span>
-              <InputMezo
-                defaultValue={allomas.hanyPerc}
-                input={{ columnName: "hanyPerc", dataType: "tinyint" }}
-                handleChange={(event) => handleChange(event)}
-              />
+              {allomas.elozoMegallo && (
+                <>
+                  <span className="me-2">idő: </span>
+                  <InputMezo
+                    defaultValue={allomas.hanyPerc}
+                    input={{ columnName: "hanyPerc", dataType: "tinyint" }}
+                    handleChange={(event) => handleChange(event)}
+                  />
+                </>
+              )}
               <br />
             </div>
             {megallok[irany].megallok.length > 1 && (
@@ -138,7 +160,7 @@ function AllomasKartya({ allomas, nev, irany }) {
               </Button>
             )}
           </div>
-        </Card.Text>
+        </div>
       </Card.Body>
     </Card>
   );

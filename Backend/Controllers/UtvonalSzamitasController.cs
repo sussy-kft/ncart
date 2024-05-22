@@ -16,6 +16,9 @@ namespace Backend.Controllers
         [HttpPost("legkevesebb")]
         public IActionResult legkevesebb([FromBody] TervezesiFeltetelekDTO tervezesiFeltetelek) => CheckIfBadRequest(() =>
         {
+            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
+                return UnprocessableEntity();
+
             (Vonal[] vonalak, Megall[] megallok, Inditas[][] indulasok) = adatokLekerdezese(tervezesiFeltetelek);
 
             List<Megall> lehetsegesMegallok = megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan).ToList();
@@ -24,15 +27,15 @@ namespace Backend.Controllers
 
             List<int> bV = uticelVonalak.Select(x => x.Vonal).ToList();
 
-            if (tervezesiFeltetelek.honnan == tervezesiFeltetelek.hova)
-                return Ok(lehetsegesMegallok);
-
-
             foreach (int item in bV)
             {
-                if (lehetsegesMegallok.Select(x => x.Vonal).Contains(item))
+                IEnumerable<int> lehetsegesMegallokVonalai = lehetsegesMegallok.Select(x => x.Vonal);
+                if (lehetsegesMegallokVonalai.Contains(item))
                 {
-                    List<ValaszVonal>? valasz = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, new Csomopont(new(null, megallok.Where(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item).First()), megallok.Where(x => lehetsegesMegallok.Select(x => x.Vonal).Contains(x.Vonal) && x.Allomas == tervezesiFeltetelek.hova).First()));
+                    Megall honnanMegallo = megallok.First(x => x.ElozoMegallo == tervezesiFeltetelek.honnan && x.Vonal == item);
+                    Megall hovaMegallo = megallok.First(x => lehetsegesMegallokVonalai.Contains(x.Vonal) && x.Allomas == tervezesiFeltetelek.hova);
+
+                    List<ValaszVonal>? valasz = utvonalMegallapitas(tervezesiFeltetelek, megallok, indulasok, new Csomopont(new(null, honnanMegallo), hovaMegallo));
                     if (valasz is not null)
                         return Ok(valasz);
                 }
@@ -54,7 +57,7 @@ namespace Backend.Controllers
                 foreach (Megall item in lehetsegesMegallok)
                 {
                     Csomopont csomopont = new(csomopontok[ix], item);
-                    if (!csomopont.ismetlodke(csomopont.megallo))
+                    if (!csomopont.ismetlodike(csomopont.megallo))
                         csomopontok.Add(csomopont);
 
                     if (bV.Contains(csomopont.megallo.Vonal))
@@ -188,9 +191,9 @@ namespace Backend.Controllers
             return [.. elozoCsomopont?.utvonal() ?? [], megallo];
         }
 
-        public bool ismetlodke(Megall megallo)
+        public bool ismetlodike(Megall megallo)
         {
-            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodke(megallo) ?? false);
+            return (elozoCsomopont?.megallo.Equals(megallo) ?? false) || (elozoCsomopont?.ismetlodike(megallo) ?? false); 
         }
     }
 

@@ -89,6 +89,45 @@ async function showLines() {
     });
 }
 
+function fillOptionLines() {
+    axios.get(baseUrl + "/vonalak").then((response) => {
+        response.data
+        console.log(vonalak);
+        const selectElem = $("#selectLine")
+        response.data.forEach(element => {
+            selectElem.append(`<option value="${element.id}">${element.vonalSzam}</option>`)
+        });
+    });
+    
+}
+
+async function showTimetable() {
+    // let menetrendElem = $("#menetrend")
+    // menetrendElem.empty();
+    // const menetrend = await axios.get(baseUrl + "/inditasok/"+ selectedLine)
+    // console.log(menetrend)
+}
+
+$(document).on('change', '#selectLine', function() {
+    axios.get(baseUrl + "/inditasok/"+ $(this).val()).then((response) => {
+        //console.log(response.data)
+        //let tesztadat = [{vonal: 3, nap : 2, indulasiIdo: 120}, {vonal: 3, nap : 2, indulasiIdo: 150}, {vonal: 3, nap : 2, indulasiIdo: 180}]
+        let valasz = `<tr>
+        <th>Vonal</th>
+        <th>Nap</th>
+        <th>Indulás</th>
+    </tr>`
+        response.data.forEach((entry) => {
+           valasz += `<tr>
+              <td>${entry.vonal}</td>    
+                <td>${entry.nap}</td>
+                <td>${percekToOraPerc(entry.inditasIdeje)}</td>
+            </tr>`
+        });
+        $("#timetable").html(valasz)
+    })
+});
+
 function generateRandomColorPair() {
     // Generate a random hue
     let hue = Math.floor(Math.random() * 360);
@@ -469,3 +508,4 @@ getAllAllomas();
 getJarmuvek();
 getVonalak();
 showLines();
+fillOptionLines()

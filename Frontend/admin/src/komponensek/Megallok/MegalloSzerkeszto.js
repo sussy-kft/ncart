@@ -50,30 +50,29 @@ function MegalloSzerkeszto({ meta }) {
     if (!destination || source.index === destination.index) return;
 
     const sourceDroppableId = source.droppableId;
-    const sourceAllomasok = [...megallok[sourceDroppableId].megallok];
-    const a = { ...sourceAllomasok[0] };
-    const [removed] = sourceAllomasok.splice(source.index, 1);
-
-    sourceAllomasok.splice(destination.index, 0, removed);
-
-    if (source.index > 0)
-      sourceAllomasok[source.index].elozoMegallo =
-        sourceAllomasok[source.index - 1].allomas;
-    else {
-      sourceAllomasok[source.index].elozoMegallo = removed.elozoMegallo;
+    let sourceAllomasok2 = _.cloneDeep(megallok[sourceDroppableId].megallok
+      .map((val, index) => {
+        if(index === 0)
+          return [{allomas: val.elozoMegallo, hanyPerc: null}, {allomas: val.allomas, hanyPerc: val.hanyPerc}];
+        return {allomas: val.allomas, hanyPerc: val.hanyPerc};
+      })
+    );
+    sourceAllomasok2= sourceAllomasok2.flat()
+    let [removed] = sourceAllomasok2.splice(source.index, 1);
+    sourceAllomasok2.splice(destination.index, 0, removed);
+    if(destination.index === 0)
+      sourceAllomasok2[1].hanyPerc = sourceAllomasok2[0].hanyPerc
+    if(source.index === 0)
+      sourceAllomasok2[destination.index].hanyPerc = sourceAllomasok2[0].hanyPerc
+    let sourceAllomasok=[]; 
+    for (let ix = 1; ix < sourceAllomasok2.length; ix++) {
+      sourceAllomasok.push({
+        elozoMegallo: sourceAllomasok2[ix - 1].allomas,
+        allomas: sourceAllomasok2[ix].allomas,
+        hanyPerc: sourceAllomasok2[ix].hanyPerc,
+        vonal: megallok[sourceDroppableId].vonal.id,
+      });
     }
-
-    if (source.index < sourceAllomasok.length - 1)
-      sourceAllomasok[source.index + 1].elozoMegallo =
-        sourceAllomasok[source.index].allomas;
-
-    if (destination.index > 0)
-      sourceAllomasok[destination.index].elozoMegallo =
-        sourceAllomasok[destination.index - 1].allomas;
-    else sourceAllomasok[destination.index].elozoMegallo = a.elozoMegallo;
-    if (destination.index < sourceAllomasok.length - 1)
-      sourceAllomasok[destination.index + 1].elozoMegallo =
-        sourceAllomasok[destination.index].allomas;
 
     setMegallok((prevMegallok) => ({
       ...prevMegallok,
@@ -92,7 +91,7 @@ function MegalloSzerkeszto({ meta }) {
 
   const renderMegallok = () =>
     Object.entries(megallok).map(([key, value]) => (
-      <Col md={6} className="mt-4">
+      <Col md={6} className="mt-4" key={key}>
         {value ? (
           <MegalloDnD name={key} value={value} />
         ) : (
@@ -115,7 +114,7 @@ function MegalloSzerkeszto({ meta }) {
       {/*kys */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Row>{renderMegallok()}</Row>
-        <SzinkronizaloGomb/>
+        <SzinkronizaloGomb />
       </DragDropContext>
       <MentesOffcanvas />
     </Form>

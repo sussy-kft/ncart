@@ -97,7 +97,7 @@ namespace Backend.Controllers
         }
     }
 
-    public partial class KezeloController : IPatchableIdentityPkTablaController<KezeloController.KezeloPatch>
+    public partial class KezeloController : IPatchableIdentityPkTableController<KezeloController.KezeloPatch>
     {
         [HttpPatch("{id}")]
         public ActionResult Patch([FromRoute] int id, [FromBody] KezeloPatch ujKezelo) => PerformPatch(
