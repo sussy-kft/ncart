@@ -1,5 +1,5 @@
 let allomasok = [];
-let jarmuvek = []; // Járműtípusokat tároló tömb
+let jarmuvek = [];
 let vonalak = [];
 
 let baseUrl = "https://localhost:44339";

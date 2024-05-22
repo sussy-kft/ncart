@@ -332,7 +332,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("images/pacifica.jpg");
+    background-image: url("images/pacifica.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -360,7 +360,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("images/dog.png");
+    background-image: url("images/dog2.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -622,7 +622,7 @@ img {
 #summary > div {
     display: none;
 }
-footer{
+footer {
     background-color: black;
     margin: auto;
     width: 100%;
@@ -633,6 +633,6 @@ footer{
     justify-content: center;
     align-items: center;
 }
-footer img{
+footer img {
     width: 50%;
 }
